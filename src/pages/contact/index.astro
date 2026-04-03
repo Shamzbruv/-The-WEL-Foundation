@@ -1,0 +1,68 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Contact Us">
+  <div class="container" style="padding: var(--spacing-6) 0;">
+    
+    <h1>Contact The WEL Foundation</h1>
+    <p>Use the secure form below to inquire generally. To become a client, please use our <a href="/intake/start/">Intake form</a>.</p>
+    <form class="card" id="contact-form">
+      <div class="form-group">
+        <label for="contact-name">Name</label>
+        <input type="text" id="contact-name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="contact-email">Email</label>
+        <input type="email" id="contact-email" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="contact-message">Message</label>
+        <textarea id="contact-message" name="message" rows="5" required></textarea>
+      </div>
+      <div id="contact-error" style="color:var(--color-error); margin-bottom:1rem; display:none;"></div>
+      <div id="contact-success" style="color:green; font-weight:bold; margin-bottom:1rem; display:none;">Your message has been sent successfully.</div>
+      <button class="btn" type="submit" id="contact-submit">Send Message</button>
+    </form>
+    
+    <script>
+    // @ts-nocheck
+      document.getElementById('contact-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('contact-submit');
+        const errBox = document.getElementById('contact-error');
+        const sucBox = document.getElementById('contact-success');
+        btn.disabled = true;
+        btn.innerText = 'Sending...';
+        errBox.style.display = 'none';
+        sucBox.style.display = 'none';
+        
+        try {
+           const formData = new FormData(e.target);
+           // We map contact submissions as a specialized branch of intake-submit or a direct REST call.
+           // Since the Edge function intake-submit handles metadata, we can route it there or use direct Supabase REST API securely here because Contact Messages aren't HIPAA. 
+           // Wait, schema.sql says "Handled by Edge Function for INSERT. Staff can SELECT and UPDATE."
+           // So I should hit the edge function! I will route it to a contact-submit or intake-submit.
+           const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+           
+           const res = await fetch(`${supabaseUrl}/functions/v1/contact-submit`, {
+              method: 'POST',
+              body: formData
+           });
+           
+           if(!res.ok) throw new Error("Failed to submit contact form.");
+           
+           sucBox.style.display = 'block';
+           e.target.reset();
+        } catch(err) {
+           errBox.style.display = 'block';
+           errBox.innerText = err.message;
+        } finally {
+           btn.disabled = false;
+           btn.innerText = 'Send Message';
+        }
+      });
+    </script>
+    
+  </div>
+</Layout>

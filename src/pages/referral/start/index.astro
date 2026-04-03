@@ -1,0 +1,203 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Start Provider Referral">
+  <div class="container" style="padding: var(--spacing-6) 0; max-width: 800px;">
+    <h1 style="text-align: center; margin-bottom: var(--spacing-4);">Client Referral Form</h1>
+    <p style="text-align: center; color: var(--color-text-muted); margin-bottom: var(--spacing-6);">
+      Please complete the steps below to securely refer a client to The WEL Foundation.
+    </p>
+
+    <!-- Progress Indicator -->
+    <div class="flex" style="justify-content: space-between; margin-bottom: var(--spacing-5); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-2);">
+      <span id="progress-1" style="font-weight: bold; color: var(--color-primary-blue);">1. Basic Info</span>
+      <span id="progress-2" style="color: var(--color-text-muted);">2. Documents</span>
+      <span id="progress-3" style="color: var(--color-text-muted);">3. Review</span>
+    </div>
+
+    <form id="referral-form" novalidate>
+      <input type="hidden" name="type" value="referral" />
+      <input type="hidden" name="audience" value="provider" />
+      
+      <!-- STEP 1: Basic Info -->
+      <section id="step-1" class="form-step">
+        <h2>Client Details</h2>
+        <div class="form-group">
+          <label for="fullName">Client Full Name <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="text" id="fullName" name="fullName" required aria-required="true" />
+          <span class="error-message sr-only" id="error-fullName">Client name is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="email">Client/Provider Email <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="email" id="email" name="email" required aria-required="true" />
+          <span class="error-message sr-only" id="error-email">A valid email address is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="programSelect">Target Program <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <select id="programSelect" name="programSelect" required aria-required="true">
+            <option value="">Select a program...</option>
+            <option value="SUD">Substance Use Disorder (SUD)</option>
+            <option value="PRP">Psychiatric Rehabilitation (PRP)</option>
+            <option value="DUI">DUI / DWI Education</option>
+            <option value="Community">Community Development</option>
+          </select>
+          <span class="error-message sr-only" id="error-programSelect">Please select a program.</span>
+        </div>
+        <button type="button" class="btn" id="btn-next-1">Next: Attachments</button>
+      </section>
+
+      <!-- STEP 2: Documents -->
+      <section id="step-2" class="form-step" style="display: none;">
+        <h2>Diligence Documents</h2>
+        <p style="font-size: 0.9em; margin-bottom: var(--spacing-3);">Accepted formats: PDF, JPG, PNG. Max size: 5MB per file.</p>
+        <div class="form-group">
+          <label for="govId">Client Record / Proof of Identity <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="file" id="govId" name="govId" accept=".pdf,image/jpeg,image/png" required aria-required="true" />
+          <span class="error-message sr-only" id="error-govId">A primary document is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="insuranceCard">Clinical Justification (Optional)</label>
+          <input type="file" id="insuranceCard" name="insuranceCard" accept=".pdf,image/jpeg,image/png" />
+          <span class="error-message sr-only" id="error-insuranceCard">Invalid file type or size.</span>
+        </div>
+        <div class="flex" style="gap: var(--spacing-3);">
+          <button type="button" class="btn btn-secondary" id="btn-prev-2">Back</button>
+          <button type="button" class="btn" id="btn-next-2">Review Referral</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Review -->
+      <section id="step-3" class="form-step" style="display: none;">
+        <h2>Verify Information</h2>
+        <div class="card" style="margin-bottom: var(--spacing-4);">
+          <p><strong>Client Name:</strong> <span id="review-name"></span></p>
+          <p><strong>Contact Email:</strong> <span id="review-email"></span></p>
+          <p><strong>Selected Program:</strong> <span id="review-program"></span></p>
+          <p><strong>Primary Document:</strong> <span id="review-id"></span></p>
+        </div>
+        <div id="form-error-summary" class="error-message" style="display: none; color: var(--color-error); margin-bottom: 1rem;" role="alert"></div>
+        <div class="flex" style="gap: var(--spacing-3);">
+          <button type="button" class="btn btn-secondary" id="btn-prev-3">Back</button>
+          <button type="submit" class="btn" id="btn-submit" style="background-color: var(--color-accent-gold); color: var(--color-primary-blue);">Secure Submission</button>
+        </div>
+      </section>
+      
+      <!-- Success View -->
+      <section id="step-success" class="form-step" style="display: none; text-align: center;">
+        <h2 style="color: var(--color-primary-blue);">Referral Received</h2>
+        <p>The referral has been securely submitted to The WEL Foundation. A coordinator will process this packet within 3 business days.</p>
+        <a href="/" class="btn" style="margin-top: var(--spacing-4);">Return to Home</a>
+      </section>
+
+    </form>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('referral-form');
+      const step1 = document.getElementById('step-1');
+      const step2 = document.getElementById('step-2');
+      const step3 = document.getElementById('step-3');
+      const stepSuccess = document.getElementById('step-success');
+
+      // Validation Helper
+      const validateInput = (input) => {
+        const errorSpan = document.getElementById(`error-${input.id}`);
+        if (!input.checkValidity()) {
+          input.setAttribute('aria-invalid', 'true');
+          input.style.borderColor = 'var(--color-error)';
+          if (errorSpan) errorSpan.classList.remove('sr-only');
+          return false;
+        } else {
+          input.removeAttribute('aria-invalid');
+          input.style.borderColor = 'var(--color-border)';
+          if (errorSpan) errorSpan.classList.add('sr-only');
+          return true;
+        }
+      };
+
+      document.getElementById('btn-next-1').addEventListener('click', () => {
+        const name = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const program = document.getElementById('programSelect');
+        if (validateInput(name) & validateInput(email) & validateInput(program)) {
+          step1.style.display = 'none'; step2.style.display = 'block';
+          document.getElementById('progress-1').style.color = 'var(--color-text-muted)';
+          document.getElementById('progress-1').style.fontWeight = 'normal';
+          document.getElementById('progress-2').style.color = 'var(--color-primary-blue)';
+          document.getElementById('progress-2').style.fontWeight = 'bold';
+        }
+      });
+
+      document.getElementById('btn-prev-2').addEventListener('click', () => {
+        step2.style.display = 'none'; step1.style.display = 'block';
+        document.getElementById('progress-2').style.color = 'var(--color-text-muted)';
+        document.getElementById('progress-2').style.fontWeight = 'normal';
+        document.getElementById('progress-1').style.color = 'var(--color-primary-blue)';
+        document.getElementById('progress-1').style.fontWeight = 'bold';
+      });
+
+      document.getElementById('btn-next-2').addEventListener('click', () => {
+        const govId = document.getElementById('govId');
+        if (validateInput(govId)) {
+          document.getElementById('review-name').innerText = document.getElementById('fullName').value;
+          document.getElementById('review-email').innerText = document.getElementById('email').value;
+          document.getElementById('review-program').innerText = document.getElementById('programSelect').options[document.getElementById('programSelect').selectedIndex].text;
+          document.getElementById('review-id').innerText = govId.files.length > 0 ? govId.files[0].name : 'None attached';
+
+          step2.style.display = 'none'; step3.style.display = 'block';
+          document.getElementById('progress-2').style.color = 'var(--color-text-muted)';
+          document.getElementById('progress-2').style.fontWeight = 'normal';
+          document.getElementById('progress-3').style.color = 'var(--color-primary-blue)';
+          document.getElementById('progress-3').style.fontWeight = 'bold';
+        }
+      });
+
+      document.getElementById('btn-prev-3').addEventListener('click', () => {
+        step3.style.display = 'none'; step2.style.display = 'block';
+        document.getElementById('progress-3').style.color = 'var(--color-text-muted)';
+        document.getElementById('progress-3').style.fontWeight = 'normal';
+        document.getElementById('progress-2').style.color = 'var(--color-primary-blue)';
+        document.getElementById('progress-2').style.fontWeight = 'bold';
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSubmit = document.getElementById('btn-submit');
+        const errSum = document.getElementById('form-error-summary');
+        btnSubmit.innerText = 'Transmitting...';
+        btnSubmit.disabled = true;
+        errSum.style.display = 'none';
+
+        try {
+          const formData = new FormData(form);
+          // Assuming proxy mapping or explicit cloud URL
+          const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+          
+          if(!supabaseUrl) { throw new Error("Backend connection missing (ENV)"); }
+
+          const response = await fetch(`${supabaseUrl}/functions/v1/intake-submit`, {
+            method: 'POST',
+            body: formData,
+            // DO NOT set content-type header manually when using FormData
+          });
+
+          if (!response.ok) {
+            const errBody = await response.json().catch(()=>({}));
+            throw new Error(errBody.error || `Status ${response.status}`);
+          }
+
+          step3.style.display = 'none';
+          stepSuccess.style.display = 'block';
+        } catch (error) {
+          errSum.style.display = 'block';
+          errSum.innerText = 'Failed transmitting to secure server: ' + error.message;
+          btnSubmit.innerText = 'Secure Submission';
+          btnSubmit.disabled = false;
+        }
+      });
+    });
+  </script>
+</Layout>

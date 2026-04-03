@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Our Programs">
+  <div class="container" style="padding: var(--spacing-6) 0;">
+    
+    <header style="margin-bottom: var(--spacing-6); text-align:center;">
+      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">Exploring Our Programs</h1>
+      <p style="font-size: 1.2rem; color: var(--color-text-muted);">Discover how The WEL Foundation supports the community.</p>
+    </header>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <article class="card">
+          <h3>Substance Use Disorder (SUD)</h3>
+          <p>Overcoming addiction and building a sustainable sober lifestyle.</p>
+          <a href="/programs/sud/" style="font-weight: 600;">Learn More &rarr;</a>
+        </article>
+        <article class="card">
+          <h3>Psychiatric Rehabilitation (PRP)</h3>
+          <p>Life-skill management for dealing with mental health barriers.</p>
+          <a href="/programs/prp/" style="font-weight: 600;">Explore PRP &rarr;</a>
+        </article>
+        <article class="card">
+          <h3>DUI / DWI Education</h3>
+          <p>State-certified MVA/court-mandated courses.</p>
+          <a href="/programs/dui-dwi/" style="font-weight: 600;">View Program &rarr;</a>
+        </article>
+        <article class="card">
+          <h3>Community Development</h3>
+          <p>Enrichment, mentorship, and life resource distribution.</p>
+          <a href="/programs/community-development/" style="font-weight: 600;">Get Involved &rarr;</a>
+        </article>
+      </div>
+  </div>
+</Layout>

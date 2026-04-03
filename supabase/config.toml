@@ -1,0 +1,24 @@
+# A string used to distinguish different projects on the same host. Defaults to the
+# working directory name when running `supabase init`.
+project_id = "weempower"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[db.pooler]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[edge_runtime]
+enabled = true
+port = 54324

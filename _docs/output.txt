@@ -1,0 +1,1173 @@
+Revamp Research Report for The WEL Foundation
+Website
+Executive summary
+The current public website for The WEL Foundation is a small Wix-style brochure site with core pages for
+Home, About, Programs, and Contact, plus a publicly accessible  Groups feature. The front-facing pages
+communicate mission and basic program categories, but they are extremely light on program detail and
+“next-step” guidance, and the Contact experience appears minimal. 
+The most urgent, high-impact issue is that the Groups section is public and contains content that appears
+unrelated to the organization (e.g., sports betting spam). This directly undermines trust and can create
+reputational and SEO risk because search engines can index these pages. 
+Based on the client questionnaire (attached CSV) and the current site content, the revamp should prioritize:
+a  full  brand  refresh;  clearer  service/program  explanations  (including  the  newly  added  SUD  program);
+improved and accessible intake/referral forms with secure file uploads; and an employee login + dashboard
+workflow so staff can receive, manage, and follow up on submissions (including reminders to process
+submissions within 3 business days). (Client questionnaire, provided file)
+A  feasible  delivery  approach—given  the  client’s  requested  completion  date  of  April  3,  2026 (next  day
+relative to today)—is a phased plan: - Phase A (Immediate risk reduction / stabilization): remove or lock
+down Groups; clean indexability; publish a simplified, trustworthy “MVP” site with clear programs, CTAs, and
+a working Contact + basic forms. -  Phase B (Full rebuild): brand refresh, complete rewrite, structured
+program pages, event calendar/resources, and the secure staff portal with reminders and document upload
+workflow. 
+Estimated effort depends on scope decisions (especially around HIPAA sensitivity and portal complexity),
+but a typical range is: - Phase A: 20–40 hours - Phase B: 120–220 hours (includes auth, RLS, storage, staff
+dashboard, reminder automation, content rewrite coordination, QA, and launch hardening). 
+Current-state website audit and content inventory
+Current top-level navigation and page set
+The current navigation exposes a small set of core pages (Home, About, Programs, Contact), and the site
+includes a “Log In” entry (suggesting a members feature). 
+The site also has a publicly accessible Groups area and at least one public group with posts. 
+1
+2
+3
+4
+1
+2
+1
+Content and messaging observed on current pages
+Home: The homepage headline positions the organization as assisting/teaching/mentoring the
+Baltimore community and lists a long set of skills/support areas (e.g., conflict resolution, anger
+management, personal hygiene, budgeting/financial literacy). It also lists criteria for “1-on-1” services
+(mental health treatment requirement, referral by provider , Maryland Medical Assistance). 
+About: Defines PRP (Psychiatric Rehabilitation Program) and includes a mission statement and
+service categories (psychiatric/supportive services; substance abuse; DUI/DWI; community
+development). 
+Programs: Displays only three program headings with “Get in Touch” links—Community
+Development; Support Services (DUI, Substance Abuse); Education & Outreach—without descriptions
+or eligibility/next steps. 
+Contact: Displays the page title and a submission confirmation message, but the extracted text does
+not show form fields; treat as “form present but not auditable from extracted content.” 
+Footer across pages: email, phone, and physical address are consistently shown. 
+Critical risk: public “Groups” section appears compromised by spam
+The Groups section is public and includes posts with content unrelated to the organization (example: “Guide
+to read odds in Indonesia football betting” with outbound links). This is a high-severity trust issue for
+prospective clients and referral partners and can pollute search results for the brand. 
+Current content inventory table
+Current URL pathPage purposeCore content
+visible
+Primary
+CTA(s)
+visible
+Key issues / gaps
+/ (Home)
+Intro,
+mission,
+high-level
+offerings
+Mission
+statement; long
+list of support
+areas; “1-on-1”
+criteria; contact
+footer
+“Get in
+Touch”
+Needs modern design,
+scannable structure, and
+clear pathways (intake vs
+referral). “1-on-1” criteria
+should be clarified with
+eligibility + process. 
+/about Explain PRP +
+mission
+PRP definition;
+mission
+statement;
+service
+categories
+None
+prominent
+beyond nav
+Copy quality and hierarchy
+need improvement; add
+trust elements (licenses,
+partners, outcomes) once
+confirmed. 
+/programs Program list
+3 headings +
+images + “Get in
+Touch” links
+“Get in
+Touch”
+Too thin: no descriptions,
+eligibility, FAQs, or “how to
+start” steps. 
+• 
+5
+• 
+6
+• 
+7
+• 
+8
+• 1
+2
+5
+6
+7
+2
+Current URL pathPage purposeCore content
+visible
+Primary
+CTA(s)
+visible
+Key issues / gaps
+/contact Contact form
+“Submit” /
+“Thanks for
+submitting!” +
+footer contacts
+Submit
+UX unclear; form fields not
+visible in extracted
+content; likely needs
+better validation,
+accessibility, and success/
+follow-up messaging. 
+/groups
+Community/
+groups
+directory
+One public
+group; join
+buttons
+Join
+High reputational risk;
+remove/lock down or
+heavily moderate; likely
+should not exist for this
+org’s use case. 
+/group/.../
+discussion/...
+Individual
+group posts
+Spam/unrelated
+posts; outbound
+links
+Join /
+browse
+Severe trust/SEO risk;
+must be removed from
+public index and/or
+decommissioned. 
+Proposed information architecture and sitemap
+Design goals translated into an IA
+From the client questionnaire (attached), the future IA must support: - Clear program/service explanations
+and a modern, welcoming, community-focused visual identity (full brand refresh; blue/yellow preference).
+(Client questionnaire, provided file) - Two primary form flows: Client Intake and Referral, both accessible
+and user-friendly with file uploads (ID, insurance cards, supporting documents) and a requirement for
+secure/privacy-conscious  handling.  (Client  questionnaire,  provided  file)  -  An  employee  login and
+dashboard to  access  submissions;  plus  reminders  for  submitted  documents  to  be  processed  within  3
+business days. (Client questionnaire, provided file)
+From the current site, the IA must also communicate PRP , substance abuse services, DUI/DWI services, and
+community development, with a clear “how to qualify” and “how to get started” pathway. 
+Proposed sitemap and HTML page list
+A static-first structure (responsive, accessible HTML) with a small authenticated staff area meets the request
+while keeping the marketing site fast and easy to host.
+Recommended public pages (core): - Home - About (mission/vision/values + what PRP is) - Programs/
+Services (overview + deep links) - Program detail pages (one per program/service) - Intake / Referral landing
++ dedicated forms - Events calendar - Resources (downloadables) - FAQ - Team - Contact
+8
+9
+10
+11
+3
+Recommended  utility/trust  pages: -  Privacy  Policy  -  Terms  of  Use  -  Accessibility  Statement  -  Notice/
+Disclaimer for form submissions and response times
+Staff portal: - Staff Login - Staff Dashboard (submissions list) - Submission detail view (with secure file
+access, status, assignments)
+Sitemap table with priorities and content model
+Proposed path Page name Audience Content
+model
+MVP
+priority Notes
+/ Home Everyone Mostly
+static High
+Clear primary CTAs:
+“Refer a Client”,
+“Start Intake”,
+“Contact Us”,
+“Programs”.
+/about/ About Everyone Mostly
+static High
+Include PRP
+definition and
+mission; expand
+with values and
+outcomes. 
+/programs/ Programs/
+Services Everyone
+Static +
+optional
+dynamic
+cards
+High
+Replace “3 headings
+only” with
+scannable program
+summaries +
+“eligibility + next
+steps.” 
+/programs/prp/PRP detail Clients/
+referrers Static High
+Align with “What is
+PRP?” content,
+improved. 
+/programs/sud/SUD program
+detail
+Clients/
+referrers Static High
+New page required
+by client
+(questionnaire).
+(Client
+questionnaire,
+provided file)
+/programs/dui/DUI/DWI
+detail
+Clients/
+referrers Static Medium
+Current About
+mentions DUI/DWI;
+detail should be
+clarified. 
+6
+7
+6
+6
+4
+Proposed path Page name Audience Content
+model
+MVP
+priority Notes
+/programs/
+community-
+development/
+Community
+DevelopmentEveryone Static Medium
+Current messaging
+exists but needs
+rewrite/structure. 
+/intake/ Intake
+landing Clients Static High
+Explains eligibility,
+what to prepare,
+timelines, privacy.
+/intake/start/Client Intake
+form Clients Dynamic
+(Supabase) High
+Multi-step w/
+validation; secure
+uploads.
+/referral/ Referral
+landing
+Providers/
+partners Static High
+Clear referral
+criteria and
+process.
+/referral/
+start/ Referral formProviders/
+partners
+Dynamic
+(Supabase) High Multi-step; secure
+uploads optional.
+/events/ Events CommunityDynamic or
+static Medium
+If dynamic: store in
+DB and render; or
+prebuild static from
+DB.
+/resources/ Resources Everyone Dynamic or
+static Medium
+Public, non-
+sensitive
+downloadables
+only.
+/faq/ FAQ Everyone Static Medium
+Include “How long
+until we hear back?”
+and “What
+documents do I
+need?”
+/team/ Team Everyone Static Medium
+Biographies, roles,
+photos, credentials;
+trust builder .
+/contact/ Contact Everyone Dynamic
+(Supabase) High
+Clean contact form
++ confirmation;
+could be less
+sensitive than
+intake. 
+/staff/login/Staff login Staff Dynamic High Supabase Auth. 
+12
+8
+13
+5
+Proposed path Page name Audience Content
+model
+MVP
+priority Notes
+/staff/ Staff
+dashboard Staff Dynamic High
+Submissions triage,
+reminders, status
+tracking. 
+/privacy/ Privacy PolicyEveryone Static High
+Needed because
+forms collect
+sensitive data; exact
+legal language
+requires client
+counsel. 
+/
+accessibility/
+Accessibility
+statement Everyone Static Medium
+Commitment to
+accessible forms
+and content. 
+Redirect and de-index plan for legacy URLs
+At minimum, preserve and redirect: - / → / - /about → /about/ (or keep exact) - /programs → /
+programs/ - /contact → /contact/
+Decommission and block: - /groups - /group/... discussion paths (remove from new build; return 410
+Gone or redirect to a safe page)
+This is especially important because the Groups area is publicly visible and includes spam content. 
+Experience design, wireframes, accessibility, and SEO
+Wireframe descriptions
+Global layout (all pages) - Skip link → Header (logo + primary nav) → Main content → Footer (contact info,
+hours, social links, legal links). - Sticky header on scroll (mobile: hamburger; desktop: horizontal nav). -
+Footer includes consistent phone/email/address (already present today) plus office hours and social links
+(requested). 
+Homepage -  Hero  section:  organization  name  +  one-sentence  value  statement  (clear ,  non-jargon)  +  2
+primary  CTAs  (Start  Intake,  Refer  a  Client).  -  “Programs  at  a  glance”:  4–6  cards  (PRP ,  SUD,  DUI/DWI,
+Community  Development,  Education  &  Outreach).  -  “Who  we  serve”  +  eligibility  highlights  (rewrite  the
+current 1-on-1 criteria into a clearer process and add a “call us if unsure” path).  - Trust builder band:
+licenses/affiliations/partners (once confirmed), outcomes/impact (if available), testimonials (if permitted). -
+“How it works” 3-step: Prepare docs → Submit intake/referral → We respond within X business days. -
+Lightweight event highlight and resource links.
+Programs overview - Intro sentence + filterable list (optional) grouped by “Mental Health / PRP”, “Substance
+Use”, “DUI/DWI”, “Community”. - Each program card includes: who it’s for , what you’ll get, how to start, and a
+14
+15
+16
+2
+17
+5
+6
+“Learn more” CTA. - Each program detail page includes: overview, eligibility, what to bring, what happens
+after you submit, FAQs.
+Intake / Referral - Landing page: audience selection (Prospective client, Parent/guardian, Referral partner)
+(client requested different audiences). (Client questionnaire, provided file) - Create “Start Intake” and “Start
+Referral”  flows.  -  Multi-step  form  wizard  with  “Next”  disabled  until  required  fields  completed  (client
+requested each page be completed before moving on). (Client questionnaire, provided file) - First step:
+document capture (ID/insurance/supporting documents) if required, then details.
+Staff dashboard - Login via Supabase Auth. - Dashboard: list + filters (new submissions, due soon, overdue,
+assigned  to  me).  -  Submission  detail:  metadata  +  download  links  (signed  URLs)  for  documents;  status
+updates; internal notes. - Automated reminders for overdue items, as requested. (Client questionnaire,
+provided file) 
+UI/UX recommendations
+Replace the current “thin” Programs listing (headings only) with scannable summaries and clear next
+steps; the existing Programs page provides only headings and Get in Touch links. 
+Remove or replace the public Groups feature entirely; it is not aligned with the organization’s service
+mission and is currently showing spam. 
+Use a consistent CTA hierarchy:
+Primary: Start Intake, Refer a Client
+Secondary: Programs, Contact Us
+Tertiary: Events, Resources, Learn More
+Create “trust scaffolding” everywhere sensitive info is requested: what data is collected, why, how it’s
+protected, and expected response time.
+Ensure mobile-first spacing and readable type scaling; responsive design is strongly recommended
+for mobile-first indexing. 
+Accessibility baseline requirements
+Given the heavy form emphasis, WCAG form guidance is critical: - Provide explicit labels/instructions for
+each  input  and  describe  errors  in  text  (WCAG  2.2  input  assistance  criteria).   -  Ensure  keyboard
+accessibility, clear focus states, and logical heading order . - Use error summaries at top of step pages and
+inline field-level errors. - Avoid “placeholder-only” labeling. - Use sufficient contrast for blue/yellow branding
+and test with automated + manual checks. - Provide accessible authentication patterns (avoid CAPTCHAs
+without accessible alternatives), especially if combined with secure workflows. 
+SEO basics aligned to this project
+Maintain clean titles and headings (Google considers <title> and other on-page signals for title
+links). 
+Ensure responsive design and parity of content between mobile and desktop for mobile-first
+indexing. 
+Publish an XML sitemap and keep it accurate. 
+18
+• 
+7
+• 
+2
+• 
+• 
+• 
+• 
+• 
+• 
+19
+20
+21
+• 
+22
+• 
+19
+• 23
+7
+Remove spam URLs from the site and return appropriate 404/410 responses, then submit removal/
+recrawl actions in Search Console if necessary (implementation detail; removal mechanics not fully
+covered in sources here).
+Add structured metadata for Organization/LocalBusiness if desired (optional; requires accurate NAP
+and hours confirmation).
+Technical architecture
+Frontend implementation approach
+Recommended build model - Static-first site: hand-authored pages compiled from templates into static
+HTML (easy CDN hosting, low attack surface). - Use a simple templating build tool (e.g., 11ty/Astro) to avoid
+repeating header/footer and to keep page creation consistent; output remains plain HTML. - Vanilla CSS
+with design tokens (CSS variables) for color , spacing, typography. Use modern layout (Flexbox/Grid). - Vanilla
+JS  modules  for  progressive  enhancement:  form  wizard  behaviors,  mobile  menu,  light  UI  interactions,
+Supabase auth state.
+Responsive breakpoints (suggested) - 0–479px: small mobile - 480–767px: large mobile - 768–1023px:
+tablet - 1024–1279px: desktop - 1280px+: large desktop
+Progressive enhancement - Marketing pages work without JS. - Contact/Intake/Referral forms can be JS-
+enhanced, but for reliability and security, prefer posting to a serverless endpoint (Netlify/Vercel/Cloudflare)
+that writes to Supabase with the service role key (kept server-side). 
+When to use additional tech - If the staff dashboard grows into a complex app (filtering, attachments,
+assignment  workflows),  consider  a  small  React/Vite  app  only  under  /staff/* while  the  public  site
+remains static. This keeps complexity contained and avoids framework overhead sitewide.
+Supabase backend design
+This section uses Supabase as the primary backend for authentication, roles, form submissions, and file
+storage.
+Core Supabase components to use
+Auth for staff login.
+Postgres + Row Level Security (RLS) for data protection; requests map to anon and 
+authenticated Postgres roles. 
+Storage for secure document uploads (private buckets + RLS and/or signed URLs). 
+Edge Functions + Cron for reminders and automated workflows:
+Supabase supports pg_cron scheduling and invoking Edge Functions via pg_net. 
+Vault/Secrets pattern for storing tokens for cron-driven function calls (per Supabase scheduling
+guidance). 
+Never expose the service role key in frontend code; use it only in server-side functions. 
+• 
+• 
+24
+25
+• 
+• 
+26
+• 27
+• 
+• 14
+• 
+28
+• 24
+8
+Authentication and user roles
+For role-based access control: - Use Supabase RBAC guidance via  custom claims and a  Custom Access
+Token Auth Hook to attach user_role to the JWT, then enforce in RLS policies. 
+Suggested  roles  (adjustable):  -  admin (full  access)  -  staff (view/manage  submissions)  -
+intake_coordinator (optional specialized staff function)
+Contact forms, intake/referral forms, and reminders
+Contact form (low sensitivity) - Store into  contact_messages table. - Allow inserts from  anon with
+strong validation, spam protection (rate limiting, CAPTCHA/Turnstile), and minimal fields.
+Intake/referral forms (high sensitivity) - Store into submissions table (type: intake or referral)
+with a status workflow: - new → in_review → complete (or needs_more_info) - File uploads: - Use
+a private Storage bucket; access controlled via RLS and/or signed URLs.  - Reminder automation: - On
+submission creation, compute due_at. - Scheduled function runs daily to find overdue submissions and
+email assigned staff; log reminders. Supabase supports cron scheduling in Postgres and invoking Edge
+Functions. 
+HIPAA/compliance note (must be treated as a project risk) Because the client wants HIPAA-conscious
+handling and the forms include ID/insurance/supporting documents (potentially PHI), vendor selection and
+contracts matter . HHS notes that entities handling PHI on behalf of covered entities may be “business
+associates” and typically require appropriate agreements (BAAs) and safeguards. 
+This report can design secure controls, but compliance determination requires legal and vendor contracting
+review.
+Database schema proposal
+Below  is  a  practical  schema  designed  for  the  requested  functionality  (auth,  roles,  contact/messages,
+submissions  with  secure  files,  newsletter  signups,  and  reminders).  It  assumes  Supabase-managed
+auth.users and uses public schema tables with RLS enabled. 
+Table Purpose Key fields (examples) Relationships RLS / access notes
+profiles
+Staff profile
+and display
+fields
+user_id (PK, uuid), 
+full_name, email, 
+role_label, 
+created_at
+user_id → 
+auth.users.id
+authenticated
+can read own; 
+admin can read
+all. 
+user_roles
+Role
+assignment
+for RBAC
+user_id (PK/FK), 
+role (enum: admin/
+staff/…)
+user_id → 
+auth.users.id
+Used by auth
+hook to set
+claims; only 
+admin can
+modify. 
+29
+27
+30
+31
+32
+33
+34
+9
+Table Purpose Key fields (examples) Relationships RLS / access notes
+contact_messages Public contact
+submissions
+id, created_at, 
+name, email, 
+phone, message, 
+status
+optional user_id
+nullable
+Public insert via
+Edge Function
+recommended;
+staff-only select. 
+submissions
+Intake/
+referral
+master record
+id, type (intake/
+referral), created_at, 
+submitted_by_email,
+submitted_by_name, 
+audience (client/
+parent/referrer), 
+status, due_at, 
+assigned_to
+assigned_to → 
+profiles.user_id
+Public insert
+should be tightly
+controlled; staff
+select/update
+only. 
+submission_fields
+Flexible,
+versioned
+form answers
+id, submission_id, 
+field_key, 
+field_value (text/
+jsonb), field_group
+submission_id → 
+submissions.id
+Staff-only select;
+insert via Edge
+Function.
+submission_files
+Map
+uploaded files
+to a
+submission
+id, submission_id, 
+bucket, 
+object_path, 
+content_type, 
+size, created_at
+submission_id → 
+submissions.id
+Files stored in 
+private bucket;
+access via signed
+URL or JWT-
+protected
+download. 
+newsletter_subscriptionsNewsletter
+signups
+id, email, status
+(pending/confirmed/
+unsubscribed), 
+created_at, 
+confirmed_at
+none
+Public insert
+allowed with RLS;
+double opt-in
+recommended via
+email function.
+events Event listings
+id, title, 
+start_at, end_at, 
+location, 
+description, 
+published
+none
+Public select for
+published; staff
+insert/update.
+resources
+Downloadable
+resources
+metadata
+id, title, 
+description, 
+file_url or storage
+reference, published
+optional storage link
+Public select for
+published; staff
+insert/update.
+35
+13
+27
+10
+Table Purpose Key fields (examples) Relationships RLS / access notes
+reminder_log
+Audit of
+reminder
+sends
+id, submission_id, 
+sent_at, sent_to, 
+channel, result
+submission_id → 
+submissions.id
+Staff/admin-only
+select; written by
+scheduled
+function. 
+Content migration plan and asset requirements
+Content migration plan
+Because the client requested a complete rewrite, the migration should be treated as a structured content
+project, not a “copy/paste” task. (Client questionnaire, provided file)
+Recommended steps: - Extract current copy (Home, About, Programs) and convert into a structured outline:
+- Mission/value proposition (already present but needs editing).  - Program definitions: PRP , substance
+abuse/SUD, DUI/DWI, community development (present but fragmented).  - Replace current “Programs
+page headings only” with full program summaries and detail pages.   - Add an explicit  SUD program
+detail page (client requirement). (Client questionnaire, provided file) - Create plain-language “How to start”
+flows for intake vs referral using the current eligibility bullets as a base, rewritten for clarity.  - Produce
+final copy in a content doc, reviewed/approved by stakeholders, then implement into templates.
+Assets needed
+Because the client has no updated photos/visuals and wants a full brand refresh, asset production is a
+gating dependency. (Client questionnaire, provided file)
+Asset Description Format/specSource/owner Priority
+Logo (new) Primary logo + simplified
+mark
+SVG + PNG
+exports Designer High
+Brand kit
+Palette (blue/yellow
+variants), type scale,
+button styles
+Figma + CSS
+tokens Designer + devHigh
+Photography
+Staff headshots; facility/
+location; community/
+program imagery
+High-res
+JPG/WEBP
+Client +
+photographer High
+Program images/
+icons
+Consistent icons/
+illustrations per programSVG Designer Medium
+Team bios Names, titles, licensed
+credentials, short bios Text Client High
+Certifications/
+affiliations list
+Licenses, partners,
+accreditation Text + logos Client Medium
+14
+36
+12
+7
+5
+11
+Asset Description Format/specSource/owner Priority
+Office hours Confirmed hours for
+footer/contact Text Client High
+Legal pages Privacy policy, terms,
+consent language Text Client counsel
+High (if
+collecting
+sensitive docs)
+Event data Event titles/dates/
+locations
+Structured
+data Client Medium
+Downloadable
+resources PDFs (public-safe) PDF Client Medium
+Implementation roadmap, estimates, testing, deployment, and
+handoff
+Prioritized roadmap with milestones and estimated hours
+Totals assume one developer lead + optional designer/copywriter support. Hours are estimates and should
+be refined once hosting/domain access and exact portal requirements are confirmed. (Client questionnaire
+indicates domain/hosting access is not currently available.)
+Phase  A:  stabilize  reputation  +  ship  MVP  site  (recommended  immediately) -  Decommission  public
+Groups spam surface (remove from navigation; return 410/redirect; ensure not indexable).   - Build/
+launch clean static site skeleton with high-trust messaging and working Contact + basic forms flow.
+Phase B: complete revamp + staff portal - Implement full brand refresh + rewrite. - Implement secure doc
+uploads + staff dashboard + 3-business-day reminder workflow.
+Task estimate table
+Milestone Task Est.
+hours Dependencies Deliverable
+Discovery
+Confirm scope, IA, portal
+requirements, compliance
+constraints
+4–8 Stakeholder
+availability
+Final sitemap +
+feature spec
+Audit
+Current content inventory +
+URL mapping + spam removal
+plan
+4–6 None Redirect plan + de-
+index list
+Design Brand refresh coordination + UI
+system (tokens, components)20–40 Designer/assetsStyle guide +
+component library
+2
+12
+Milestone Task Est.
+hours Dependencies Deliverable
+Content Copy rewrite (Home/About/
+Programs/FAQ/Intake/Referral)20–45 Client review
+loop Approved copy doc
+Frontend
+build
+Templates (header/footer),
+responsive layout, page builds30–60 Design tokens Static HTML site
+Supabase
+setup
+Project, tables, RLS policies,
+storage buckets 16–28 Supabase accessDB + RLS + buckets
+configured 
+Forms Intake/referral multi-step,
+validation, file uploads 24–50 Schema +
+storage
+Working forms +
+secure upload 
+Staff portal Auth, RBAC, dashboard,
+submission viewer 24–60 RBAC design Staff portal live 
+Automation Reminders (cron + edge
+function) + logging 10–18 Portal + schemaReminder workflow 
+SEO/
+Analytics Sitemap, metadata, GA install6–10 Hosting choice Sitemap + GA
+configured 
+QA
+Cross-device testing,
+accessibility checks, security
+review
+16–30 Feature
+complete
+QA report + fixes 
+Launch DNS cutover , redirects,
+monitoring 6–12 Domain access Live launch +
+rollback plan
+Testing strategy
+Unit tests: helper logic (form validation, data mapping).
+Integration tests: Supabase insert/select flows, auth state, RLS behaviors (critical because anon/
+authenticated access differs). 
+E2E tests (recommended): Playwright flows for intake/referral and staff login.
+Accessibility testing:
+Automated checks (axe)
+Manual keyboard-only form completion and screen reader spot checks
+Error messaging verification per WCAG input assistance. 
+Performance: Lighthouse runs; image optimization; avoid heavy JS on public pages.
+Deployment, hosting, and CI/CD options
+Hosting options for static-first + serverless - Netlify / Vercel / Cloudflare Pages: static CDN hosting +
+serverless functions for form endpoints and secure operations. - Supabase hosts the database/auth/storage
+and Edge Functions; scheduled jobs can be managed via Supabase Cron. 
+CI/CD (recommended baseline) - GitHub repository with: - PR previews (deploy preview per branch) - Lint +
+build checks on PR - Main branch deploy to production - Environment variable management: - Public:
+37
+38
+29
+14
+39
+40
+• 
+• 
+41
+• 
+• 
+• 
+• 
+• 20
+• 
+30
+13
+Supabase URL + anon key - Secret (server-side only): Supabase service role key, email provider tokens,
+CAPTCHA secret. 
+Handoff documentation checklist
+Final sitemap + redirect map (including removed Groups paths). 
+Brand kit (logo exports, palette, typography, usage rules).
+Content source-of-truth (final copy doc).
+Supabase project notes:
+Schema diagram + migrations
+RLS policies and role definitions
+Storage bucket configuration and access patterns. 
+Admin/staff user provisioning SOP (how to add staff, reset passwords, assign roles). 
+Operations runbook:
+How reminders work and how to disable/adjust cron schedules. 
+How to handle data retention and deletion requests (policy TBD).
+Analytics baseline (GA property ID, event list, privacy considerations).
+Risks, assumptions, and open questions
+Risks
+Public spam content is currently visible under Groups, which can harm trust and search
+presence; removing it is urgent. 
+HIPAA/compliance sensitivity is indicated by the client (secure/PHI-conscious forms, ID/
+insurance uploads). Whether the org is a HIPAA covered entity and whether vendors must sign BAAs
+impacts architecture, vendors, and legal requirements. 
+Requested completion by April 3, 2026 is not realistic for a full brand refresh + rewrite + secure
+portal unless scope is reduced to a minimal stabilization release (Phase A). (Client questionnaire,
+provided file)
+Domain/hosting access is not currently available per client response; this can block deployment/
+cutover until resolved. (Client questionnaire, provided file)
+Certification/affiliation info is unknown (client noted they need to find them), but the new site’s
+trust strategy depends on it. (Client questionnaire, provided file)
+Assumptions
+The site will be rebuilt away from the current Wix Groups-style setup (inferred from URL patterns and
+Groups feature), and Group pages will not be migrated. 
+The staff portal is for internal staff only (not a client-facing portal) unless otherwise specified.
+“3 business days” reminder logic is based on business days Monday–Friday; exact holiday logic is out
+of scope unless specified. (Client questionnaire, provided file)
+Open questions to resolve during discovery (documented because some request items
+are unspecified)
+What exactly is “Option 1” for the key homepage message in the questionnaire export? (Client
+questionnaire, provided file)
+24
+• 2
+• 
+• 
+• 
+• 
+• 
+• 42
+• 29
+• 
+• 30
+• 
+• 
+• 
+2
+• 
+31
+• 
+• 
+• 
+• 
+2
+• 
+• 
+• 
+14
+Which submissions are considered PHI, and what is the required compliance posture?
+Do staff need to export submissions (PDF), assign owners, or integrate with existing EHR/CRM
+systems?
+Do events/resources require client self-editing (CMS-style admin) or will the developer remain the
+updater post-launch? (Client questionnaire suggests the developer/designer will update.)
+Sample HTML template snippets
+Homepage skeleton template
+<!doctype html>
+<htmllang="en-US">
+<head>
+<metacharset="utf-8"/>
+<metaname="viewport"content="width=device-width, initial-scale=1"/>
+<title>The WEL Foundation | Mental Health & Community Support</title>
+<metaname="description"content="Support services, PRP, and community 
+programs in Baltimore. Start an intake, refer a client, or contact our team."/>
+<!-- Open Graph basics -->
+<metaproperty="og:title"content="The WEL Foundation"/>
+<metaproperty="og:description"content="Support services, PRP, and community 
+programs in Baltimore."/>
+<!-- og:image should be added once brand assets exist -->
+<style>
+:root{
+/* Brand tokens (final values should come from the new brand kit) */
+--brand-blue: #0b4ea2;
+--brand-yellow: #f2c100;
+--ink: #111;
+--bg: #fff;
+--muted: #f6f7f9;
+--radius: 14px;
+--max: 1120px;
+}
+body{ margin:0; font-family: system-ui, -apple-system, SegoeUI, Roboto,
+Arial, sans-serif; color:var(--ink);background:var(--bg);}
+a{ color: var(--brand-blue);}
+.skip-link{ position:absolute; left:-999px; top:auto; width:1px; height:
+1px; overflow:hidden; }
+.skip-link:focus{ left: 16px; top: 16px; width:auto; height:auto; padding:
+10px12px; background:#fff; border:2pxsolidvar(--brand-blue);border-radius:
+10px; z-index: 9999; }
+header{ border-bottom: 1pxsolid#e6e6e6; }
+• 
+• 
+• 
+15
+.wrap{ max-width: var(--max);margin: 0 auto; padding: 16px; }
+.row{ display:flex; align-items:center; justify-content:space-between; gap:
+16px; }
+navul{ list-style:none; margin:0; padding:0; display:flex; gap: 14px; flex-
+wrap:wrap; }
+nava{ text-decoration:none; padding: 8px10px; border-radius: 10px; }
+nava:focus{ outline: 3pxsolidvar(--brand-yellow);outline-offset: 2px; }
+.hero{ background: linear-gradient(180deg, var(--muted),#fff);}
+.hero-grid{ display:grid; gap: 18px; padding: 28px0; }
+.cta-row{ display:flex; gap: 10px; flex-wrap:wrap; }
+.btn{ display:inline-block; padding: 12px14px; border-radius: 12px; text-
+decoration:none; font-weight: 600; }
+.btn-primary{ background: var(--brand-blue);color:#fff; }
+.btn-secondary{ background: #fff; border: 2pxsolidvar(--brand-blue);
+color: var(--brand-blue);}
+.cards{ display:grid; gap: 14px; }
+.card{ background:#fff; border: 1pxsolid#e6e6e6; border-radius: var(--
+radius);padding: 14px; }
+.band{ background: var(--muted);}
+@media(min-width: 768px){
+.hero-grid{ grid-template-columns: 1.25fr0.75fr; align-items:center; }
+.cards{ grid-template-columns: repeat(3, 1fr);}
+}
+</style>
+</head>
+<body>
+<a class="skip-link"href="#main">Skip to main content</a>
+<header>
+<divclass="wrap row">
+<divaria-label="Site identity">
+<strong>The WEL Foundation</strong>
+</div>
+<navaria-label="Primary">
+<ul>
+<li><a href="/about/">About</a></li>
+<li><a href="/programs/">Programs</a></li>
+<li><a href="/intake/">Intake</a></li>
+<li><a href="/referral/">Referral</a></li>
+<li><a href="/contact/">Contact</a></li>
+<li><a href="/staff/login/">Staff Login</a></li>
+</ul>
+</nav>
+</div>
+16
+</header>
+<mainid="main">
+<sectionclass="hero">
+<divclass="wrap hero-grid">
+<div>
+<h1>Support that meets you where you are.</h1>
+<p>
+            We provide community-based support services and programs to help 
+individuals and families build skills,
+            stability, and confidence.
+</p>
+<divclass="cta-row"role="group"aria-label="Primary actions">
+<a class="btn btn-primary"href="/intake/">Start Intake</a>
+<a class="btn btn-secondary"href="/referral/">Refer a Client</a>
+<a class="btn btn-secondary"href="/programs/">Explore Programs</a>
+</div>
+</div>
+<divclass="card"aria-label="Quick info">
+<h2style="margin-top:0;">What to expect</h2>
+<ol>
+<li>Prepare your documents (if needed).</li>
+<li>Submit intake or referral.</li>
+<li>We follow up within the posted response window.</li>
+</ol>
+</div>
+</div>
+</section>
+<section>
+<divclass="wrap">
+<h2>Programs & services</h2>
+<divclass="cards">
+<articleclass="card">
+<h3>PRP</h3>
+<p>Community-based mental health support and skill building.</p>
+<a href="/programs/prp/">Learn more</a>
+</article>
+<articleclass="card">
+<h3>SUD Program</h3>
+<p>Support for substance use disorder services and recovery 
+pathways.</p>
+<a href="/programs/sud/">Learn more</a>
+</article>
+<articleclass="card">
+<h3>DUI/DWI</h3>
+<p>Education and support for DUI/DWI-related needs.</p>
+<a href="/programs/dui/">Learn more</a>
+17
+</article>
+</div>
+</div>
+</section>
+<sectionclass="band">
+<divclass="wrap">
+<h2>Resources</h2>
+<p>Download forms and helpful guides.</p>
+<a class="btn btn-secondary"href="/resources/">View resources</a>
+</div>
+</section>
+</main>
+<footer>
+<divclass="wrap">
+<p><strong>The WEL Foundation</strong></p>
+<p><!-- phone/email/address/hours placeholders --></p>
+<p><a href="/privacy/">Privacy</a> · <a href="/
+accessibility/">Accessibility</a></p>
+</div>
+</footer>
+</body>
+</html>
+Contact form snippet with Supabase integration
+This example demonstrates a “progressive enhancement” approach: a standard HTML form with JS that
+inserts into Supabase. For sensitive submissions, route through a serverless endpoint so the service role key
+stays server-side, per Supabase security guidance. 
+<formid="contactForm"novalidate>
+<h1>Contact Us</h1>
+<labelfor="name">Full name</label>
+<inputid="name"name="name"autocomplete="name"required/>
+<labelfor="email">Email</label>
+<inputid="email"name="email"type="email"autocomplete="email"required/>
+<labelfor="phone">Phone (optional)</label>
+<inputid="phone"name="phone"autocomplete="tel"/>
+<labelfor="message">How can we help?</label>
+<textareaid="message"name="message"rows="5"required></textarea>
+24
+18
+<buttontype="submit">Send</button>
+<p id="status"role="status"aria-live="polite"></p>
+</form>
+<scripttype="module">
+import{ createClient} from"https://cdn.jsdelivr.net/npm/@supabase/supabase-
+js@2/+esm";
+// Public values (safe to expose only if RLS is correctly configured).
+// Never expose the Supabase service role key in the browser. 
+constSUPABASE_URL= "https://YOUR_PROJECT_ID.supabase.co";
+constSUPABASE_ANON_KEY= "YOUR_SUPABASE_ANON_KEY";
+constsupabase= createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+constform= document.getElementById("contactForm");
+conststatusEl= document.getElementById("status");
+functionsetStatus(msg) { statusEl.textContent= msg; }
+form.addEventListener("submit", async(e) =>{
+e.preventDefault();
+setStatus("");
+// Basic client-side validation (also enforce server-side).
+constname= form.name.value.trim();
+constemail= form.email.value.trim();
+constphone= form.phone.value.trim();
+constmessage= form.message.value.trim();
+if(!name||!email||!message) {
+setStatus("Please complete all required fields.");
+return;
+}
+// Optionally associate logged-in user (if using auth for public visitors 
+later)
+const{ data: userResp} = awaitsupabase.auth.getUser();
+constuserId= userResp?.user?.id??null;
+const{ error} = awaitsupabase
+.from("contact_messages")
+.insert([{
+user_id: userId,
+name,
+email,
+phone,
+message,
+24
+19
+status: "new"
+}]);
+if(error) {
+console.error(error);
+setStatus("Sorry — we could not send your message. Please try again 
+later.");
+return;
+}
+form.reset();
+setStatus("Thanks — your message has been sent.");
+});
+</script>
+RLS note: if you allow  anon inserts into  contact_messages, ensure RLS is enabled and the policy is
+narrowly scoped to  insert only. Supabase maps requests to  anon and  authenticated roles, and
+safe use of the anon key depends on RLS being enabled and correct. 
+Home | The WEL Foundation
+https://www.weempowerleadership.com/
+Groups | The WEL Foundation
+https://www.weempowerleadership.com/groups
+Row Level Security | Supabase Docs
+https://supabase.com/docs/guides/database/postgres/row-level-security?utm_source=chatgpt.com
+About | The WEL Foundation
+https://www.weempowerleadership.com/about
+Programs | The WEL Foundation
+https://www.weempowerleadership.com/programs
+Contact | The WEL Foundation
+https://www.weempowerleadership.com/contact
+Guide to read odds in Indonesia football betting If you're i | Group | WEL Foundation
+https://www.weempowerleadership.com/group/mysite-200-group/discussion/064410dd-c1f1-403d-a28f-bba00fdc1ed7
+Scheduling Edge Functions | Supabase Docs
+https://supabase.com/docs/guides/functions/schedule-functions?utm_source=chatgpt.com
+Collecting, Using, or Sharing Consumer Health Information? | HHS.gov
+https://www.hhs.gov/hipaa/for-professionals/special-topics/hipaa-ftc-act/index.html?utm_source=chatgpt.com
+Web Content Accessibility Guidelines (WCAG) 2.2
+https://www.w3.org/TR/wcag/?utm_source=chatgpt.com
+13
+1 5 17 36
+2 3 9
+4 13 26 33 41
+6 11 12
+7
+8
+10
+14 18 28
+15 31
+16 20 40
+20
+Mobile-first Indexing Best Practices | Google Search Central  |  Documentation  |  Google for
+Developers
+https://developers.google.com/search/docs/crawling-indexing/mobile/mobile-sites-mobile-first-indexing?
+utm_source=chatgpt.com
+Understanding WCAG 2.2 | WAI | W3C
+https://www.w3.org/WAI/WCAG22/understanding/?utm_source=chatgpt.com
+SEO Starter Guide: The Basics | Google Search Central  |  Documentation  |  Google for Developers
+https://developers.google.com/search/docs/fundamentals/seo-starter-guide?
+rd=1&visit_id=638333614595826138-3479662331&utm_source=chatgpt.com
+What Is a Sitemap | Google Search Central  |  Documentation  |  Google for Developers
+https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview?utm_source=chatgpt.com
+Securing your data | Supabase Docs
+https://supabase.com/docs/guides/database/secure-data?utm_source=chatgpt.com
+Storage Buckets | Supabase Docs
+https://supabase.com/docs/guides/storage/buckets/fundamentals?utm_source=chatgpt.com
+Custom Claims & Role-based Access Control (RBAC) | Supabase Docs
+https://supabase.com/docs/guides/database/postgres/custom-claims-and-role-based-access-control-rbac?
+utm_source=chatgpt.com
+Cron | Supabase Docs
+https://supabase.com/docs/guides/cron?utm_source=chatgpt.com
+Row Level Security | Supabase Docs
+https://supabase.com/docs/learn/auth-deep-dive/auth-row-level-security?utm_source=chatgpt.com
+19
+21
+22
+23 39
+24 35
+25 27 38 42
+29 34
+30
+32 37
+21

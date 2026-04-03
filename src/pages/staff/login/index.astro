@@ -1,0 +1,60 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Staff Login">
+  <div class="container" style="max-width: 400px; padding: var(--spacing-8) 0; height: 60vh;">
+    <div class="card" style="border-top: 4px solid var(--color-primary-blue);">
+      <h1 style="text-align: center; font-size: 1.75rem;">Staff Access</h1>
+      <p style="text-align: center; margin-bottom: var(--spacing-4); font-size: 0.9em; color: var(--color-text-muted);">Secure internal dashboard</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required />
+        </div>
+        <div id="login-error" class="error-message sr-only" role="alert"></div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: var(--spacing-2);">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    import { createClient } from '@supabase/supabase-js';
+
+    // Public anon key only.
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL',
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY'
+    );
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errBox = document.getElementById('login-error');
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        errBox.innerText = 'Invalid login credentials.';
+        errBox.classList.remove('sr-only');
+      } else {
+        // Redirect to dashboard on success
+        window.location.href = '/staff/';
+      }
+    });
+
+    // Auto-redirect if already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+         window.location.href = '/staff/';
+      }
+    });
+  </script>
+</Layout>

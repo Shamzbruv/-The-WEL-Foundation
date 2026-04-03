@@ -1,0 +1,243 @@
+---
+// Dashboard Shell. Logic handled entirely client-side to keep static-first build completely uncoupled from Node SSR requirements.
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Dashboard | The WEL Foundation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --color-primary-blue: #0A2540;
+        --color-border: #E2E8F0;
+        --color-bg-offset: #F8F9FA;
+        --font-family-base: 'Inter', sans-serif;
+      }
+      body { margin: 0; font-family: var(--font-family-base); background: var(--color-bg-offset); }
+      .nav { background: var(--color-primary-blue); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+      .container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+      .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+      th, td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--color-border); }
+      th { background-color: var(--color-bg-offset); font-size: 0.85em; text-transform: uppercase; color: #4A5568;}
+      .status-pill { padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+      .status-New { background: #EBF8FF; color: #2B6CB0; }
+      .status-Overdue { background: #FED7D7; color: #C53030; }
+      .btn { padding: 0.5rem 1rem; background: var(--color-primary-blue); color: white; border: none; border-radius: 4px; cursor: pointer; }
+      .filters { display: flex; gap: 1rem; margin-bottom: 1rem; }
+      .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); padding: 2rem; overflow-y: auto; }
+      .modal-content { background: white; max-width: 800px; margin: 0 auto; padding: 2rem; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <strong>WEL Foundation Admin</strong>
+      <button id="logout-btn" style="background:transparent; border:1px solid white; color:white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor:pointer;">Sign Out</button>
+    </div>
+    
+    <div class="container">
+      <div class="card">
+        <h2>Submissions Workflow</h2>
+        <div class="filters">
+          <select id="filter-status">
+            <option value="">All Statuses</option>
+            <option value="New">New</option>
+            <option value="In Review">In Review</option>
+            <option value="Overdue">Overdue</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <input type="text" id="search-input" placeholder="Search name or email..." style="padding: 0.5rem; border: 1px solid var(--color-border); flex-grow: 1;" />
+          <button class="btn" id="refresh-btn">Refresh</button>
+        </div>
+
+        <table id="submissions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal">
+      <div class="modal-content">
+        <div style="display:flex; justify-content: space-between;">
+           <h2 id="modal-title">Submission Details</h2>
+           <button class="btn" style="background:#E2E8F0; color:black;" id="close-modal">X</button>
+        </div>
+        <div id="modal-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top:1rem;">
+           <!-- JS will populate -->
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      // @ts-nocheck
+      import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+
+      const supabase = createClient(
+        import.meta.env.PUBLIC_SUPABASE_URL,
+        import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+      );
+
+      // Auth validation gate
+      const checkAuth = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) { window.location.href = '/staff/login/'; return null; }
+        return session;
+      };
+
+      const loadData = async () => {
+        const session = await checkAuth();
+        if (!session) return;
+        
+        const tbody = document.querySelector('#submissions-table tbody');
+        
+        // RLS guarantees only staff role sees data
+        const { data, error } = await supabase
+          .from('submissions')
+          .select('*, profiles!assigned_to(full_name)')
+          .order('created_at', { ascending: false });
+
+        if (error) { tbody.innerHTML = `<tr><td colspan="5">Error: ${error.message}</td></tr>`; return; }
+        
+        tbody.innerHTML = '';
+        data.forEach(sub => {
+          const row = document.createElement('tr');
+          const badgeColor = sub.internal_priority === 'Urgent' ? '#C53030' : (sub.internal_priority === 'High' ? '#D69E2E' : 'black');
+          row.innerHTML = `
+            <td>${new Date(sub.created_at).toLocaleDateString()}</td>
+            <td><strong>${sub.submitted_by_name}</strong><br/>${sub.submitted_by_email}</td>
+            <td>${sub.type.toUpperCase()} <strong style="color: ${badgeColor}; margin-left:8px;">${sub.internal_priority !== 'Normal' ? sub.internal_priority : ''}</strong><br/><small style="color:var(--color-border); filter: brightness(0.7);">Assigned: ${sub.profiles ? sub.profiles.full_name : 'Unassigned'}</small></td>
+            <td><span class="status-pill status-${sub.status.replace(' ', '')}">${sub.status}</span></td>
+            <td><button class="btn view-btn" data-id="${sub.id}" style="padding: 0.25rem 0.5rem; font-size: 0.85em;">View</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        document.querySelectorAll('.view-btn').forEach(btn => 
+           btn.addEventListener('click', (e) => loadDetail(e.target.dataset.id))
+        );
+      };
+
+      const loadDetail = async (id) => {
+         document.getElementById('detail-modal').style.display = 'block';
+         document.getElementById('modal-body').innerHTML = '<p>Loading securely...</p>';
+
+         const { data: sub, error } = await supabase.from('submissions').select('*, submission_files(*)').eq('id', id).single();
+         if(error || !sub) return;
+
+         const { data: profiles } = await supabase.from('profiles').select('*');
+         const { data: reminders } = await supabase.from('reminder_log').select('*').eq('submission_id', id).order('sent_at', { ascending: false });
+
+         let profileOptions = '<option value="">Unassigned</option>';
+         if(profiles) {
+           profiles.forEach(p => {
+             profileOptions += `<option value="${p.id}" ${sub.assigned_to === p.id ? 'selected' : ''}>${p.full_name}</option>`;
+           });
+         }
+
+         let reminderHtml = '<div style="background:var(--color-bg-offset); padding:1rem; border-radius:4px; font-size:0.85em; margin-bottom:1rem;"><ul>';
+         if(reminders && reminders.length > 0) {
+            reminders.forEach(r => reminderHtml += `<li><strong>${new Date(r.sent_at).toLocaleDateString()}</strong>: ${r.result}</li>`);
+         } else {
+            reminderHtml += '<li>No automated reminders sent yet.</li>';
+         }
+         reminderHtml += '</ul></div>';
+
+         let filesHtml = '<ul>';
+         if (sub.submission_files && sub.submission_files.length > 0) {
+            for (let f of sub.submission_files) {
+               // Generate short lived signed URL (1 hour)
+               const { data: urlData } = await supabase.storage.from('private_uploads').createSignedUrl(f.object_path, 3600);
+               filesHtml += `<li><a href="${urlData?.signedUrl || '#'}" target="_blank">${f.file_name}</a></li>`;
+            }
+         } else {
+            filesHtml += '<li>No files attached.</li>';
+         }
+         filesHtml += '</ul>';
+
+         document.getElementById('modal-body').innerHTML = `
+           <div>
+             <h3>Applicant Information</h3>
+             <p>Name: ${sub.submitted_by_name}</p>
+             <p>Email: ${sub.submitted_by_email}</p>
+             <p>Audience: ${sub.audience}</p>
+             <p>Due By: ${new Date(sub.due_at).toLocaleDateString()}</p>
+             <p>Assigned To: ${sub.profiles ? sub.profiles.full_name : 'Unassigned'}</p>
+             <hr style="margin: 1rem 0; border:none; border-top: 1px solid var(--color-border);"/>
+             <h3>Secure Documents</h3>
+             ${filesHtml}
+           </div>
+           <div>
+             <h3>Workflow State</h3>
+             <label style="font-size:0.85em; font-weight:600;">Status</label>
+             <select id="update-status" style="width:100%; padding:0.5rem; margin-bottom:1rem;">
+               <option value="New" ${sub.status==='New'?'selected':''}>New</option>
+               <option value="In Review" ${sub.status==='In Review'?'selected':''}>In Review</option>
+               <option value="Needs More Info" ${sub.status==='Needs More Info'?'selected':''}>Needs More Info</option>
+               <option value="Assigned" ${sub.status==='Assigned'?'selected':''}>Assigned</option>
+               <option value="Completed" ${sub.status==='Completed'?'selected':''}>Completed</option>
+               <option value="Overdue" ${sub.status==='Overdue'?'selected':''}>Overdue</option>
+             </select>
+             
+             <label style="font-size:0.85em; font-weight:600;">Urgency Flag</label>
+             <select id="update-urgency" style="width:100%; padding:0.5rem; margin-bottom:1rem;">
+               <option value="Low" ${sub.internal_priority==='Low'?'selected':''}>Low</option>
+               <option value="Normal" ${sub.internal_priority==='Normal'?'selected':''}>Normal</option>
+               <option value="High" ${sub.internal_priority==='High'?'selected':''}>High</option>
+               <option value="Urgent" ${sub.internal_priority==='Urgent'?'selected':''}>Urgent</option>
+             </select>
+             
+             <label style="font-size:0.85em; font-weight:600;">Assigned To</label>
+             <select id="update-assignment" style="width:100%; padding:0.5rem; margin-bottom:1rem;">
+               ${profileOptions}
+             </select>
+             
+             <label style="font-size:0.85em; font-weight:600;">Internal Notes</label>
+             <textarea id="internal-notes" placeholder="Staff specific internal notes..." rows="4" style="width:100%; padding:0.5rem; margin-bottom:1rem;">${sub.internal_notes || ''}</textarea>
+             
+             <label style="font-size:0.85em; font-weight:600;">Reminder History Log</label>
+             ${reminderHtml}
+             
+             <button id="save-state-btn" class="btn" style="width:100%; background-color:#2B6CB0;">Save Changes</button>
+           </div>
+         `;
+
+         document.getElementById('save-state-btn').addEventListener('click', async () => {
+             const stat = document.getElementById('update-status').value;
+             const urg = document.getElementById('update-urgency').value;
+             const assign = document.getElementById('update-assignment').value;
+             const notes = document.getElementById('internal-notes').value;
+             await supabase.from('submissions').update({ status: stat, internal_priority: urg, internal_notes: notes, assigned_to: assign || null }).eq('id', id);
+             loadData(); // refresh grid
+             document.getElementById('detail-modal').style.display = 'none';
+         });
+      };
+
+      document.getElementById('close-modal').addEventListener('click', () => {
+         document.getElementById('detail-modal').style.display = 'none';
+      });
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/staff/login/';
+      });
+
+      document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+      loadData();
+    </script>
+  </body>
+</html>

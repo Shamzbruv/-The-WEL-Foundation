@@ -1,0 +1,224 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Start Intake Process">
+  <div class="container" style="padding: var(--spacing-6) 0; max-width: 800px;">
+    <h1 style="text-align: center; margin-bottom: var(--spacing-4);">Confidential Intake Form</h1>
+    <p style="text-align: center; color: var(--color-text-muted); margin-bottom: var(--spacing-6);">
+      Please complete the steps below. Your information is securely encrypted and stored privately.
+    </p>
+
+    <!-- Progress Indicator -->
+    <div class="flex" style="justify-content: space-between; margin-bottom: var(--spacing-5); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-2);">
+      <span id="progress-1" style="font-weight: bold; color: var(--color-primary-blue);">1. Basic Info</span>
+      <span id="progress-2" style="color: var(--color-text-muted);">2. Documents</span>
+      <span id="progress-3" style="color: var(--color-text-muted);">3. Review</span>
+    </div>
+
+    <!-- Intake Form -->
+    <!-- Important: The form does NOT use an action="direct_supabase_url". It will use a backend server endpoint or handle submission via secure JS to an Edge Function -->
+    <form id="intake-form" novalidate>
+      
+      <!-- STEP 1: Basic Info -->
+      <section id="step-1" class="form-step">
+        <h2>Basic Information</h2>
+        <div class="form-group">
+          <label for="fullName">Full Name <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="text" id="fullName" name="fullName" required aria-required="true" />
+          <span class="error-message sr-only" id="error-fullName">Full name is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="email" id="email" name="email" required aria-required="true" />
+          <span class="error-message sr-only" id="error-email">A valid email address is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="programSelect">Program of Interest <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <select id="programSelect" name="programSelect" required aria-required="true">
+            <option value="">Select a program...</option>
+            <option value="SUD">Substance Use Disorder (SUD)</option>
+            <option value="PRP">Psychiatric Rehabilitation (PRP)</option>
+            <option value="DUI">DUI / DWI Education</option>
+            <option value="Community">Community Development</option>
+          </select>
+          <span class="error-message sr-only" id="error-programSelect">Please select a program.</span>
+        </div>
+        <button type="button" class="btn" id="btn-next-1">Next: Upload Documents</button>
+      </section>
+
+      <!-- STEP 2: Documents -->
+      <section id="step-2" class="form-step" style="display: none;">
+        <h2>Supporting Documents</h2>
+        <p style="font-size: 0.9em; margin-bottom: var(--spacing-3);">Accepted formats: PDF, JPG, PNG. Max size: 5MB per file.</p>
+        <div class="form-group">
+          <label for="govId">Government Issued ID <span aria-hidden="true" style="color: var(--color-error);">*</span></label>
+          <input type="file" id="govId" name="govId" accept=".pdf,image/jpeg,image/png" required aria-required="true" />
+          <span class="error-message sr-only" id="error-govId">Government ID is required.</span>
+        </div>
+        <div class="form-group">
+          <label for="insuranceCard">Insurance Card (Optional)</label>
+          <input type="file" id="insuranceCard" name="insuranceCard" accept=".pdf,image/jpeg,image/png" />
+          <span class="error-message sr-only" id="error-insuranceCard">Invalid file type or size.</span>
+        </div>
+        <div class="flex" style="gap: var(--spacing-3);">
+          <button type="button" class="btn btn-secondary" id="btn-prev-2">Back</button>
+          <button type="button" class="btn" id="btn-next-2">Review Submission</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Review -->
+      <section id="step-3" class="form-step" style="display: none;">
+        <h2>Review Your Information</h2>
+        <div class="card" style="margin-bottom: var(--spacing-4);">
+          <p><strong>Name:</strong> <span id="review-name"></span></p>
+          <p><strong>Email:</strong> <span id="review-email"></span></p>
+          <p><strong>Program:</strong> <span id="review-program"></span></p>
+          <p><strong>ID Document:</strong> <span id="review-id"></span></p>
+        </div>
+        <div id="form-error-summary" class="error-message sr-only" role="alert">Please correct errors before submitting.</div>
+        <div class="flex" style="gap: var(--spacing-3);">
+          <button type="button" class="btn btn-secondary" id="btn-prev-3">Back</button>
+          <button type="submit" class="btn" id="btn-submit" style="background-color: var(--color-accent-gold); color: var(--color-primary-blue);">Secure Submit</button>
+        </div>
+      </section>
+      
+      <!-- Success View -->
+      <section id="step-success" class="form-step" style="display: none; text-align: center;">
+        <h2 style="color: var(--color-primary-blue);">Submission Received</h2>
+        <p>Your intake form has been securely submitted. A coordinator will review your information and contact you within 3 business days.</p>
+        <a href="/" class="btn" style="margin-top: var(--spacing-4);">Return to Home</a>
+      </section>
+
+    </form>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    // Vanilla JS Logic for Multi-step Form
+    document.addEventListener('DOMContentLoaded', () => {
+      const step1 = document.getElementById('step-1');
+      const step2 = document.getElementById('step-2');
+      const step3 = document.getElementById('step-3');
+      const stepSuccess = document.getElementById('step-success');
+
+      const btnNext1 = document.getElementById('btn-next-1');
+      const btnNext2 = document.getElementById('btn-next-2');
+      const btnPrev2 = document.getElementById('btn-prev-2');
+      const btnPrev3 = document.getElementById('btn-prev-3');
+
+      const form = document.getElementById('intake-form');
+
+      // Validation Helper
+      const validateInput = (input) => {
+        const errorSpan = document.getElementById(`error-${input.id}`);
+        if (!input.checkValidity()) {
+          input.setAttribute('aria-invalid', 'true');
+          input.style.borderColor = 'var(--color-error)';
+          if (errorSpan) errorSpan.classList.remove('sr-only');
+          return false;
+        } else {
+          input.removeAttribute('aria-invalid');
+          input.style.borderColor = 'var(--color-border)';
+          if (errorSpan) errorSpan.classList.add('sr-only');
+          return true;
+        }
+      };
+
+      btnNext1.addEventListener('click', () => {
+        const name = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const program = document.getElementById('programSelect');
+        
+        let isValid = validateInput(name) & validateInput(email) & validateInput(program);
+        if (isValid) {
+          step1.style.display = 'none';
+          step2.style.display = 'block';
+          document.getElementById('progress-1').style.color = 'var(--color-text-muted)';
+          document.getElementById('progress-1').style.fontWeight = 'normal';
+          document.getElementById('progress-2').style.color = 'var(--color-primary-blue)';
+          document.getElementById('progress-2').style.fontWeight = 'bold';
+        } else {
+           // Focus first invalid element for accessibility
+           const firstInvalid = form.querySelector('[aria-invalid="true"]');
+           if(firstInvalid) firstInvalid.focus();
+        }
+      });
+
+      btnPrev2.addEventListener('click', () => {
+        step2.style.display = 'none';
+        step1.style.display = 'block';
+        document.getElementById('progress-2').style.color = 'var(--color-text-muted)';
+        document.getElementById('progress-2').style.fontWeight = 'normal';
+        document.getElementById('progress-1').style.color = 'var(--color-primary-blue)';
+        document.getElementById('progress-1').style.fontWeight = 'bold';
+      });
+
+      btnNext2.addEventListener('click', () => {
+        const govId = document.getElementById('govId');
+        let isValid = validateInput(govId);
+        if (isValid) {
+          // Populate Review Screen
+          document.getElementById('review-name').innerText = document.getElementById('fullName').value;
+          document.getElementById('review-email').innerText = document.getElementById('email').value;
+          document.getElementById('review-program').innerText = document.getElementById('programSelect').options[document.getElementById('programSelect').selectedIndex].text;
+          document.getElementById('review-id').innerText = govId.files.length > 0 ? govId.files[0].name : 'None attached';
+
+          step2.style.display = 'none';
+          step3.style.display = 'block';
+          document.getElementById('progress-2').style.color = 'var(--color-text-muted)';
+          document.getElementById('progress-2').style.fontWeight = 'normal';
+          document.getElementById('progress-3').style.color = 'var(--color-primary-blue)';
+          document.getElementById('progress-3').style.fontWeight = 'bold';
+        } else {
+          govId.focus();
+        }
+      });
+
+      btnPrev3.addEventListener('click', () => {
+        step3.style.display = 'none';
+        step2.style.display = 'block';
+        document.getElementById('progress-3').style.color = 'var(--color-text-muted)';
+        document.getElementById('progress-3').style.fontWeight = 'normal';
+        document.getElementById('progress-2').style.color = 'var(--color-primary-blue)';
+        document.getElementById('progress-2').style.fontWeight = 'bold';
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btnSubmit = document.getElementById('btn-submit');
+        btnSubmit.innerText = 'Submitting...';
+        btnSubmit.disabled = true;
+
+        // In the real system, this forwards via fetch() to the secure Supabase Edge Function API route.
+        // It does not hit Supabase directly from the browser to protect the schema structure.
+        try {
+          const formData = new FormData(form);
+          const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+          if (!supabaseUrl) throw new Error("Backend environment missing");
+          
+          const response = await fetch(`${supabaseUrl}/functions/v1/intake-submit`, {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!response.ok) {
+            const errBody = await response.json().catch(()=>({}));
+            throw new Error(errBody.error || `Server returned ${response.status}`);
+          }
+          
+          step3.style.display = 'none';
+          stepSuccess.style.display = 'block';
+        } catch (err) {
+          const errSum = document.getElementById('form-error-summary');
+          errSum.classList.remove('sr-only');
+          errSum.style.display = 'block';
+          errSum.style.color = 'var(--color-error)';
+          errSum.innerText = 'Error transmitting to secure server: ' + err.message;
+          btnSubmit.innerText = 'Secure Submit';
+          btnSubmit.disabled = false;
+        }
+      });
+    });
+  </script>
+</Layout>

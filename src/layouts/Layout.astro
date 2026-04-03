@@ -1,0 +1,91 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "The WEL Foundation provides mental health support, substance use disorder programs, and active community development in Baltimore." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} | The WEL Foundation</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="site-header">
+      <div class="container flex" style="justify-content: space-between; align-items: center; padding-top: var(--spacing-3); padding-bottom: var(--spacing-3);">
+        <div class="logo">
+          <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 40px; height: 40px; background-color: var(--color-primary-blue); border-radius: 50%;"></div>
+            <span style="font-family: var(--font-family-heading); color: var(--color-primary-blue); font-size: 1.25rem;">The WEL Foundation</span>
+          </a>
+        </div>
+        <nav aria-label="Main Navigation">
+          <ul class="flex" style="list-style: none; margin: 0; padding: 0; gap: var(--spacing-4);">
+            <li><a href="/">Home</a></li>
+            <li><a href="/about/">About</a></li>
+            <li><a href="/programs/">Programs</a></li>
+            <li><a href="/events/">Events</a></li>
+            <li><a href="/contact/">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="header-ctas flex" style="gap: var(--spacing-2);">
+          <a href="/intake/start/" class="btn">Start Intake</a>
+          <a href="/referral/start/" class="btn btn-secondary">Refer a Client</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer" style="background-color: var(--color-primary-blue); color: var(--color-bg); padding: var(--spacing-6) 0; margin-top: var(--spacing-8);">
+      <div class="container grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+        <div>
+          <h2 style="color: var(--color-bg);">The WEL Foundation</h2>
+          <p>Real People, Real Support, Real Results.</p>
+          <address style="font-style: normal; margin-top: var(--spacing-2);">
+            5858 Belair Rd<br />
+            Baltimore, MD 21206<br />
+            <a href="tel:443-826-2770" style="color: var(--color-accent-gold);">443-826-2770</a><br/>
+            <a href="mailto:info@weempowerleadership.com" style="color: var(--color-accent-gold);">info@weempowerleadership.com</a>
+          </address>
+        </div>
+        <div>
+          <h3 style="color: var(--color-bg);">Quick Links</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li><a href="/programs/prp/" style="color: var(--color-bg);">PRP Program</a></li>
+            <li><a href="/programs/sud/" style="color: var(--color-bg);">SUD Program</a></li>
+            <li><a href="/programs/dui-dwi/" style="color: var(--color-bg);">DUI / DWI</a></li>
+            <li><a href="/staff/login/" style="color: var(--color-bg);">Staff Portal</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="color: var(--color-bg);">Legal</h3>
+          <ul style="list-style: none; padding: 0;">
+            <li><a href="/privacy/" style="color: var(--color-bg);">Privacy Policy</a></li>
+            <li><a href="/accessibility/" style="color: var(--color-bg);">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container" style="text-align: center; margin-top: var(--spacing-4); border-top: 1px solid rgba(255,255,255,0.2); padding-top: var(--spacing-4);">
+        <p>&copy; {new Date().getFullYear()} The WEL Foundation. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

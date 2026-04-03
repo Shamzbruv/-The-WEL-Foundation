@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Home">
+  <section class="hero" style="background-color: var(--color-bg-offset); padding: var(--spacing-8) 0; text-align: center;">
+    <div class="container">
+      <h1 style="font-size: 3rem; margin-bottom: var(--spacing-2);">Real People, Real Support, Real Results.</h1>
+      <p style="font-size: 1.25rem; color: var(--color-text-muted); max-width: 800px; margin: 0 auto var(--spacing-5);">
+        The WEL Foundation is here to assist, teach, and mentor the Baltimore community. We empower each client to maximize their quality of life.
+      </p>
+      <div class="flex" style="justify-content: center; gap: var(--spacing-3);">
+        <a href="/intake/start/" class="btn" style="font-size: 1.1rem;">Start Your Intake</a>
+        <a href="/programs/" class="btn btn-secondary" style="font-size: 1.1rem;">Explore Programs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="programs-overview" style="padding: var(--spacing-8) 0;">
+    <div class="container">
+      <h2 style="text-align: center; margin-bottom: var(--spacing-6);">Our Core Programs</h2>
+      
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <!-- SUD Program -->
+        <article class="card">
+          <h3>Substance Use Disorder (SUD)</h3>
+          <p>Comprehensive, compassionate support to help individuals overcome addiction and achieve lasting recovery.</p>
+          <a href="/programs/sud/" style="font-weight: 600;">Learn about SUD Support &rarr;</a>
+        </article>
+
+        <!-- PRP Program -->
+        <article class="card">
+          <h3>Psychiatric Rehabilitation (PRP)</h3>
+          <p>Skill-building and resource management to assist clients in managing mental health barriers effectively.</p>
+          <a href="/programs/prp/" style="font-weight: 600;">Explore PRP Services &rarr;</a>
+        </article>
+
+        <!-- DUI / DWI Program -->
+        <article class="card">
+          <h3>DUI / DWI Education</h3>
+          <p>State-certified educational programs focusing on awareness, prevention, and fulfilling legal requirements.</p>
+          <a href="/programs/dui-dwi/" style="font-weight: 600;">View Class Details &rarr;</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust-banner" style="background-color: var(--color-primary-blue); color: var(--color-bg); padding: var(--spacing-6) 0; text-align: center;">
+    <div class="container">
+      <h2 style="color: var(--color-accent-gold);">Why The WEL Foundation?</h2>
+      <p style="max-width: 700px; margin: 0 auto; font-size: 1.1rem;">
+        We value treating the whole individual from the inside out without judgment. Our team is dedicated to offering practical interventions that respect each person who walks through our doors.
+      </p>
+    </div>
+  </section>
+</Layout>
