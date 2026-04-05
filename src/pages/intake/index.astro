@@ -2,23 +2,54 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Client Intake">
-  <div class="container" style="padding: var(--spacing-6) 0; max-width: 800px; text-align: center;">
-    <h1 style="color: var(--color-primary-blue); font-size: 2.5rem; margin-bottom: var(--spacing-4);">Client Intake Application</h1>
-    <p style="font-size: 1.1rem; margin-bottom: var(--spacing-6); color: var(--color-text-muted);">
-      Welcome to your first step toward recovery and empowerment. All information submitted here is treated with strict confidentiality.
+<Layout title="Client Intake - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0; max-width: 900px; text-align: center;">
+    <h1 class="reveal-on-scroll" style="color: var(--color-primary-blue); font-size: 3rem; margin-bottom: var(--spacing-4);">Begin Your Recovery Journey</h1>
+    <p class="reveal-on-scroll stagger-1" style="font-size: 1.15rem; margin-bottom: var(--spacing-6); color: var(--color-text-muted); line-height: 1.6; max-width: 700px; margin-inline: auto;">
+      Taking the first step is often the hardest. Our streamlined, confidential intake process ensures that you are paired with the right clinical professionals and community resources immediately.
     </p>
 
-    <div class="card" style="text-align: left; margin-bottom: var(--spacing-6);">
-      <h2 style="margin-bottom: var(--spacing-3);">What to Expect</h2>
-      <ul style="margin-bottom: var(--spacing-4); padding-left: var(--spacing-4);">
-        <li style="margin-bottom: var(--spacing-2);">You will need a valid copy of your state-issued Government ID.</li>
-        <li style="margin-bottom: var(--spacing-2);">You will need your current Insurance credentials (if applicable).</li>
-        <li style="margin-bottom: var(--spacing-2);">Expect the process to take approximately 5-10 minutes.</li>
-        <li style="margin-bottom: var(--spacing-2);">Once submitted, our team targets a 3-business-day turnaround for review.</li>
-      </ul>
-      <div style="text-align: center; margin-top: var(--spacing-6);">
-        <a href="/intake/start/" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">Begin Secure Intake</a>
+    <div class="card reveal-on-scroll stagger-2" style="text-align: left; margin-bottom: var(--spacing-6); padding: var(--spacing-6);">
+      <h2 style="font-size: 1.8rem; margin-bottom: var(--spacing-4); color: var(--color-primary-light-blue); text-align: center;">What to Expect</h2>
+      
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-5); margin-bottom: var(--spacing-6);">
+        <div style="display: flex; gap: var(--spacing-3);">
+          <div style="font-size: 1.5rem; color: var(--color-accent-gold);">1</div>
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: var(--spacing-1);">Submit the Form</h4>
+            <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5;">Fill out our HIPAA-compliant, secure web form. It only takes about 5 minutes.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: var(--spacing-3);">
+          <div style="font-size: 1.5rem; color: var(--color-accent-gold);">2</div>
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: var(--spacing-1);">Coordination Call</h4>
+            <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5;">An intake specialist will call you within 24-48 hours to confirm benefits and schedule an assessment.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: var(--spacing-3);">
+          <div style="font-size: 1.5rem; color: var(--color-accent-gold);">3</div>
+          <div>
+            <h4 style="font-size: 1.1rem; margin-bottom: var(--spacing-1);">Clinical Assessment</h4>
+            <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5;">Meet with a licensed counselor to map out your personalized recovery architecture.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background-color: var(--color-bg-offset); padding: var(--spacing-4); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-bottom: var(--spacing-6);">
+        <h4 style="color: var(--color-primary-blue); margin-bottom: var(--spacing-2);">Preparation Checklist</h4>
+        <ul style="font-size: 0.95rem; color: var(--color-text-muted); margin-bottom: 0; padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>A clear digital copy (photo or PDF) of your state-issued Government ID.</li>
+          <li>A clear digital copy of your current Maryland Medicaid or Private Insurance card.</li>
+          <li>Basic contact information and program preferences.</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="/intake/start/" class="btn" style="padding: 1rem 2.5rem; font-size: 1.1rem;">Access Secure Intake Form</a>
+        <p style="margin-top: var(--spacing-2); font-size: 0.85rem; color: var(--color-text-muted);">Transmitted via encrypted AES-256 connections.</p>
       </div>
     </div>
   </div>

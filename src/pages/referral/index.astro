@@ -2,23 +2,44 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Provider Referrals">
-  <div class="container" style="padding: var(--spacing-6) 0; max-width: 800px; text-align: center;">
-    <h1 style="color: var(--color-primary-blue); font-size: 2.5rem; margin-bottom: var(--spacing-4);">Provider/Partner Referrals</h1>
-    <p style="font-size: 1.1rem; margin-bottom: var(--spacing-6); color: var(--color-text-muted);">
-      Securely refer a patient or client to The WEL Foundation.
+<Layout title="Provider Referrals - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0; max-width: 900px; text-align: center;">
+    <h1 class="reveal-on-scroll" style="color: var(--color-primary-blue); font-size: 3rem; margin-bottom: var(--spacing-4);">Clinical Partnerships & Referrals</h1>
+    <p class="reveal-on-scroll stagger-1" style="font-size: 1.15rem; margin-bottom: var(--spacing-6); color: var(--color-text-muted); line-height: 1.6; max-width: 700px; margin-inline: auto;">
+      We partner with hospitals, social workers, case managers, and private practitioners across Maryland. Use our secure portal to safely forward a client for evaluation and program admission.
     </p>
 
-    <div class="card" style="text-align: left; margin-bottom: var(--spacing-6);">
-      <h2 style="margin-bottom: var(--spacing-3);">Referral Requirements</h2>
-      <p style="margin-bottom: var(--spacing-4);">For an expedited processing time, please have the following client documentation ready to upload via our secure intake channel:</p>
-      <ul style="margin-bottom: var(--spacing-4); padding-left: var(--spacing-4);">
-        <li style="margin-bottom: var(--spacing-2);">Client's demographic and contact profiles.</li>
-        <li style="margin-bottom: var(--spacing-2);">Current medical or psychiatric assessments justifying the program selection.</li>
-        <li style="margin-bottom: var(--spacing-2);">Consent-to-release forms (if sending behavioral records).</li>
-      </ul>
-      <div style="text-align: center; margin-top: var(--spacing-6);">
-        <a href="/referral/start/" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem; background-color: var(--color-accent-gold); color: var(--color-primary-blue);">Submit Referral</a>
+    <div class="card reveal-on-scroll stagger-2" style="text-align: left; margin-bottom: var(--spacing-6); padding: var(--spacing-6);">
+      <h2 style="font-size: 1.8rem; margin-bottom: var(--spacing-4); color: var(--color-primary-light-blue); text-align: center;">The Referral Handoff</h2>
+      
+      <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-5);">
+        When you submit a referral to The WEL Foundation, you are initiating a collaborative continuity of care. We understand that your clients are vulnerable. Our intake team prioritizes incoming medical referrals, reaching out to the patient within 24 business hours to facilitate a warm, trauma-informed onboarding.
+      </p>
+
+      <div style="background-color: var(--color-bg-offset); padding: var(--spacing-4); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-bottom: var(--spacing-6);">
+        <h4 style="color: var(--color-primary-blue); margin-bottom: var(--spacing-2);">Required Documentation for Expedited Processing</h4>
+        <ul style="font-size: 0.95rem; color: var(--color-text-muted); margin-bottom: 0; padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Detailed client demographic and contact profiles.</li>
+          <li>Current medical or psychiatric assessments justifying the clinical necessity of the requested program.</li>
+          <li>Signed Consent-to-Release forms (required if you are transmitting protected behavioral records).</li>
+          <li>Relevant insurance or Medicaid coverage details.</li>
+        </ul>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-bottom: var(--spacing-6);">
+        <div style="border-left: 2px solid var(--color-accent-gold); padding-left: var(--spacing-3);">
+          <h4 style="color: var(--color-primary-light-blue); margin-bottom: var(--spacing-1);">Data Security Guarantee</h4>
+          <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.5;">All data submitted through our portal is encrypted at rest and in transit via enterprise-grade AES-256 protocols, fully compliant with HIPAA regulations.</p>
+        </div>
+        <div style="border-left: 2px solid var(--color-accent-gold); padding-left: var(--spacing-3);">
+          <h4 style="color: var(--color-primary-light-blue); margin-bottom: var(--spacing-1);">Need to speak with a clinician?</h4>
+          <p style="font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.5;">If you are discussing a complex dual-diagnosis case, you can request a direct peer-to-peer consultation before submitting the referral.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="/referral/start/" class="btn" style="padding: 1rem 2.5rem; font-size: 1.1rem; background-color: var(--color-primary-light-blue);">Access Provider Portal</a>
+        <p style="margin-top: var(--spacing-2); font-size: 0.85rem; color: var(--color-text-muted);">Strictly restricted. Secure access only.</p>
       </div>
     </div>
   </div>

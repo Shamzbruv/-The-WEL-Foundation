@@ -1,12 +1,16 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
+  hideHeader?: boolean;
+  hideFooter?: boolean;
 }
 
-const { title, description = "The WEL Foundation provides mental health support, substance use disorder programs, and active community development in Baltimore." } = Astro.props;
+const { title, description = "The WEL Foundation provides mental health support, substance use disorder programs, and active community development in Baltimore.", hideHeader = false, hideFooter = false } = Astro.props;
+const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html';
 ---
 
 <!doctype html>
@@ -21,31 +25,33 @@ const { title, description = "The WEL Foundation provides mental health support,
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Lexend:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <ClientRouter />
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <header class="site-header">
-      <div class="container flex" style="justify-content: space-between; align-items: center; padding-top: var(--spacing-3); padding-bottom: var(--spacing-3);">
+    <header id="site-header" class={`site-header ${isHome ? 'is-home' : ''}`}>
+      <div class="header-inner flex" style="justify-content: space-between; align-items: center; padding: 1rem 1.5rem;">
         <div class="logo">
-          <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
-            <div style="width: 40px; height: 40px; background-color: var(--color-primary-blue); border-radius: 50%;"></div>
-            <span style="font-family: var(--font-family-heading); color: var(--color-primary-blue); font-size: 1.25rem;">The WEL Foundation</span>
+          <a href="/" style="display: flex; align-items: center; gap: 12px; transition: opacity var(--transition-hover);">
+            <div style="width: 32px; height: 32px; background-color: var(--color-primary-navy); border-radius: 50%;"></div>
+            <span style="font-family: var(--font-family-heading); color: var(--color-primary-navy); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;">The WEL Foundation</span>
           </a>
         </div>
         <nav aria-label="Main Navigation">
-          <ul class="flex" style="list-style: none; margin: 0; padding: 0; gap: var(--spacing-4);">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about/">About</a></li>
-            <li><a href="/programs/">Programs</a></li>
-            <li><a href="/events/">Events</a></li>
-            <li><a href="/contact/">Contact</a></li>
+          <ul class="flex" style="list-style: none; margin: 0; padding: 0; gap: var(--spacing-5); font-size: 0.95rem; font-weight: 500;">
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/about/" class="nav-link">About</a></li>
+            <li><a href="/programs/" class="nav-link">Programs</a></li>
+            <li><a href="/contact/" class="nav-link">Contact</a></li>
           </ul>
         </nav>
-        <div class="header-ctas flex" style="gap: var(--spacing-2);">
-          <a href="/intake/start/" class="btn">Start Intake</a>
-          <a href="/referral/start/" class="btn btn-secondary">Refer a Client</a>
+        <div class="header-ctas flex" style="gap: var(--spacing-3); align-items: center;">
+          <a href="/referral/start/" class="btn-secondary" style="padding: 0.6rem 1.2rem; border-radius: 30px; font-weight: 500; font-size: 0.9rem; text-decoration: none;">Refer Client</a>
+          <a href="/intake/start/" class="btn" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Start Intake</a>
         </div>
       </div>
     </header>
@@ -54,38 +60,183 @@ const { title, description = "The WEL Foundation provides mental health support,
       <slot />
     </main>
 
-    <footer class="site-footer" style="background-color: var(--color-primary-blue); color: var(--color-bg); padding: var(--spacing-6) 0; margin-top: var(--spacing-8);">
-      <div class="container grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+    <footer class="site-footer" style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: white; border-top: var(--border-delicate); padding: var(--spacing-12) 0 var(--spacing-6) 0; margin-top: var(--spacing-10);">
+      <div class="container grid" style="grid-template-columns: 2fr 1fr 1fr; gap: var(--spacing-8);">
+        <div style="padding-right: var(--spacing-8);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: var(--spacing-4);">
+            <div style="width: 24px; height: 24px; background-color: var(--color-accent-gold-muted); border-radius: 50%;"></div>
+            <h2 style="color: white; font-size: 1.25rem; margin: 0;">The WEL Foundation</h2>
+          </div>
+          <p style="color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.7; max-width: 300px;">
+            A premier clinical behavioral health agency dedicated to unconditional community support and scientifically-backed rehabilitation.
+          </p>
+        </div>
+        
         <div>
-          <h2 style="color: var(--color-bg);">The WEL Foundation</h2>
-          <p>Real People, Real Support, Real Results.</p>
-          <address style="font-style: normal; margin-top: var(--spacing-2);">
-            5858 Belair Rd<br />
-            Baltimore, MD 21206<br />
-            <a href="tel:443-826-2770" style="color: var(--color-accent-gold);">443-826-2770</a><br/>
-            <a href="mailto:info@weempowerleadership.com" style="color: var(--color-accent-gold);">info@weempowerleadership.com</a>
+          <h3 style="color: white; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--spacing-4);">Programs</h3>
+          <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-3); font-size: 0.95rem;">
+            <li><a href="/programs/prp/" class="footer-link">Psychiatric Rehabilitation</a></li>
+            <li><a href="/programs/sud/" class="footer-link">Substance Use Disorder</a></li>
+            <li><a href="/programs/dui-dwi/" class="footer-link">DUI / DWI Education</a></li>
+            <li><a href="/programs/community-development/" class="footer-link">Community Outreach</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 style="color: white; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--spacing-4);">Connect</h3>
+          <address style="font-style: normal; color: #CBD5E1; font-size: 0.95rem; display: flex; flex-direction: column; gap: var(--spacing-3); line-height: 1.5;">
+            <span>5858 Belair Rd<br />Baltimore, MD 21206</span>
+            <a href="tel:443-826-2770" class="footer-link" style="font-weight: 500;">443-826-2770</a>
+            <a href="mailto:info@weempowerleadership.com" class="footer-link" style="font-weight: 500;">info@weempowerleadership.com</a>
           </address>
         </div>
-        <div>
-          <h3 style="color: var(--color-bg);">Quick Links</h3>
-          <ul style="list-style: none; padding: 0;">
-            <li><a href="/programs/prp/" style="color: var(--color-bg);">PRP Program</a></li>
-            <li><a href="/programs/sud/" style="color: var(--color-bg);">SUD Program</a></li>
-            <li><a href="/programs/dui-dwi/" style="color: var(--color-bg);">DUI / DWI</a></li>
-            <li><a href="/staff/login/" style="color: var(--color-bg);">Staff Portal</a></li>
-          </ul>
-        </div>
-        <div>
-          <h3 style="color: var(--color-bg);">Legal</h3>
-          <ul style="list-style: none; padding: 0;">
-            <li><a href="/privacy/" style="color: var(--color-bg);">Privacy Policy</a></li>
-            <li><a href="/accessibility/" style="color: var(--color-bg);">Accessibility</a></li>
-          </ul>
-        </div>
       </div>
-      <div class="container" style="text-align: center; margin-top: var(--spacing-4); border-top: 1px solid rgba(255,255,255,0.2); padding-top: var(--spacing-4);">
-        <p>&copy; {new Date().getFullYear()} The WEL Foundation. All rights reserved.</p>
+      
+      <div class="container" style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--spacing-8); padding-top: var(--spacing-6); border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; color: #94A3B8;">
+        <p style="margin: 0;">&copy; {new Date().getFullYear()} The WEL Foundation. Confidential & Secure.</p>
+        <div style="display: flex; gap: var(--spacing-4);">
+          <a href="/privacy/" class="footer-link">Privacy Policy</a>
+          <a href="/accessibility/" class="footer-link">Accessibility</a>
+          <a href="/staff/login/" class="footer-link">Staff Portal</a>
+        </div>
       </div>
     </footer>
+
+    <style>
+      .site-header {
+        position: sticky;
+        margin: 20px auto var(--spacing-6) auto;
+        top: 20px;
+        z-index: 50;
+        width: 95%;
+        max-width: 1100px;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 50px;
+        box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+        transition: padding 0.4s var(--ease-premium), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, background-color 0.4s ease, top 0.4s ease;
+      }
+      
+      .site-header.is-home {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        top: 0;
+        margin: 0;
+      }
+
+      .site-header.is-scrolled {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: saturate(200%) blur(24px);
+        -webkit-backdrop-filter: saturate(200%) blur(24px);
+        box-shadow: 0 15px 40px -10px rgba(15, 23, 42, 0.15); 
+        transform: scale(0.98);
+        top: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+      }
+
+      .site-header.is-home.is-scrolled {
+        transform: translateX(-50%) translateY(10px) scale(0.98);
+        top: 0;
+      }
+      
+      .site-header .header-inner {
+        transition: padding 0.4s var(--ease-premium);
+      }
+      
+      .site-header.is-scrolled .header-inner {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+      }
+      
+      .nav-link {
+        color: var(--color-text-secondary);
+        position: relative;
+        padding-bottom: 2px;
+        transition: color 0.3s ease;
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 2px;
+        background-color: var(--color-accent-gold-muted);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      
+      .nav-link:hover {
+        color: var(--color-primary-navy);
+      }
+
+      .nav-link:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+      
+      .footer-link {
+        color: #CBD5E1;
+        text-decoration: none;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 2px;
+        transition: color var(--transition-hover);
+      }
+      
+      .footer-link:hover {
+        color: var(--color-accent-gold-muted);
+      }
+      
+      .logo a:hover {
+        opacity: 0.8;
+      }
+    </style>
+
+    <script>
+      // Enclose all global scripts within astro:page-load to support ViewTransitions SPA architecture
+      document.addEventListener('astro:page-load', () => {
+        // 1. Sticky Header Logic
+        const header = document.getElementById('site-header');
+        const handleScroll = () => {
+          if (window.scrollY > 20) {
+            header?.classList.add('is-scrolled');
+          } else {
+            header?.classList.remove('is-scrolled');
+          }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Trigger on initial load
+        
+        // 2. Intersection Observer for Scroll Animations
+        // We ensure we only bind this if the user hasn't requested reduced motion, 
+        // though CSS fallback handles this, it's good practice.
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal-visible');
+                observer.unobserve(entry.target);
+            }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+            observer.observe(el);
+        });
+      });
+    </script>
   </body>
 </html>

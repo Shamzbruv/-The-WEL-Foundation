@@ -2,44 +2,56 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="DUI / DWI Education">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    
-    <nav aria-label="Breadcrumbs" style="margin-bottom: var(--spacing-4);">
-      <a href="/">Home</a> &gt; <a href="/programs/">Programs</a> &gt; <span aria-current="page">DUI / DWI Education</span>
-    </nav>
-    <header style="margin-bottom: var(--spacing-6);">
-      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">DUI / DWI Education</h1>
-      <p style="font-size: 1.2rem; color: var(--color-text-muted);">State-certified educational programs focusing on awareness, prevention, and legal fulfillment.</p>
+<Layout title="DUI / DWI Education - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <div style="font-size: 3rem; margin-bottom: var(--spacing-3);">🚘</div>
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">DUI / DWI Education</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        Navigating the legal aftermath of an impaired driving charge is stressful. Our state-certified programs provide a judgment-free environment to fulfill your court or Motor Vehicle Administration (MVA) requirements quickly and affordably.
+      </p>
     </header>
-    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-6);">
-      <div class="main-content">
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What the Service Is</h2>
-          <p>A structured psychoeducational program tailored to outline the risks of impaired driving. The course explores personal accountability, the physiological impacts of alcohol and substances, and strategies to prevent impaired driving recurrence.</p>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>Who It Is For</h2>
-          <p>This program is designed for individuals who have received a DUI/DWI citation or conviction and have been ordered by the court or the MVA to complete a certified 12-hour or 26-hour education program.</p>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>How to Qualify</h2>
-          <ul>
-            <li>Documented requirement via court order, MVA directive, or attorney recommendation.</li>
-            <li>Completion of our initial substance abuse assessment.</li>
-          </ul>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What Happens Next</h2>
-          <p>Once you complete your intake application, our team will process it within <strong>3 business days</strong> and evaluate your case. We then assign you to upcoming class dates. Upon completion, we provide all required certifications of completion directly to your requesting agency.</p>
-        </section>
-      </div>
-      <aside>
-        <div class="card" style="background-color: var(--color-bg-offset); border-top: 4px solid var(--color-accent-gold);">
-          <h3>Take the First Step</h3>
-          <a href="/intake/start/" class="btn" style="display: block; width: 100%; margin-bottom: var(--spacing-2);">Start Your Intake</a>
-        </div>
-      </aside>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); margin-bottom: var(--spacing-8);">
+      <article class="card reveal-on-scroll stagger-1">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">12-Hour Program</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          The standard AEP (Alcohol Education Program) mandated for first-time offenders who are not deemed high-risk by initial assessments.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Typically spans across 6 successive weeks (2 hours per week)</li>
+          <li>Focus on physiological effects of alcohol/drugs</li>
+          <li>Legal ramifications and decision-making frameworks</li>
+        </ul>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">26-Hour Program</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          An extended curriculum designed for subsequent offenders or individuals whose Blood Alcohol Content (BAC) met enhanced penalty thresholds.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Includes the foundational 12-hour AEP curriculum</li>
+          <li>Additional 14 hours of intensive outpatient counseling</li>
+          <li>Individualized risk assessment and mitigation planning</li>
+        </ul>
+      </article>
+      
+      <article class="card reveal-on-scroll stagger-3" style="background-color: var(--color-bg-offset);">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">State Compliance</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7;">
+          Upon successful completion of either program, we automatically submit your certification directly to the Maryland MVA and relevant court systems via secure portals, ensuring your legal standing is updated promptly without administrative delays.
+        </p>
+      </article>
     </div>
+
+    <section class="reveal-on-scroll" style="text-align: center; max-width: 600px; margin-inline: auto;">
+      <h2 style="font-size: 2rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Enroll Today</h2>
+      <p style="font-size: 1.1rem; color: var(--color-text-muted); margin-bottom: var(--spacing-4);">
+        We offer flexible evening and weekend classes to accommodate your work schedule. Contact our front desk to complete your initial assessment and register for an upcoming cohort.
+      </p>
+      <a href="/contact/" class="btn">View Contact Options</a>
+    </section>
+
   </div>
 </Layout>

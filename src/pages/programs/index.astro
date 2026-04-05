@@ -2,34 +2,59 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Our Programs">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    
-    <header style="margin-bottom: var(--spacing-6); text-align:center;">
-      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">Exploring Our Programs</h1>
-      <p style="font-size: 1.2rem; color: var(--color-text-muted);">Discover how The WEL Foundation supports the community.</p>
+<Layout title="Our Programs - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Transformative Care Ecosystem</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        At The WEL Foundation, we do not view mental health in isolation. Our interconnected programs form a holistic ecosystem, designed to stabilize, educate, and empower individuals at every stage of their recovery journey.
+      </p>
     </header>
-    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-        <article class="card">
-          <h3>Substance Use Disorder (SUD)</h3>
-          <p>Overcoming addiction and building a sustainable sober lifestyle.</p>
-          <a href="/programs/sud/" style="font-weight: 600;">Learn More &rarr;</a>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6);">
+        <article class="card reveal-on-scroll stagger-1" style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: var(--spacing-3); color: var(--color-primary-light-blue);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+          </div>
+          <h3 style="font-size: 1.4rem; margin-bottom: var(--spacing-2);">Substance Use Disorder (SUD)</h3>
+          <p style="color: var(--color-text-muted); flex-grow: 1; line-height: 1.6;">Our intensive outpatient and general outpatient programs utilize evidence-based therapies (like CBT and DBT) to help individuals overcome addiction. We provide individual counseling, dynamic group therapy, and long-term relapse prevention planning.</p>
+          <a href="/programs/sud/" style="font-weight: 500; margin-top: var(--spacing-4); display: inline-block;">Explore SUD Support &rarr;</a>
         </article>
-        <article class="card">
-          <h3>Psychiatric Rehabilitation (PRP)</h3>
-          <p>Life-skill management for dealing with mental health barriers.</p>
-          <a href="/programs/prp/" style="font-weight: 600;">Explore PRP &rarr;</a>
+
+        <article class="card reveal-on-scroll stagger-2" style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: var(--spacing-3); color: var(--color-primary-light-blue);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          <h3 style="font-size: 1.4rem; margin-bottom: var(--spacing-2);">Psychiatric Rehabilitation (PRP)</h3>
+          <p style="color: var(--color-text-muted); flex-grow: 1; line-height: 1.6;">Designed for adults and minors facing severe mental health barriers. Our rehabilitation coordinators conduct in-home and on-site visits to build essential life skills, including financial literacy, hygiene management, and social integration.</p>
+          <a href="/programs/prp/" style="font-weight: 500; margin-top: var(--spacing-4); display: inline-block;">Learn about PRP &rarr;</a>
         </article>
-        <article class="card">
-          <h3>DUI / DWI Education</h3>
-          <p>State-certified MVA/court-mandated courses.</p>
-          <a href="/programs/dui-dwi/" style="font-weight: 600;">View Program &rarr;</a>
+
+        <article class="card reveal-on-scroll stagger-3" style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: var(--spacing-3); color: var(--color-primary-light-blue);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+          <h3 style="font-size: 1.4rem; margin-bottom: var(--spacing-2);">DUI / DWI Education</h3>
+          <p style="color: var(--color-text-muted); flex-grow: 1; line-height: 1.6;">State-certified, court-approved educational courses focused on safe driving behaviors and substance awareness. We offer flexible scheduling (12-hour and 26-hour tracks) to fulfill MVA mandates without unnecessary stress.</p>
+          <a href="/programs/dui-dwi/" style="font-weight: 500; margin-top: var(--spacing-4); display: inline-block;">View Class Schedule &rarr;</a>
         </article>
-        <article class="card">
-          <h3>Community Development</h3>
-          <p>Enrichment, mentorship, and life resource distribution.</p>
-          <a href="/programs/community-development/" style="font-weight: 600;">Get Involved &rarr;</a>
+
+        <article class="card reveal-on-scroll stagger-1" style="display: flex; flex-direction: column; height: 100%;">
+          <div style="margin-bottom: var(--spacing-3); color: var(--color-primary-light-blue);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <h3 style="font-size: 1.4rem; margin-bottom: var(--spacing-2);">Community Development</h3>
+          <p style="color: var(--color-text-muted); flex-grow: 1; line-height: 1.6;">True healing extends beyond the clinic. Our outreach programs include youth mentorship, fresh food drives, coat dispensaries, and partnerships with local Baltimore businesses to uplift the neighborhoods we serve.</p>
+          <a href="/programs/community-development/" style="font-weight: 500; margin-top: var(--spacing-4); display: inline-block;">Join Our Impact &rarr;</a>
         </article>
       </div>
+
+    <section class="reveal-on-scroll" style="margin-top: var(--spacing-8); padding: var(--spacing-6); background-color: var(--color-bg-offset); border-radius: var(--radius-lg); border: 1px solid var(--color-border); text-align: center;">
+      <h2 style="font-size: 2rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-4);">Not sure where to start?</h2>
+      <p style="font-size: 1.1rem; color: var(--color-text-muted); margin-bottom: var(--spacing-4); max-width: 600px; margin-inline: auto;">
+        Navigating behavioral health options can be overwhelming. Let our intake coordinators assess your specific needs and architect a custom care plan.
+      </p>
+      <a href="/intake/start/" class="btn">Request a Consultation</a>
+    </section>
   </div>
 </Layout>

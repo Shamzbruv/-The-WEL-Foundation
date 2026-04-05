@@ -2,17 +2,55 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="FAQ">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    
-    <h1>Frequently Asked Questions</h1>
-    <section>
-      <h3>How quickly will I hear back after submitting an intake form?</h3>
-      <p>We mandate a strict internal response time of 3 business days for all submitted forms.</p>
-      <h3>Is my data secure?</h3>
-      <p>Yes. All uploaded files and intake details are encrypted and stored in completely private storage, only accessible to verified staff members.</p>
-      <h3>Where are you located?</h3>
-      <p>We are physically located at 5858 Belair Rd, Baltimore, MD 21206.</p>
+<Layout title="Frequently Asked Questions - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Frequently Asked Questions</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        We believe in complete transparency. Below are answers to common questions regarding our intake process, insurance policies, and clinical programs to help you make an informed decision for your care.
+      </p>
+    </header>
+
+    <div class="grid" style="max-width: 800px; margin: 0 auto; gap: var(--spacing-5);">
+      <article class="card reveal-on-scroll stagger-1">
+        <h3 style="font-size: 1.3rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">What insurance providers do you accept?</h3>
+        <p style="color: var(--color-text-main); line-height: 1.6;">
+          We accept Maryland Medicaid and a wide array of private health insurance plans. During your initial intake call, our coordination team will verify your benefits confidentially and explain any potential out-of-pocket costs before any services are rendered.
+        </p>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h3 style="font-size: 1.3rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">How long does the intake process take?</h3>
+        <p style="color: var(--color-text-main); line-height: 1.6;">
+          Once you submit the digital intake form, a care coordinator will contact you within 24 to 48 business hours. Your initial psychosocial assessment is typically scheduled within five business days, ensuring you receive care promptly without lingering on waitlists.
+        </p>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-3">
+        <h3 style="font-size: 1.3rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">Are your services entirely confidential?</h3>
+        <p style="color: var(--color-text-main); line-height: 1.6;">
+          Yes. The WEL Foundation complies strictly with all state and federal HIPAA regulations. Your clinical records, SUD treatment status, and all communications are strictly confidential and will never be released without your explicit, written consent.
+        </p>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-1">
+        <h3 style="font-size: 1.3rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">Can family members participate in my rehab program?</h3>
+        <p style="color: var(--color-text-main); line-height: 1.6;">
+          Absolutely. We strongly encourage family integration, particularly in our SUD and child/adolescent PRP programs. With your consent, family members can join mediation sessions and receive education on supporting your long-term recovery journey.
+        </p>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h3 style="font-size: 1.3rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">How do I refer a patient to The WEL Foundation?</h3>
+        <p style="color: var(--color-text-main); line-height: 1.6;">
+          Physicians, social workers, and other clinical partners can refer clients directly using our secure online Referral Portal. Simply click "Refer a Client" at the top of the page, fill out the basic demographic and clinical necessity data, and our team will handle the warm hand-off.
+        </p>
+      </article>
+    </div>
+
+    <section class="reveal-on-scroll" style="text-align: center; margin-top: var(--spacing-8);">
+      <p style="font-size: 1.1rem; color: var(--color-text-muted); margin-bottom: var(--spacing-3);">Still have questions?</p>
+      <a href="/contact/" class="btn">Contact Our Office</a>
     </section>
   </div>
 </Layout>

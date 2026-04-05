@@ -3,16 +3,43 @@ import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout title="About The WEL Foundation">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    
-    <header style="margin-bottom: var(--spacing-6); text-align:center;">
-      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">About Us</h1>
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-6); text-align:center; max-width: 800px; margin-inline: auto;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">About Us</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        The WEL Foundation is a premier behavioral health agency located in Baltimore, Maryland, established to redefine the standard of compassionate, clinical excellence within our community.
+      </p>
     </header>
-    <section>
-      <h2>Our Mission</h2>
-      <p>The WEL Foundation is determined to treat the whole individual from the inside out without judgment. We respect every individual and strive to provide the most practical and empowering mental health interventions available.</p>
-      <h2>What We Do</h2>
-      <p>Based in Baltimore, we specialize in Psychiatric Rehabilitation Programs (PRP), Substance Use Disorder (SUD) therapy, and comprehensive Community Development initiatives. We believe that with the right guidance, mental health challenges should not serve as unbreachable barriers.</p>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: var(--spacing-6); margin-top: var(--spacing-8);">
+      <article class="card reveal-on-scroll stagger-1">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Our Mission</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7;">
+          The WEL Foundation is unconditionally committed to treating the whole individual—from the inside out—without prejudice or judgment. We recognize that true healing requires empathy and structurally sound clinical frameworks. We strive to provide the most practical, empowering, and culturally sensitive mental health interventions available, ensuring that everyone who walks through our doors is treated with the maximum dignity and respect they deserve.
+        </p>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Our Vision</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7;">
+          We envision a robust community where mental health challenges and substance use disorders do not define an individual's trajectory or dictate their boundaries. Instead, we see a future where comprehensive education, rigorous psychosocial rehabilitation, and active mentorship elevate entire neighborhoods, breaking generational cycles of trauma and transforming personal vulnerability into enduring, collective strength.
+        </p>
+      </article>
+    </div>
+
+    <section class="reveal-on-scroll" style="margin-top: var(--spacing-8); padding: var(--spacing-6); background-color: var(--color-bg-offset); border-radius: var(--radius-lg); border: 1px solid var(--color-border);">
+      <h2 style="font-size: 2rem; color: var(--color-primary-blue); text-align: center; margin-bottom: var(--spacing-4);">Our History & Approach</h2>
+      <div style="column-count: 2; column-gap: var(--spacing-6); color: var(--color-text-muted); line-height: 1.7;">
+        <p style="margin-bottom: var(--spacing-3);">
+          Founded to bridge the glaring gap in accessible, high-quality behavioral health services in Baltimore, The WEL Foundation emerged from a coalition of experienced clinicians, community advocates, and social workers. We recognized that traditional programmatic models often treated symptoms in isolation.
+        </p>
+        <p style="margin-bottom: var(--spacing-3);">
+          Understanding the deep intersections of poverty, trauma, and substance use, we constructed a holistic infrastructure. Whether facilitating our state-certified DUI/DWI programs or providing intensive Psychiatric Rehabilitation (PRP), our philosophy hinges on actionable life-skill development and long-term stabilization, rather than short-term triage.
+        </p>
+        <p>
+          Today, we proudly operate out of our Belair Road facility, serving as a trusted beacon and an institutional partner to the state of Maryland's broader clinical network.
+        </p>
+      </div>
     </section>
   </div>
 </Layout>

@@ -2,8 +2,45 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Resources">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    <h1>Client Resources</h1><p>Find links to external partner organizations, crisis lines, and mental health literature below.</p>
+<Layout title="Client & Community Resources - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Community Resources</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        If you or someone you love is navigating a behavioral health crisis, help is available. We have curated a list of local Maryland and national support structures to assist you immediately.
+      </p>
+    </header>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); margin-bottom: var(--spacing-8);">
+      <article class="card reveal-on-scroll stagger-1" style="background-color: var(--color-bg-offset);">
+        <h2 style="font-size: 1.4rem; color: var(--color-error); margin-bottom: var(--spacing-2);">Immediate Crisis Support</h2>
+        <p style="color: var(--color-text-main); margin-bottom: var(--spacing-3); font-size: 0.95rem;">If you are experiencing a medical emergency, please call <strong>911</strong> immediately.</p>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-2);">
+          <li><strong>Maryland Crisis Call Center:</strong> 211 (Option 1)</li>
+          <li><strong>National Suicide Prevention Lifeline:</strong> 988</li>
+          <li><strong>Baltimore City Crisis Response:</strong> 410-433-5175</li>
+        </ul>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h2 style="font-size: 1.4rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">Housing & Basic Needs</h2>
+        <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-3); font-size: 0.95rem;">Our PRP coordinators can assist with these applications during your program.</p>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-2);">
+          <li><a href="#" style="font-weight: 500;">MD Department of Human Services (SNAP & Cash Assistance)</a></li>
+          <li><a href="#" style="font-weight: 500;">Housing Authority of Baltimore City</a></li>
+          <li><a href="#" style="font-weight: 500;">Maryland Energy Assistance Program (MEAP)</a></li>
+        </ul>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-3">
+        <h2 style="font-size: 1.4rem; color: var(--color-primary-light-blue); margin-bottom: var(--spacing-2);">Substance Use Support Groups</h2>
+        <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-3); font-size: 0.95rem;">Supplement your outpatient treatment with local community-led meetings.</p>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--spacing-2);">
+          <li><a href="#" style="font-weight: 500;">Alcoholics Anonymous (AA) - Maryland General Service</a></li>
+          <li><a href="#" style="font-weight: 500;">Narcotics Anonymous (NA) Free State Region</a></li>
+          <li><a href="#" style="font-weight: 500;">Al-Anon/Alateen Family Support</a></li>
+        </ul>
+      </article>
+    </div>
   </div>
 </Layout>

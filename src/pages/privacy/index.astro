@@ -2,8 +2,45 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Privacy Policy">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    <h1>Privacy Policy</h1><p>We take your privacy seriously. The WEL Foundation enforces HIPAA-compliant boundaries for patient information transmission and storage. Direct file storage is not publicly accessible via any URL endpoint.</p>
+<Layout title="Privacy Policy - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0; max-width: 800px;">
+    
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-6); text-align:center;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Privacy Policy</h1>
+      <p style="font-size: 1.1rem; color: var(--color-text-muted);">Last Updated: October 2023</p>
+    </header>
+
+    <div class="card reveal-on-scroll stagger-1" style="border: none; box-shadow: none; background-color: var(--color-bg); padding: 0;">
+      <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-4);">
+        The WEL Foundation ("we", "our", or "us") is dedicated to protecting the confidentiality and privacy of our clients and web visitors. This Privacy Policy details how we collect, use, and shield your Personal Health Information (PHI) across our digital infrastructure in accordance with the Health Insurance Portability and Accountability Act (HIPAA) and applicable Maryland state laws.
+      </p>
+
+      <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin-top: var(--spacing-6); margin-bottom: var(--spacing-3);">Information Collection & Handling</h2>
+      <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">We only collect data that is clinically or administratively necessary to provision care:</p>
+      <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6; margin-bottom: var(--spacing-5);">
+        <li><strong>Voluntary Form Submissions:</strong> Information provided through our Intake or Referral portals (e.g., medical records, contact profiles) is transmitted via AES-256 encryption.</li>
+        <li><strong>Automated Data:</strong> We do not deploy third-party advertising trackers. Standard site analytics may log non-identifiable browser endpoints strictly for functional maintenance.</li>
+      </ul>
+
+      <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin-top: var(--spacing-6); margin-bottom: var(--spacing-3);">HIPAA & Third-Party Disclosure</h2>
+      <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+        Under no circumstances is your PHI sold to data brokers. Furthermore, clinical records regarding Psychiatric Rehabilitation or Substance Use treatment are heavily siloed. We will not disclose any information to external health providers or family members without an active, explicit Consent to Release form signed by you, except where mandated by law to prevent imminent harm.
+      </p>
+
+      <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin-top: var(--spacing-6); margin-bottom: var(--spacing-3);">Your Rights to Access</h2>
+      <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+        You reserve the right to review, amend, or request an accounting of disclosures related to your clinical records. To enforce these rights or raise a privacy concern, contact our designated Privacy Officer at:
+      </p>
+      
+      <div style="background-color: var(--color-bg-offset); padding: var(--spacing-4); border-radius: var(--radius-sm); border: 1px solid var(--color-border); margin-top: var(--spacing-4);">
+        <p style="margin: 0; color: var(--color-text-muted); line-height: 1.6;">
+          <strong>Privacy Officer</strong><br/>
+          The WEL Foundation<br/>
+          5858 Belair Rd, Baltimore, MD 21206<br/>
+          compliance@weempowerleadership.com
+        </p>
+      </div>
+    </div>
+
   </div>
 </Layout>

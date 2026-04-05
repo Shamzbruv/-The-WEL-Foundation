@@ -2,52 +2,55 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Substance Use Disorder (SUD) Program">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    <nav aria-label="Breadcrumbs" style="margin-bottom: var(--spacing-4);">
-      <a href="/">Home</a> &gt; <a href="/programs/">Programs</a> &gt; <span aria-current="page">SUD Program</span>
-    </nav>
-    
-    <header style="margin-bottom: var(--spacing-6);">
-      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">Substance Use Disorder (SUD) Support</h1>
-      <p style="font-size: 1.2rem; color: var(--color-text-muted);">Compassionate, structured support for individuals seeking lasting recovery from addiction.</p>
+<Layout title="Substance Use Disorder (SUD) Support - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <div style="font-size: 3rem; margin-bottom: var(--spacing-3);">⚕️</div>
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Substance Use Disorder (SUD) Program</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        Addiction is not a moral failing; it is a complex behavioral health challenge that requires a structured, compassionate, and evidence-based approach. Our SUD programs are tailored to build lasting recovery architectures for our clients.
+      </p>
     </header>
 
-    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-6);">
-      <div class="main-content">
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What the Service Is</h2>
-          <p>The Substance Use Disorder (SUD) program at The WEL Foundation provides comprehensive assistance to individuals battling addiction. Through behavioral therapies, mental health coordination, and community support, we offer a dedicated environment designed to empower clients to build and sustain a sober lifestyle. We do not just focus on the symptoms of addiction; we address the whole individual from the inside out.</p>
-        </section>
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: var(--spacing-6); margin-bottom: var(--spacing-8);">
+      <article class="card reveal-on-scroll stagger-1">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Intensive Outpatient Program (IOP)</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          Designed for individuals requiring rigorous support without the constraints of inpatient hospitalization. Our IOP track provides a concentrated regimen of therapy, typically running 3-5 days a week depending on the clinical assessment.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Individualized dual-diagnosis clinical assessments</li>
+          <li>Frequent toxicological screenings mapped to recovery goals</li>
+          <li>Intensive group therapy utilizing Cognitive Behavioral Therapy (CBT)</li>
+        </ul>
+      </article>
 
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>Who It Is For</h2>
-          <p>This program is designed for adolescents and adults in the Baltimore community who are actively struggling with a substance use disorder. Whether you are seeking help for the first time or looking for ongoing community support after initial recovery, The WEL Foundation is here to mentor and guide you.</p>
-        </section>
+      <article class="card reveal-on-scroll stagger-2">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Standard Outpatient (OP)</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          Geared toward clients who have achieved a baseline of stability but still require consistent clinical touchpoints to prevent relapse. OP allows clients to maintain their employment and community routines.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Bi-weekly or weekly 1-on-1 counseling sessions</li>
+          <li>Relapse prevention strategizing and trigger mapping</li>
+          <li>Seamless integration with Psychiatric Rehabilitation (PRP) services</li>
+        </ul>
+      </article>
+    </div>
 
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>How to Qualify</h2>
-          <ul>
-            <li>Must be actively participating in or willing to begin concurrent mental health treatment.</li>
-            <li>Must have a referral from a mental health provider or healthcare partner (or initiate a self-referral through our intake process).</li>
-            <li>Participation in Maryland Medical Assistance or appropriate pre-arranged coverage is highly recommended.</li>
-          </ul>
-        </section>
-
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What Happens Next</h2>
-          <p>Once an intake or referral is submitted, our team reviews the application within <strong>3 business days</strong>. An assigned coordinator will reach out to schedule an initial consultation and evaluation. From there, we work with you to develop a personalized recovery and development plan tailored to your specific needs.</p>
-        </section>
+    <section class="reveal-on-scroll" style="padding: var(--spacing-6); background-color: var(--color-bg-offset); border-radius: var(--radius-lg); border: 1px solid var(--color-border); margin-bottom: var(--spacing-8);">
+      <h2 style="font-size: 2rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-4);">Our Therapeutic Modalities</h2>
+      <div style="column-count: 2; column-gap: var(--spacing-6); color: var(--color-text-main); line-height: 1.7;">
+        <p><strong>Cognitive Behavioral Therapy (CBT):</strong> Helping clients unearth the deeply rooted thought patterns and distortions that precipitate substance use, effectively severing the cycle of addiction.</p>
+        <p><strong>Dialectical Behavior Therapy (DBT) Skills:</strong> Equipping clients with severe emotional dysregulation the distress-tolerance skills necessary to handle crisis without resorting to chemical coping mechanisms.</p>
+        <p><strong>Family Integration:</strong> Addiction reverberates through families. We offer guided family counseling sessions to rebuild trust, set healthy boundaries, and educate loved ones on the neurobiology of recovery.</p>
       </div>
+    </section>
 
-      <aside>
-        <div class="card" style="background-color: var(--color-bg-offset); border-top: 4px solid var(--color-accent-gold);">
-          <h3>Take the First Step</h3>
-          <p style="margin-bottom: var(--spacing-4);">Our secure intake process is confidential and easy to complete online.</p>
-          <a href="/intake/start/" class="btn" style="display: block; width: 100%; margin-bottom: var(--spacing-2);">Start Your Intake</a>
-          <a href="/referral/start/" class="btn btn-secondary" style="display: block; width: 100%;">Providers: Refer a Client</a>
-        </div>
-      </aside>
+    <div style="text-align: center;" class="reveal-on-scroll">
+      <h3 style="font-size: 1.5rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Ready to take the first step?</h3>
+      <a href="/intake/start/" class="btn">Begin Digital Intake</a>
+      <p style="margin-top: var(--spacing-2); font-size: 0.9rem; color: var(--color-text-muted);">Completely confidential & HIPAA compliant.</p>
     </div>
   </div>
 </Layout>

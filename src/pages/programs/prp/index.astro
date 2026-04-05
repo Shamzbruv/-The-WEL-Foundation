@@ -2,47 +2,55 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Psychiatric Rehabilitation (PRP)">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    
-    <nav aria-label="Breadcrumbs" style="margin-bottom: var(--spacing-4);">
-      <a href="/">Home</a> &gt; <a href="/programs/">Programs</a> &gt; <span aria-current="page">PRP Program</span>
-    </nav>
-    <header style="margin-bottom: var(--spacing-6);">
-      <h1 style="font-size: 2.5rem; color: var(--color-primary-blue);">Psychiatric Rehabilitation Program (PRP)</h1>
-      <p style="font-size: 1.2rem; color: var(--color-text-muted);">Skill-building and resource management for managing mental health barriers effectively.</p>
+<Layout title="Psychiatric Rehabilitation (PRP) - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <div style="font-size: 3rem; margin-bottom: var(--spacing-3);">🧠</div>
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Psychiatric Rehabilitation Program (PRP)</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        Therapy provides the mental blueprint, but PRP provides the mortar and bricks. Our Psychiatric Rehabilitation Program bridges the gap between clinical insight and the rigorous demands of daily community living.
+      </p>
     </header>
-    <div class="grid" style="grid-template-columns: 2fr 1fr; gap: var(--spacing-6);">
-      <div class="main-content">
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What the Service Is</h2>
-          <p>Our PRP service assists adults in developing, enhancing, and retaining psychiatric stability, social competencies, personal adjustment, and independent living competencies. We provide life skills training, community integration, and personalized development strategies.</p>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>Who It Is For</h2>
-          <p>The program is intended for adults and adolescents who face challenges with severe and persistent mental illness and require support transitioning into community settings or maintaining current community living statuses.</p>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>How to Qualify</h2>
-          <ul>
-            <li>Currently engaging in outpatient mental health treatment (seeing a therapist or psychiatrist regularly).</li>
-            <li>Referred by a licensed mental health professional.</li>
-            <li>Eligible under Maryland Medical Assistance guidelines.</li>
-          </ul>
-        </section>
-        <section style="margin-bottom: var(--spacing-5);">
-          <h2>What Happens Next</h2>
-          <p>After an intake form is received, an assigned PRP coordinator will review the referral within <strong>3 business days</strong> and schedule an assessment to outline rehabilitation goals.</p>
-        </section>
-      </div>
-      <aside>
-        <div class="card" style="background-color: var(--color-bg-offset); border-top: 4px solid var(--color-accent-gold);">
-          <h3>Take the First Step</h3>
-          <p style="margin-bottom: var(--spacing-4);">Secure your spot and start your evaluation online to expedite the process.</p>
-          <a href="/intake/start/" class="btn" style="display: block; width: 100%; margin-bottom: var(--spacing-2);">Start Your Intake</a>
-          <a href="/referral/start/" class="btn btn-secondary" style="display: block; width: 100%;">Providers: Refer a Client</a>
-        </div>
-      </aside>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: var(--spacing-6); margin-bottom: var(--spacing-8);">
+      <article class="card reveal-on-scroll stagger-1">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Adult PRP Services</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          For adults struggling to maintain sovereignty due to severe psychological distress (e.g., Schizophrenia, Severe Depression, or Bipolar Disorder), our rehabilitation coordinators act as active community allies.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Assistance with entitlement programs (housing, SNAP, SSI/SSDI)</li>
+          <li>Financial literacy and monthly budgeting skills</li>
+          <li>Hygiene, home-maintenance, and nutritional coaching</li>
+          <li>Medical appointment coordination and medication management support</li>
+        </ul>
+      </article>
+
+      <article class="card reveal-on-scroll stagger-2">
+        <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue);">Child & Adolescent PRP</h2>
+        <p style="color: var(--color-text-main); line-height: 1.7; margin-bottom: var(--spacing-3);">
+          Children facing behavioral disruptions or emotional dysregulation require targeted intervention to prevent adverse lifelong trajectories. We work directly in the home, community, and school settings.
+        </p>
+        <ul style="color: var(--color-text-muted); padding-left: var(--spacing-4); line-height: 1.6;">
+          <li>Anger management and conflict resolution strategies</li>
+          <li>IEP (Individualized Education Program) advocacy and school interfacing</li>
+          <li>Prosocial boundary setting and peer-relationship coaching</li>
+          <li>Family-system strengthening and parental support strategies</li>
+        </ul>
+      </article>
     </div>
+
+    <section class="reveal-on-scroll" style="text-align: center; max-width: 700px; margin-inline: auto;">
+      <h2 style="font-size: 2rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">How does PRP differ from Therapy?</h2>
+      <p style="font-size: 1.1rem; color: var(--color-text-muted); line-height: 1.7; margin-bottom: var(--spacing-5);">
+        While traditional therapy happens within the confines of an office and focuses on internal emotional processing, <strong>PRP is hyper-practical and occurs in the real world</strong>. If therapy teaches a client why they get anxious at the grocery store, a PRP coordinator will literally walk alongside the client through the grocery store to practice grounding techniques in real-time.
+      </p>
+      
+      <div style="background-color: var(--color-bg-offset); padding: var(--spacing-4); border-radius: var(--radius-sm); border: 1px solid var(--color-border); text-align: left;">
+        <h4 style="color: var(--color-primary-blue); margin-bottom: var(--spacing-1);">Eligibility Criteria:</h4>
+        <p style="color: var(--color-text-muted); font-size: 0.95rem;">Clients must be concurrently enrolled in an outpatient mental health therapy program and meet priority population diagnosis criteria established by the State of Maryland.</p>
+      </div>
+    </section>
+
   </div>
 </Layout>

@@ -2,8 +2,60 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 
-<Layout title="Events">
-  <div class="container" style="padding: var(--spacing-6) 0;">
-    <h1>Upcoming Events</h1><p>Check back soon for our latest community workshops, outreach activities, and training sessions.</p>
+<Layout title="Community Events - The WEL Foundation">
+  <div class="container" style="padding: var(--spacing-8) 0;">
+    <header class="reveal-on-scroll" style="margin-bottom: var(--spacing-8); text-align:center; max-width: 800px; margin-inline: auto;">
+      <h1 style="font-size: 3rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-3);">Community Events</h1>
+      <p style="font-size: 1.15rem; color: var(--color-text-muted); line-height: 1.6;">
+        Healing happens in community. Join us at our upcoming town halls, support groups, and community wellness days across Baltimore. All events are open to the public unless specified.
+      </p>
+    </header>
+
+    <div class="grid" style="grid-template-columns: 1fr; gap: var(--spacing-5); max-width: 800px; margin: 0 auto; margin-bottom: var(--spacing-8);">
+      <!-- Event 1 -->
+      <article class="card reveal-on-scroll stagger-1" style="display: flex; flex-direction: column; gap: var(--spacing-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border); padding-bottom: var(--spacing-3);">
+          <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin: 0;">Monthly Wellness Town Hall</h2>
+          <span style="background-color: var(--color-bg-offset); padding: var(--spacing-1) var(--spacing-3); border-radius: 20px; font-weight: 600; color: var(--color-primary-blue); font-size: 0.9rem;">First Tuesday, Every Month</span>
+        </div>
+        <p style="color: var(--color-text-main); line-height: 1.6;">A free, open-forum discussion led by our clinical directors focusing on mental health stigma, navigating medicaid benefits, and actionable wellness strategies.</p>
+        <div style="font-size: 0.95rem; color: var(--color-text-muted);">
+          <strong>Location:</strong> WEL Foundation Belair Rd Office (Community Room)<br/>
+          <strong>Time:</strong> 6:00 PM - 7:30 PM
+        </div>
+      </article>
+
+      <!-- Event 2 -->
+      <article class="card reveal-on-scroll stagger-2" style="display: flex; flex-direction: column; gap: var(--spacing-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border); padding-bottom: var(--spacing-3);">
+          <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin: 0;">Family Support Network</h2>
+          <span style="background-color: var(--color-bg-offset); padding: var(--spacing-1) var(--spacing-3); border-radius: 20px; font-weight: 600; color: var(--color-primary-blue); font-size: 0.9rem;">Bi-Weekly Thursdays</span>
+        </div>
+        <p style="color: var(--color-text-main); line-height: 1.6;">A dedicated support circle for the family members and loved ones of individuals battling Substance Use Disorders. Confidential, supportive, and educational.</p>
+        <div style="font-size: 0.95rem; color: var(--color-text-muted);">
+          <strong>Location:</strong> Virtual (Zoom link provided upon registration)<br/>
+          <strong>Time:</strong> 7:00 PM - 8:00 PM
+        </div>
+      </article>
+
+      <!-- Event 3 -->
+      <article class="card reveal-on-scroll stagger-3" style="display: flex; flex-direction: column; gap: var(--spacing-4);">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-border); padding-bottom: var(--spacing-3);">
+          <h2 style="font-size: 1.5rem; color: var(--color-primary-light-blue); margin: 0;">Autumn Coat & Food Drive</h2>
+          <span style="background-color: rgba(212, 175, 55, 0.2); padding: var(--spacing-1) var(--spacing-3); border-radius: 20px; font-weight: 600; color: var(--color-primary-blue); font-size: 0.9rem;">Annual Special Event</span>
+        </div>
+        <p style="color: var(--color-text-main); line-height: 1.6;">Join our community development coalition to distribute non-perishable food items, warm winter clothing, and hygiene kits to vulnerable Baltimore residents. Volunteers needed.</p>
+        <div style="font-size: 0.95rem; color: var(--color-text-muted);">
+          <strong>Location:</strong> To Be Announced<br/>
+          <strong>Date:</strong> October 15th
+        </div>
+      </article>
+    </div>
+
+    <section class="reveal-on-scroll" style="text-align: center;">
+      <h3 style="font-size: 1.5rem; color: var(--color-primary-blue); margin-bottom: var(--spacing-2);">Want to host an event?</h3>
+      <p style="font-size: 1.1rem; color: var(--color-text-muted); margin-bottom: var(--spacing-4);">We frequently partner with local organizers to host wellness pop-ups.</p>
+      <a href="/contact/" class="btn btn-secondary">Contact Our Team</a>
+    </section>
   </div>
 </Layout>
