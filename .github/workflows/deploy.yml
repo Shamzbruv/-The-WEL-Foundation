@@ -24,7 +24,7 @@ jobs:
           path: dist
 
   deploy-static:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -41,10 +41,11 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
   deploy-supabase:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.SUPABASE_ACCESS_TOKEN != ''
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
         with:
           version: latest
@@ -54,6 +55,8 @@ jobs:
         run: supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_ID }}
       - name: Apply DB migrations
         run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       - name: Deploy Edge Functions
         run: |
           supabase functions deploy intake-submit --no-verify-jwt
