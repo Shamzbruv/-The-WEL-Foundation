@@ -10,10 +10,10 @@ import Layout from '../../../layouts/Layout.astro';
     </p>
 
     <!-- Progress Indicator -->
-    <div class="flex" style="justify-content: space-between; margin-bottom: var(--spacing-5); border-bottom: 2px solid var(--color-border); padding-bottom: var(--spacing-2);">
-      <span id="progress-1" style="font-weight: bold; color: var(--color-primary-blue);">1. Basic Info</span>
-      <span id="progress-2" style="color: var(--color-text-muted);">2. Documents</span>
-      <span id="progress-3" style="color: var(--color-text-muted);">3. Review</span>
+    <div class="intake-progress" style="justify-content: space-between; margin-bottom: var(--spacing-5); border-bottom: 2px solid rgba(15,23,42,0.08); padding-bottom: var(--spacing-2);">
+      <span id="progress-1" style="font-weight: bold; color: var(--color-primary-navy);">1. Basic Info</span>
+      <span id="progress-2" style="color: var(--color-text-secondary);">2. Documents</span>
+      <span id="progress-3" style="color: var(--color-text-secondary);">3. Review</span>
     </div>
 
     <!-- Intake Form -->
@@ -61,7 +61,7 @@ import Layout from '../../../layouts/Layout.astro';
           <input type="file" id="insuranceCard" name="insuranceCard" accept=".pdf,image/jpeg,image/png" />
           <span class="error-message sr-only" id="error-insuranceCard">Invalid file type or size.</span>
         </div>
-        <div class="flex" style="gap: var(--spacing-3);">
+        <div class="form-btn-row">
           <button type="button" class="btn btn-secondary" id="btn-prev-2">Back</button>
           <button type="button" class="btn" id="btn-next-2">Review Submission</button>
         </div>
@@ -77,9 +77,9 @@ import Layout from '../../../layouts/Layout.astro';
           <p><strong>ID Document:</strong> <span id="review-id"></span></p>
         </div>
         <div id="form-error-summary" class="error-message sr-only" role="alert">Please correct errors before submitting.</div>
-        <div class="flex" style="gap: var(--spacing-3);">
+        <div class="form-btn-row">
           <button type="button" class="btn btn-secondary" id="btn-prev-3">Back</button>
-          <button type="submit" class="btn" id="btn-submit" style="background-color: var(--color-accent-gold); color: var(--color-primary-blue);">Secure Submit</button>
+          <button type="submit" class="btn" id="btn-submit" style="background-color: var(--color-accent-gold-muted); color: white;">Secure Submit</button>
         </div>
       </section>
       
@@ -92,6 +92,31 @@ import Layout from '../../../layouts/Layout.astro';
 
     </form>
   </div>
+
+  <style>
+    .intake-progress {
+      display: flex;
+      gap: var(--spacing-3);
+      flex-wrap: wrap;
+    }
+
+    .form-btn-row {
+      display: flex;
+      gap: var(--spacing-3);
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .form-btn-row {
+        flex-direction: column;
+      }
+
+      .form-btn-row .btn,
+      .form-btn-row .btn-secondary {
+        width: 100%;
+      }
+    }
+  </style>
 
   <script>
     // @ts-nocheck

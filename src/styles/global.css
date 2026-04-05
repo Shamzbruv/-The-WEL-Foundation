@@ -112,6 +112,12 @@ a:hover, a:focus {
   padding: 0 var(--spacing-4);
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-3);
+  }
+}
+
 .grid {
   display: grid;
   gap: var(--spacing-4);
@@ -212,10 +218,13 @@ textarea {
   border: var(--border-delicate);
   border-radius: var(--radius-md);
   font-family: inherit;
+  /* Must be >= 16px to prevent iOS auto-zoom on focus */
   font-size: 1rem;
   transition: border-color var(--transition-hover), box-shadow var(--transition-hover);
   background-color: var(--color-bg-surface);
   color: var(--color-text-primary);
+  /* Prevent double-tap zoom on mobile */
+  touch-action: manipulation;
 }
 
 input[type="text"]:focus,
@@ -310,5 +319,45 @@ textarea:focus {
   
   .cta-link:hover svg {
     transform: none !important;
+  }
+}
+
+/* =============================================
+   GLOBAL MOBILE RESPONSIVE
+   ============================================= */
+@media (max-width: 768px) {
+  /* Ensure minimum 44px touch targets for all interactive elements */
+  .btn,
+  .btn-secondary {
+    min-height: 44px;
+    padding: 0.75rem 1.5rem;
+    /* Prevent double-tap zoom */
+    touch-action: manipulation;
+  }
+
+  /* Disable card lift on touch (hover states don't suit touch) */
+  .card:hover {
+    transform: none;
+    box-shadow: var(--shadow-premium-soft);
+    border-color: transparent;
+  }
+
+  /* Reduce section spacing */
+  section {
+    padding-top: var(--spacing-8) !important;
+    padding-bottom: var(--spacing-8) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra-tight spacing on small phones */
+  h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+  h2 { font-size: clamp(1.6rem, 6vw, 2.5rem); }
+  h3 { font-size: clamp(1.2rem, 5vw, 1.5rem); }
+
+  .btn,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
   }
 }
