@@ -95,7 +95,7 @@ import Layout from '../../../layouts/Layout.astro';
 
   <script>
     // @ts-nocheck
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('astro:page-load', () => {
       const form = document.getElementById('referral-form');
       const step1 = document.getElementById('step-1');
       const step2 = document.getElementById('step-2');

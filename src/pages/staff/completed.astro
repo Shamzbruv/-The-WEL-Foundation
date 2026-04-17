@@ -1,0 +1,75 @@
+---
+import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="Completed Forms">
+    <div class="card">
+        <h2>Historical Pipeline</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Submissions securely processed and marked complete.</p>
+        
+        <table class="portal-table" id="completed-queue-table">
+            <thead>
+                <tr>
+                    <th>Date Received</th>
+                    <th>Date Completed</th>
+                    <th>Applicant</th>
+                    <th>Type</th>
+                    <th>Processed By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6">Loading history...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#completed-queue-table tbody');
+            if(!tbody) return;
+
+            // RLS automatically limits to the user's scope
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('id, created_at, last_action_at, submitted_by_name, type, profiles!assigned_to(full_name)')
+                .eq('status', 'Completed')
+                .order('last_action_at', { ascending: false })
+                .limit(50); // limit historical load size
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error loading history: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748b;">No completed submissions yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(sub => {
+                const row = document.createElement('tr');
+                const crDt = new Date(sub.created_at).toLocaleDateString();
+                const fnDt = sub.last_action_at ? new Date(sub.last_action_at).toLocaleDateString() : 'N/A';
+                
+                row.innerHTML = `
+                    <td>${crDt}</td>
+                    <td>${fnDt}</td>
+                    <td><strong>${sub.submitted_by_name}</strong></td>
+                    <td>${(sub.type || '').toUpperCase()}</td>
+                    <td>${sub.profiles ? sub.profiles.full_name : 'N/A'}</td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-outline" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Review Record</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>

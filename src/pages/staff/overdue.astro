@@ -1,0 +1,75 @@
+---
+import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="Overdue & SLAs">
+    <div class="card">
+        <h2 style="color: #c53030;">SLA Breached & Overdue</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Submissions flagged as having breached their expected processing time.</p>
+        
+        <table class="portal-table" id="overdue-queue-table">
+            <thead>
+                <tr>
+                    <th>Initial SLA Deadline</th>
+                    <th>Breached Date</th>
+                    <th>Applicant</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6">Loading overdue queue...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#overdue-queue-table tbody');
+            if(!tbody) return;
+
+            // RLS automatically limits to the user's scope
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('id, due_at, sla_breached_at, submitted_by_name, status, profiles!assigned_to(full_name)')
+                .not('sla_breached_at', 'is', null)
+                .neq('status', 'Completed')
+                .order('sla_breached_at', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error loading submissions: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #22c55e;">Incredible work! No submissions are currently overdue.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(sub => {
+                const row = document.createElement('tr');
+                const dueDt = sub.due_at ? new Date(sub.due_at).toLocaleDateString() : 'N/A';
+                const breachDt = sub.sla_breached_at ? new Date(sub.sla_breached_at).toLocaleString() : 'N/A';
+                
+                row.innerHTML = `
+                    <td>${dueDt}</td>
+                    <td style="color:#c53030; font-weight:600;">${breachDt}</td>
+                    <td><strong>${sub.submitted_by_name}</strong></td>
+                    <td><span class="status-pill status-${sub.status.replace(/\\s+/g, '')}">${sub.status}</span></td>
+                    <td>${sub.profiles ? sub.profiles.full_name : '<em style="color:#c53030;">Unassigned!</em>'}</td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem; background:#c53030;">Resolve</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>

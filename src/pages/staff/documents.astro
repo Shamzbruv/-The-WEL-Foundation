@@ -1,0 +1,81 @@
+---
+import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="Documents Queue">
+    <div class="card">
+        <h2>File Validation Queue</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Documents requiring manual verification and review.</p>
+        
+        <table class="portal-table" id="documents-queue-table">
+            <thead>
+                <tr>
+                    <th>Upload Date</th>
+                    <th>Document</th>
+                    <th>Applicant / Parent Submission</th>
+                    <th>Category</th>
+                    <th>SLA Deadline</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6">Loading documents...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Centralized Document Validation API -->
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#documents-queue-table tbody');
+            if(!tbody) return;
+
+            // RLS automatically filters this to documents we have access to
+            const { data, error } = await supabase
+                .from('submission_files')
+                .select('id, file_name, created_at, document_category, review_due_at, submission_id, submissions!inner(submitted_by_name, type, assigned_to)')
+                .eq('review_status', 'Pending')
+                .order('review_due_at', { ascending: true });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error loading documents: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #94a3b8;">No documents pending review! You're caught up.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(file => {
+                const row = document.createElement('tr');
+                const uDate = new Date(file.created_at).toLocaleDateString();
+                const dueStr = file.review_due_at ? new Date(file.review_due_at).toLocaleDateString() : 'N/A';
+                
+                let isOverdue = false;
+                if(file.review_due_at && new Date(file.review_due_at) < new Date()) isOverdue = true;
+
+                row.innerHTML = `
+                    <td>${uDate}</td>
+                    <td><strong style="word-break:break-all;">${(file.file_name || 'Document').replace(/</g, "&lt;")}</strong></td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${file.submission_id}" style="color:var(--color-primary-navy); font-weight:600; text-decoration:none;">${file.submissions.submitted_by_name}</a><br/>
+                        <span style="font-size:0.8rem; color:#64748b;">${(file.submissions.type || '').toUpperCase()}</span>
+                    </td>
+                    <td>${file.document_category || 'General'}</td>
+                    <td><span style="font-weight:600; ${isOverdue ? 'color:#c53030;' : 'color:var(--color-primary-navy);'}">${dueStr}</span></td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${file.submission_id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Review Context</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>

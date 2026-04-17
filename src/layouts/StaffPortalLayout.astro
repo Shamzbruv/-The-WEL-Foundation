@@ -1,0 +1,204 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | WEL Staff Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <ClientRouter />
+    <style>
+      :root {
+        --color-sidebar: #0A2540;
+        --color-sidebar-hover: #1e3a8a;
+        --color-sidebar-text: #e2e8f0;
+        --color-bg-offset: #F8F9FA;
+        --color-border: #E2E8F0;
+        --font-family-base: 'Inter', sans-serif;
+      }
+      body { margin: 0; font-family: var(--font-family-base); background: var(--color-bg-offset); display: flex; height: 100vh; overflow: hidden; }
+      .sidebar { width: 260px; background: var(--color-sidebar); color: var(--color-sidebar-text); display: flex; flex-direction: column; flex-shrink: 0; transition: transform 0.3s ease; }
+      .sidebar-header { padding: 1.5rem; font-weight: 700; font-size: 1.2rem; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;}
+      .sidebar-nav { padding: 1rem 0; flex-grow: 1; overflow-y: auto; }
+      .nav-item { padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; color: var(--color-sidebar-text); text-decoration: none; transition: background 0.2s; }
+      .nav-item:hover, .nav-item.active { background: var(--color-sidebar-hover); color: white; }
+      .nav-group { padding: 1rem 1.5rem 0.5rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 600; }
+      
+      .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+      .top-nav { background: white; padding: 1rem 2rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; }
+      .content-area { padding: 2rem; overflow-y: auto; flex-grow: 1; }
+      
+      .btn-outline { background: transparent; border: 1px solid var(--color-border); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+      .btn-outline:hover { background: #f1f5f9; }
+      
+      /* Shared Utilities for Portal content */
+      .card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      .hidden { display: none !important; }
+      .mobile-only { display: none; }
+      
+      .status-pill { padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+      .status-New, .status-Pending { background: #EBF8FF; color: #2B6CB0; }
+      .status-Overdue, .status-NeedsReplacement, .status-Rejected { background: #FED7D7; color: #C53030; }
+      .status-InReview, .status-Verified { background: #FEFCBF; color: #975A16; }
+      .status-Completed { background: #C6F6D5; color: #22543D; }
+      
+      .table-responsive { width: 100%; overflow-x: auto; }
+      table.portal-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.95rem; min-width: 600px; }
+      table.portal-table th, table.portal-table td { text-align: left; padding: 0.75rem; border-bottom: 1px solid var(--color-border); }
+      table.portal-table th { background-color: var(--color-bg-offset); font-size: 0.85em; text-transform: uppercase; color: #4A5568;}
+      
+      .btn-primary { padding: 0.5rem 1rem; background: var(--color-sidebar); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500;}
+      .btn-primary:hover { background: var(--color-sidebar-hover); }
+
+      /* Mobile Responsiveness */
+      .sidebar-backdrop { display: none; }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: -260px;
+          height: 100vh;
+          z-index: 100;
+        }
+        .sidebar.open {
+          transform: translateX(260px);
+        }
+        .sidebar-backdrop.open {
+          display: block;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(10, 37, 64, 0.5);
+          z-index: 90;
+          backdrop-filter: blur(2px);
+        }
+        .mobile-only { display: inline-flex; align-items: center; justify-content: center; border: none; font-size: 1.25rem; padding: 0; }
+        .desktop-text { display: none; }
+        .top-nav { padding: 1rem; }
+        .content-area { padding: 1rem; }
+        .card { padding: 1rem; }
+        #user-role-badge { display: none; } /* Save space on small screens */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div><i class="fa-solid fa-shield-halved" style="margin-right:8px; color: #fbbf24;"></i> WEL Portal</div>
+        <button id="close-sidebar-btn" class="btn-outline mobile-only" style="color: white; border: none;"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="nav-group">Workflows</div>
+        <a href="/staff/" class="nav-item root-link"><i class="fa-solid fa-inbox"></i> My Workspace</a>
+        <a href="/staff/submissions/new" class="nav-item"><i class="fa-solid fa-certificate"></i> New Submissions</a>
+        <a href="/staff/submissions/review" class="nav-item"><i class="fa-solid fa-magnifying-glass"></i> In Review</a>
+        
+        <div class="nav-group">Action Queues</div>
+        <a href="/staff/documents" class="nav-item"><i class="fa-solid fa-file-signature"></i> Documents Queue</a>
+        <a href="/staff/overdue" class="nav-item" style="color: #fca5a5;"><i class="fa-solid fa-triangle-exclamation"></i> Overdue / SLAs</a>
+        
+        <div class="nav-group role-coordinator role-admin hidden">Management</div>
+        <a href="/staff/assignments" class="nav-item role-coordinator role-admin hidden"><i class="fa-solid fa-network-wired"></i> Assignment Queue</a>
+        <a href="/staff/management" class="nav-item role-admin hidden"><i class="fa-solid fa-users-gear"></i> Staff Roles</a>
+        
+        <div class="nav-group">History</div>
+        <a href="/staff/completed" class="nav-item"><i class="fa-solid fa-check-double"></i> Completed Forms</a>
+      </nav>
+    </div>
+    
+    <div class="main-content">
+      <header class="top-nav">
+        <div style="display:flex; align-items:center; gap: 1rem;">
+          <button id="mobile-menu-btn" class="btn-outline mobile-only"><i class="fa-solid fa-bars"></i></button>
+          <h1 style="margin:0; font-size:1.25rem;">{title}</h1>
+        </div>
+        <div style="display:flex; align-items:center; gap: 1rem;">
+          <span id="user-role-badge" style="background:#e2e8f0; padding: 0.2rem 0.6rem; border-radius:12px; font-size:0.75rem; font-weight:600; text-transform:uppercase;">Loading...</span>
+          <button id="logout-btn" class="btn-outline"><span class="desktop-text">Sign Out</span><i class="fa-solid fa-right-from-bracket mobile-only" style="margin-left:5px;"></i></button>
+        </div>
+      </header>
+      
+      <main class="content-area">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      import { createClient } from '@supabase/supabase-js';
+
+      // Re-initialize supabase per page context since Astro scripts run modularly
+      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+      if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+      document.addEventListener('astro:page-load', async () => {
+        const path = window.location.pathname.replace(/\/$/, ""); // Normalize trailing slash
+
+        document.querySelectorAll('.nav-item').forEach(link => {
+           let linkPath = (link.getAttribute('href') || '').replace(/\/$/, "");
+           if (path === linkPath) {
+               link.classList.add('active');
+           } else {
+               link.classList.remove('active');
+           }
+        });
+
+        // Mobile Sidebar Logic
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        const openBtn = document.getElementById('mobile-menu-btn');
+        const closeBtn = document.getElementById('close-sidebar-btn');
+
+        function toggleSidebar() {
+          sidebar?.classList.toggle('open');
+          backdrop?.classList.toggle('open');
+        }
+
+        if(openBtn) openBtn.addEventListener('click', toggleSidebar);
+        if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+        if(backdrop) backdrop.addEventListener('click', toggleSidebar);
+
+        // Auth
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) { 
+            window.location.href = '/staff/login/'; 
+            return; 
+        }
+
+        // Role fetch
+        const { data, error } = await supabase.from('user_roles').select('role').eq('user_id', session.user.id).maybeSingle();
+        const role = data?.role || 'unknown';
+        
+        const badge = document.getElementById('user-role-badge');
+        if(badge) badge.textContent = role.replace('_', ' ');
+
+        // RBAC UI Hiding
+        if (role === 'admin' || role === 'intake_coordinator') {
+            document.querySelectorAll('.role-coordinator').forEach(el => el.classList.remove('hidden'));
+        }
+        if (role === 'admin') {
+            document.querySelectorAll('.role-admin').forEach(el => el.classList.remove('hidden'));
+        }
+
+        document.getElementById('logout-btn')?.addEventListener('click', async () => {
+          await supabase.auth.signOut();
+          window.location.href = '/staff/login/';
+        });
+      });
+    </script>
+  </body>
+</html>

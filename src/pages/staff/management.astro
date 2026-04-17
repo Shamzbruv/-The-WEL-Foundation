@@ -1,0 +1,210 @@
+---
+import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
+---
+
+<StaffPortalLayout title="Staff Management">
+    <div id="admin-controls" style="display: none; margin-bottom: 2rem;">
+        <div class="card" style="border-top: 4px solid var(--color-accent-gold-muted);">
+            <h3>Create New Staff Account</h3>
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Provision a new secure portal account for an employee.</p>
+            
+            <form id="create-staff-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="new_full_name">Full Name</label>
+                    <input type="text" id="new_full_name" class="field-input" required />
+                </div>
+                <div class="form-group">
+                    <label for="new_job_title">Job Title</label>
+                    <input type="text" id="new_job_title" class="field-input" placeholder="e.g. Clinical Therapist" required />
+                </div>
+                <div class="form-group">
+                    <label for="new_email">Email Address</label>
+                    <input type="email" id="new_email" class="field-input" required />
+                </div>
+                <div class="form-group">
+                    <label for="new_password">Temporary Password</label>
+                    <input type="password" id="new_password" class="field-input" required minlength="8" />
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="new_role">Access Level</label>
+                    <select id="new_role" class="field-input" required>
+                        <option value="staff">General Staff (Limited Access)</option>
+                        <option value="intake_coordinator">Intake Coordinator (Mid-level)</option>
+                        <option value="admin">Administrator (Full Access)</option>
+                    </select>
+                </div>
+                <div id="create-status" style="grid-column: 1 / -1; font-weight: 500; font-size: 0.9rem;"></div>
+                <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn" id="create-btn">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Administrator Console</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Manage platform access and role allocation.</p>
+        
+        <table class="portal-table" id="staff-table">
+            <thead>
+                <tr>
+                    <th>Staff Member</th>
+                    <th>Email</th>
+                    <th>Current Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4">Loading staff...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || '';
+        const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            // Verify if user is admin
+            const { data: roleData } = await supabase.from('user_roles').select('role').eq('user_id', session.user.id).maybeSingle();
+            const isAdmin = roleData && roleData.role === 'admin';
+
+            if (isAdmin) {
+                document.getElementById('admin-controls').style.display = 'block';
+            }
+
+            const tbody = document.querySelector('#staff-table tbody');
+            if(!tbody) return;
+
+            async function loadStaff() {
+                tbody.innerHTML = '<tr><td colspan="4">Loading staff...</td></tr>';
+                // Fixed previous undefined '.role' due to using 'profiles' instead of a join/role_label
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, email, role_label, job_title')
+                    .order('full_name', { ascending: true });
+
+                if (error) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error loading staff: ${error.message}</td></tr>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 2rem;">No staff found.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                data.forEach(staff => {
+                    const row = document.createElement('tr');
+                    const roleLabel = staff.role_label || 'Staff';
+                    const pillClass = roleLabel === 'Administrator' ? 'urgent' : (roleLabel === 'Intake Coordinator' ? 'high' : 'normal');
+                    
+                    row.innerHTML = `
+                        <td><strong>${staff.full_name}</strong><br><span style="font-size:0.8rem; color:#64748b;">${staff.job_title || ''}</span></td>
+                        <td>${staff.email || 'N/A'}</td>
+                        <td><span class="status-pill status-${pillClass}">${roleLabel}</span></td>
+                        <td>
+                            ${isAdmin ? `<button class="btn-outline promote-btn" data-id="${staff.id}" style="font-size:0.8rem; padding:0.25rem 0.5rem;">Edit</button>` : `<span style="font-size:0.8rem; color:#94a3b8;">Restricted</span>`}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.querySelectorAll('.promote-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        alert('Role management editing logic requires future sprint Implementation slated for dedicated user management release.');
+                    });
+                });
+            }
+
+            await loadStaff();
+
+            // Handle creation form
+            const createForm = document.getElementById('create-staff-form');
+            const statusDiv = document.getElementById('create-status');
+            const createBtn = document.getElementById('create-btn');
+
+            if (createForm) {
+                createForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const fullName = document.getElementById('new_full_name').value.trim();
+                    const jobTitle = document.getElementById('new_job_title').value.trim();
+                    const email = document.getElementById('new_email').value.trim();
+                    const password = document.getElementById('new_password').value;
+                    const role = document.getElementById('new_role').value;
+
+                    createBtn.disabled = true;
+                    createBtn.textContent = 'Creating...';
+                    statusDiv.style.color = '#333';
+                    statusDiv.textContent = 'Contacting secure edge function...';
+
+                    try {
+                        const response = await fetch(`${supabaseUrl}/functions/v1/create-staff`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${session.access_token}`
+                            },
+                            body: JSON.stringify({
+                                full_name: fullName,
+                                job_title: jobTitle,
+                                email: email,
+                                password: password,
+                                role: role
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(result.error || 'Failed to create user');
+                        }
+
+                        statusDiv.style.color = '#059669'; // Green
+                        statusDiv.textContent = `Success! Account created for ${fullName}.`;
+                        createForm.reset();
+                        await loadStaff(); // Refresh the table
+                    } catch (err) {
+                        statusDiv.style.color = '#dc2626'; // Red
+                        statusDiv.textContent = `Error: ${err.message}`;
+                    } finally {
+                        createBtn.disabled = false;
+                        createBtn.textContent = 'Create Account';
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .field-input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--color-primary-navy);
+        }
+        @media (max-width: 600px) {
+            #create-staff-form {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</StaffPortalLayout>

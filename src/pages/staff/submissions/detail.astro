@@ -1,0 +1,276 @@
+---
+import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="Submission Detail">
+    <div style="margin-bottom: 1rem;">
+        <a href="javascript:history.back()" class="btn-outline" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;"><i class="fa-solid fa-arrow-left"></i> Back to Queue</a>
+    </div>
+
+    <div id="loading" style="padding: 2rem; text-align: center; color: #64748b;">Loading submission data...</div>
+    <div id="error" style="display:none; padding: 2rem; color: #c53030; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 6px;"></div>
+
+    <div id="detail-content" style="display:none; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <!-- Left Column: Docs & Activity -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Applicant Info -->
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h2 id="app-name" style="margin-top:0;">Applicant Name</h2>
+                        <p id="app-email" style="color: #64748b; margin-top:-0.5rem;">email@example.com</p>
+                    </div>
+                    <span id="app-status" class="status-pill status-New">New</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top:1rem; font-size: 0.9rem;">
+                    <div><strong>Type:</strong> <span id="app-type">...</span></div>
+                    <div><strong>Priority:</strong> <span id="app-priority">...</span></div>
+                    <div><strong>Submitted:</strong> <span id="app-date">...</span></div>
+                    <div><strong>SLA Deadline:</strong> <span id="app-due" style="font-weight:700; color:var(--color-primary-navy);">...</span></div>
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="card">
+                <h2 style="margin-top:0; margin-bottom:1rem; display:flex; justify-content:space-between;">
+                    <span>Documents</span>
+                </h2>
+                <table class="portal-table" id="docs-table">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Category</th>
+                            <th>Review Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <!-- Notes -->
+            <div class="card">
+                <h2 style="margin-top:0;">Internal Notes</h2>
+                <textarea id="internal-notes" placeholder="Add confidential notes for staff..." rows="4" style="width:100%; padding:0.75rem; border:1px solid var(--color-border); border-radius:4px; font-family:inherit; resize:vertical;"></textarea>
+                <button id="save-notes-btn" class="btn-primary" style="margin-top:0.75rem;">Save Notes</button>
+            </div>
+        </div>
+
+        <!-- Right Column: Controls -->
+        <div style="display: flex; flex-direction: column; gap: 2rem;">
+            <div class="card">
+                <h3 style="margin-top:0; border-bottom:1px solid var(--color-border); padding-bottom:0.5rem;">Workflow Controls</h3>
+                
+                <div style="margin-top:1rem;">
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:#475569;">Submission Status</label>
+                    <select id="ctrl-status" style="width:100%; padding:0.5rem; border:1px solid var(--color-border); border-radius:4px; margin-bottom:1rem;">
+                       <option value="New">New</option>
+                       <option value="In Review">In Review</option>
+                       <option value="Needs More Info">Needs More Info</option>
+                       <option value="Assigned">Assigned</option>
+                       <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:#475569;">Assigned To</label>
+                    <select id="ctrl-assignment" style="width:100%; padding:0.5rem; border:1px solid var(--color-border); border-radius:4px; margin-bottom:1rem;">
+                       <option value="">Unassigned</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:#475569;">Urgency</label>
+                    <select id="ctrl-priority" style="width:100%; padding:0.5rem; border:1px solid var(--color-border); border-radius:4px; margin-bottom:1.5rem;">
+                       <option value="Low">Low</option>
+                       <option value="Normal">Normal</option>
+                       <option value="High">High</option>
+                       <option value="Urgent">Urgent</option>
+                    </select>
+                </div>
+
+                <button id="save-workflow-btn" class="btn-primary" style="width:100%; justify-content:center;">Update Workflow</button>
+            </div>
+
+            <!-- Validation Modal Layer for documents (hidden by default) -->
+            <div id="validation-panel" class="card hidden" style="border: 1px solid #fbbf24; background: #fffbeb;">
+                <h3 style="margin-top:0;">File Review</h3>
+                <p id="vrf-filename" style="font-size:0.85rem; word-break:break-all; font-weight:600;"></p>
+                <div style="display:flex; gap:0.5rem; margin-top:1rem;">
+                    <button class="btn-primary" id="vrf-approve" style="background:#22c55e; flex:1;">Approve</button>
+                    <button class="btn-primary" id="vrf-reject" style="background:#ef4444; flex:1;">Reject</button>
+                </div>
+                <div id="vrf-reject-zone" class="hidden" style="margin-top:1rem;">
+                    <textarea id="vrf-reason" placeholder="Reason for rejection (mandatory)..." rows="2" style="width:100%; padding:0.5rem; border:1px solid #fca5a5; border-radius:4px; margin-bottom:0.5rem;"></textarea>
+                    <button class="btn-primary" id="vrf-confirm-reject" style="width:100%; background:#b91c1c;">Confirm Rejection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+        
+        let currentSubmissionId = null;
+        let currentWorkingFileId = null;
+
+        document.addEventListener('astro:page-load', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentSubmissionId = urlParams.get('id');
+
+            if(!currentSubmissionId) {
+                document.getElementById('loading').style.display = 'none';
+                const errEl = document.getElementById('error');
+                errEl.style.display = 'block';
+                errEl.textContent = 'Invalid Request: Missing Submission ID parameter.';
+                return;
+            }
+
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            // Fetch Profiles for Assignment dropdown
+            const { data: profiles } = await supabase.from('profiles').select('id, full_name, role');
+            const assignSelect = document.getElementById('ctrl-assignment');
+            if(profiles) {
+                profiles.forEach(p => {
+                    if(['admin', 'staff', 'intake_coordinator'].includes(p.role)) {
+                        const opt = document.createElement('option');
+                        opt.value = p.id;
+                        opt.textContent = `${p.full_name} (${p.role})`;
+                        assignSelect.appendChild(opt);
+                    }
+                });
+            }
+
+            await loadDetail();
+            
+            // Handlers
+            document.getElementById('save-workflow-btn').addEventListener('click', async () => {
+                const status = document.getElementById('ctrl-status').value;
+                const priority = document.getElementById('ctrl-priority').value;
+                const assigned_to = document.getElementById('ctrl-assignment').value || null;
+                
+                const { error } = await supabase.from('submissions').update({ status, internal_priority: priority, assigned_to }).eq('id', currentSubmissionId);
+                if(error) alert('Error updating workflow: ' + error.message);
+                else {
+                    alert('Workflow updated safely.');
+                    loadDetail();
+                }
+            });
+
+            document.getElementById('save-notes-btn').addEventListener('click', async () => {
+                const notes = document.getElementById('internal-notes').value;
+                const { error } = await supabase.from('submissions').update({ internal_notes: notes }).eq('id', currentSubmissionId);
+                if(error) alert('Error: ' + error.message);
+                else alert('Notes saved safely.');
+            });
+
+            // Verification Module Events
+            document.getElementById('vrf-approve').addEventListener('click', async () => {
+                if(!currentWorkingFileId) return;
+                const { error } = await supabase.from('submission_files').update({ review_status: 'Verified', rejection_reason: null }).eq('id', currentWorkingFileId);
+                if(error) alert('Error: ' + error.message);
+                else {
+                    document.getElementById('validation-panel').classList.add('hidden');
+                    loadDetail();
+                }
+            });
+
+            document.getElementById('vrf-reject').addEventListener('click', () => {
+                document.getElementById('vrf-reject-zone').classList.remove('hidden');
+            });
+
+            document.getElementById('vrf-confirm-reject').addEventListener('click', async () => {
+                if(!currentWorkingFileId) return;
+                const reason = document.getElementById('vrf-reason').value;
+                if(!reason) { alert('Rejection reason is absolutely mandatory.'); return; }
+
+                const { error } = await supabase.from('submission_files').update({ review_status: 'Needs Replacement', rejection_reason: reason }).eq('id', currentWorkingFileId);
+                if(error) alert('Error: ' + error.message);
+                else {
+                    document.getElementById('validation-panel').classList.add('hidden');
+                    document.getElementById('vrf-reject-zone').classList.add('hidden');
+                    loadDetail();
+                }
+            });
+        });
+
+        async function loadDetail() {
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('*, submission_files(*)')
+                .eq('id', currentSubmissionId)
+                .single();
+
+            if (error || !data) {
+                document.getElementById('loading').style.display = 'none';
+                const errEl = document.getElementById('error');
+                errEl.style.display = 'block';
+                errEl.textContent = 'Error loading submission: You may not have permission to view it, or it does not exist.';
+                document.getElementById('detail-content').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('detail-content').style.display = 'grid';
+
+            // Populate Map
+            document.getElementById('app-name').textContent = data.submitted_by_name;
+            document.getElementById('app-email').textContent = data.submitted_by_email;
+            document.getElementById('app-type').textContent = (data.type || '').toUpperCase();
+            document.getElementById('app-priority').textContent = data.internal_priority;
+            document.getElementById('app-date').textContent = new Date(data.created_at).toLocaleString();
+            document.getElementById('app-due').textContent = data.due_at ? new Date(data.due_at).toLocaleString() : 'N/A';
+            
+            const pStatus = document.getElementById('app-status');
+            pStatus.textContent = data.status;
+            pStatus.className = `status-pill status-${data.status.replace(/\\s+/g, '')}`;
+
+            document.getElementById('ctrl-status').value = data.status;
+            document.getElementById('ctrl-assignment').value = data.assigned_to || '';
+            document.getElementById('ctrl-priority').value = data.internal_priority;
+            document.getElementById('internal-notes').value = data.internal_notes || '';
+
+            // Docs Map
+            const tb = document.querySelector('#docs-table tbody');
+            tb.innerHTML = '';
+            
+            if(!data.submission_files || data.submission_files.length === 0) {
+                tb.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">No documents uploaded.</td></tr>`;
+            } else {
+                for(let f of data.submission_files) {
+                    const row = document.createElement('tr');
+                    
+                    // Retrieve temporary signed link safely through DB relation
+                    let urlLink = '#';
+                    let safeName = (f.file_name || 'Document').replace(/</g, "&lt;");
+                    try {
+                        const { data: sData } = await supabase.storage.from('private_uploads').createSignedUrl(f.object_path, 3600);
+                        if(sData && sData.signedUrl) urlLink = sData.signedUrl;
+                    } catch(e) {}
+
+                    row.innerHTML = `
+                        <td><a href="${urlLink}" target="_blank" style="color:var(--color-primary-navy); font-weight:500;">${safeName}</a></td>
+                        <td>${f.document_category || 'General'}</td>
+                        <td><span class="status-pill status-${f.review_status.replace(/\\s+/g, '')}">${f.review_status}</span></td>
+                        <td>
+                           <button class="btn-outline file-review-binder" data-id="${f.id}" data-name="${safeName}" style="padding:0.25rem 0.5rem; font-size:0.8rem;">Review</button>
+                        </td>
+                    `;
+                    tb.appendChild(row);
+                }
+
+                document.querySelectorAll('.file-review-binder').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        currentWorkingFileId = e.target.dataset.id;
+                        document.getElementById('vrf-filename').textContent = "Reviewing: " + e.target.dataset.name;
+                        document.getElementById('validation-panel').classList.remove('hidden');
+                        document.getElementById('vrf-reject-zone').classList.add('hidden');
+                        document.getElementById('vrf-reason').value = '';
+                    });
+                });
+            }
+        }
+    </script>
+</StaffPortalLayout>

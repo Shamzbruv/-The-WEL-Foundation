@@ -1,0 +1,1441 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="SUD Intake Form — The WEL Foundation">
+
+<div class="intake-shell">
+
+  <!-- Sticky Top Bar -->
+  <div class="intake-topbar">
+    <a href="/intake/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </a>
+    <div class="topbar-badge">SUD — Substance Use Disorder</div>
+    <div class="topbar-pct" id="pct-display">0%</div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-rail">
+    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+  </div>
+
+  <!-- Section Counter -->
+  <div class="section-meta" id="section-meta">Section 1 of 26 &mdash; <span id="section-label-text">Your Name</span></div>
+
+  <form id="sud-form" novalidate>
+
+    <!-- =================== S1: NAME =================== -->
+    <div class="form-section active" id="s1" data-label="Your Name">
+      <div class="section-header">
+        <div class="section-icon">👤</div>
+        <h2>What's your name?</h2>
+        <p>We'll use this to fill in your name and initials throughout the form automatically.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="fullname">Full Legal Name <span class="req">*</span></label>
+        <input class="field-input" type="text" id="fullname" name="fullName" placeholder="e.g. John Michael Davis" required autocomplete="name" />
+        <div class="field-error" id="err-fullname">Please enter your full name.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="dob">Date of Birth <span class="req">*</span></label>
+        <input class="field-input" type="date" id="dob" name="dateOfBirth" required />
+        <div class="field-error" id="err-dob">Please enter your date of birth.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="ssn">Social Security # <span class="field-opt">(optional)</span></label>
+        <input class="field-input" type="text" id="ssn" name="ssn" placeholder="XXX-XX-XXXX" autocomplete="off" />
+      </div>
+    </div>
+
+    <!-- =================== S2: GOV ID =================== -->
+    <div class="form-section" id="s2" data-label="Government ID">
+      <div class="section-header">
+        <div class="section-icon">🪪</div>
+        <h2>Upload your Government ID</h2>
+        <p>Driver's license, state ID, or passport. You can take a photo on your phone.</p>
+      </div>
+      <div class="upload-zone" id="govid-zone">
+        <input type="file" id="gov-id" name="govId" accept="image/jpeg,image/png,application/pdf" required class="upload-input" />
+        <div class="upload-zone-inner">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <p class="upload-title">Tap to upload your ID</p>
+          <p class="upload-hint">JPG, PNG, or PDF · Max 10MB</p>
+        </div>
+      </div>
+      <div class="field-error" id="err-gov-id">Please upload your government ID.</div>
+      <div class="upload-success" id="govid-success" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="govid-filename">ID uploaded</span>
+      </div>
+    </div>
+
+    <!-- =================== S3: INSURANCE =================== -->
+    <div class="form-section" id="s3" data-label="Insurance Card">
+      <div class="section-header">
+        <div class="section-icon">🛡️</div>
+        <h2>Upload your Insurance Card</h2>
+        <p>Medicaid, Medicare, or private insurance — front of the card.</p>
+      </div>
+      <div class="upload-zone" id="insurance-zone">
+        <input type="file" id="insurance-card" name="insuranceCard" accept="image/jpeg,image/png,application/pdf" required class="upload-input" />
+        <div class="upload-zone-inner">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <p class="upload-title">Tap to upload your insurance card</p>
+          <p class="upload-hint">JPG, PNG, or PDF · Max 10MB</p>
+        </div>
+      </div>
+      <div class="field-error" id="err-insurance-card">Please upload your insurance card.</div>
+      <div class="upload-success" id="insurance-success" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="insurance-filename">Card uploaded</span>
+      </div>
+    </div>
+
+    <!-- =================== S4: CONTACT INFO =================== -->
+    <div class="form-section" id="s4" data-label="Contact Information">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2>Contact Information</h2>
+        <p>How we can reach you and where you live.</p>
+      </div>
+      <div class="autofill-pill">✓ Your name has been filled in automatically</div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Referral Source</label><input class="field-input" type="text" name="referralSource" placeholder="Who referred you?" /></div>
+        <div class="field-group"><label class="field-label">Date of Admission</label><input class="field-input" type="date" name="dateOfAdmission" /></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label autofill-label">Client Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="fs_name" readonly /></div>
+        <div class="field-group"><label class="field-label autofill-label">Date of Intake <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="fs_dateOfIntake" readonly /></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="address">Home Address <span class="req">*</span></label>
+        <input class="field-input" type="text" id="address" name="address" required />
+        <div class="field-error" id="err-address">Please enter your address.</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Are you currently homeless?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="isHomeless" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="isHomeless" value="yes" /> Yes</label></div>
+      </div>
+      <div class="field-row-3">
+        <div class="field-group"><label class="field-label">Cell Phone</label><input class="field-input" type="tel" name="cellPhone" /></div>
+        <div class="field-group"><label class="field-label">Home Phone</label><input class="field-input" type="tel" name="homePhone" /></div>
+        <div class="field-group"><label class="field-label">Other Phone</label><input class="field-input" type="tel" name="otherPhone" /></div>
+      </div>
+    </div>
+
+    <!-- =================== S5: PERSONAL INFO =================== -->
+    <div class="form-section" id="s5" data-label="Personal Details">
+      <div class="section-header">
+        <div class="section-icon">🏷️</div>
+        <h2>Personal Details</h2>
+        <p>Background information to help us provide appropriate care.</p>
+      </div>
+      <div class="field-row-3">
+        <div class="field-group"><label class="field-label">Age</label><input class="field-input" type="number" name="age" min="1" max="120" /></div>
+        <div class="field-group"><label class="field-label">Race</label><input class="field-input" type="text" name="race" /></div>
+        <div class="field-group"><label class="field-label">Gender Identity</label><input class="field-input" type="text" name="genderIdentity" /></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Sexual Orientation <span class="field-opt">(optional)</span></label><input class="field-input" type="text" name="sexualOrientation" /></div>
+        <div class="field-group"><label class="field-label">Preferred Pronouns <span class="field-opt">(optional)</span></label><input class="field-input" type="text" name="pronouns" /></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Religious Affiliation <span class="field-opt">(optional)</span></label><input class="field-input" type="text" name="religiousAffiliation" /><label class="checkbox-pill" style="margin-top:5px;"><input type="checkbox" name="religionNA" /> N/A</label></div>
+        <div class="field-group"><label class="field-label">Cultural Identity</label><input class="field-input" type="text" name="culturalIdentity" /></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Highest Grade Completed</label><input class="field-input" type="text" name="educationLevel" /></div>
+        <div class="field-group">
+          <label class="field-label">Employment Status</label>
+          <select class="field-input" name="employmentStatus">
+            <option value="">Select...</option>
+            <option>Employed full-time</option>
+            <option>Employed part-time</option>
+            <option>Unemployed / Seeking</option>
+            <option>Receiving Public Assistance</option>
+            <option>Not applicable</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Employer (if employed)</label>
+        <input class="field-input" type="text" name="employer" placeholder="Employer name" />
+        <input class="field-input" type="text" name="employerAddress" placeholder="Employer address" style="margin-top:6px;" />
+        <input class="field-input" type="tel" name="employerPhone" placeholder="Employer phone" style="margin-top:6px;" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Marital Status</label>
+        <div class="radio-row flex-wrap">
+          <label class="radio-pill"><input type="radio" name="maritalStatus" value="single" /> Single</label>
+          <label class="radio-pill"><input type="radio" name="maritalStatus" value="married" /> Married</label>
+          <label class="radio-pill"><input type="radio" name="maritalStatus" value="separated" /> Separated</label>
+          <label class="radio-pill"><input type="radio" name="maritalStatus" value="divorced" /> Divorced</label>
+          <label class="radio-pill"><input type="radio" name="maritalStatus" value="widowed" /> Widowed</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S6: EMERGENCY CONTACT =================== -->
+    <div class="form-section" id="s6" data-label="Emergency Contact">
+      <div class="section-header">
+        <div class="section-icon">🚨</div>
+        <h2>Emergency Contact</h2>
+        <p>Who should we call if we can't reach you?</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="emg-name">Full Name <span class="req">*</span></label>
+        <input class="field-input" type="text" id="emg-name" name="emergencyContactName" required />
+        <div class="field-error" id="err-emg-name">Please enter an emergency contact name.</div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group">
+          <label class="field-label" for="emg-rel">Relationship <span class="req">*</span></label>
+          <input class="field-input" type="text" id="emg-rel" name="emergencyContactRelationship" placeholder="e.g. Mother, Spouse" required />
+          <div class="field-error" id="err-emg-rel">Please enter their relationship.</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="emg-phone">Phone Number <span class="req">*</span></label>
+          <input class="field-input" type="tel" id="emg-phone" name="emergencyContactPhone" required />
+          <div class="field-error" id="err-emg-phone">Please enter their phone number.</div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Address</label>
+        <input class="field-input" type="text" name="emergencyContactAddress" />
+        <label class="checkbox-pill" style="margin-top:5px;"><input type="checkbox" name="emgAddressUnknown" /> Address is unknown</label>
+      </div>
+    </div>
+
+    <!-- =================== S7: MEDICAL & INSURANCE =================== -->
+    <div class="form-section" id="s7" data-label="Medical & Insurance">
+      <div class="section-header">
+        <div class="section-icon">🏥</div>
+        <h2>Medical &amp; Insurance Info</h2>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Medicaid / MA #</label><input class="field-input" type="text" name="maNumber" /></div>
+        <div class="field-group"><label class="field-label">MCO Name</label><input class="field-input" type="text" name="mcoName" placeholder="e.g. Careleon, Optum" /></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label">Other Primary Insurance #</label><input class="field-input" type="text" name="otherInsuranceNumber" /></div>
+        <div class="field-group"><label class="field-label">Group #</label><input class="field-input" type="text" name="groupNumber" /></div>
+      </div>
+      <div class="field-group"><label class="field-label">Current Medical Issues</label><textarea class="field-input" name="medicalIssues" rows="2"></textarea></div>
+      <div class="field-group"><label class="field-label">Current Mental Health Diagnosis</label><textarea class="field-input" name="mentalHealthDiagnosis" rows="2"></textarea></div>
+      <div class="field-group"><label class="field-label">Allergies</label><input class="field-input" type="text" name="allergies" placeholder="Type 'None' if none" /></div>
+    </div>
+
+    <!-- =================== S8: PCP =================== -->
+    <div class="form-section" id="s8" data-label="Primary Care Physician">
+      <div class="section-header">
+        <div class="section-icon">👨‍⚕️</div>
+        <h2>Primary Care Physician</h2>
+        <p>Your regular doctor. Skip if you don't have one.</p>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Do you have a PCP?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="hasPCP" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="hasPCP" value="yes" /> Yes</label></div>
+      </div>
+      <div id="pcp-fields" style="display:none;">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Doctor's Name</label><input class="field-input" type="text" name="pcpName" /></div>
+          <div class="field-group"><label class="field-label">Doctor's Phone</label><input class="field-input" type="tel" name="pcpPhone" /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Doctor's Address</label><input class="field-input" type="text" name="pcpStreet" /></div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">City</label><input class="field-input" type="text" name="pcpCity" /></div>
+          <div class="field-group"><label class="field-label">Date of Last Exam</label><input class="field-input" type="date" name="pcpLastExam" /></div>
+        </div>
+      </div>
+      <label class="checkbox-pill" style="margin-top: var(--spacing-3);"><input type="checkbox" name="noPCPAcknowledge" /> I don't have a PCP and will notify WEL when I find one</label>
+    </div>
+
+    <!-- =================== S9: MEDICATIONS =================== -->
+    <div class="form-section" id="s9" data-label="Medications">
+      <div class="section-header">
+        <div class="section-icon">💊</div>
+        <h2>Current Medications</h2>
+        <p>List all prescriptions and over-the-counter medicines you're taking.</p>
+      </div>
+      <div class="med-table-wrap">
+        <table class="med-table">
+          <thead><tr><th>Medication</th><th>Dose / How Often</th><th>Prescribing Doctor</th><th>Start Date</th><th></th></tr></thead>
+          <tbody id="med-body">
+            <tr><td><input type="text" name="meds[0][name]" /></td><td><input type="text" name="meds[0][dose]" /></td><td><input type="text" name="meds[0][prescriber]" /></td><td><input type="date" name="meds[0][startDate]" /></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button type="button" class="btn-add-row" id="add-med">+ Add another medication</button>
+      <label class="checkbox-pill" style="margin-top: 12px;"><input type="checkbox" name="noMeds" /> I am not currently taking any medications</label>
+    </div>
+
+    <!-- =================== S10: PRIMARY DRUG USE =================== -->
+    <div class="form-section sud-section" id="s10" data-label="Substance Use History">
+      <div class="section-header">
+        <div class="section-icon">💬</div>
+        <h2>Substance Use History</h2>
+        <p>These questions help us build the best treatment plan for you. There is no judgment here.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Are you currently using Methadone, Suboxone, or MAT?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="isOnMAT" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="isOnMAT" value="yes" /> Yes</label><label class="radio-pill"><input type="radio" name="isOnMAT" value="na" /> N/A</label></div>
+        <div id="mat-dose" style="display:none; margin-top:8px;"><label class="field-label">Current Suboxone dose: <input class="field-input" type="text" name="matDose" placeholder="e.g. 8mg" style="display:inline-block; width:120px; margin-left:8px;" /> mg</label></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Number of overdoses in the last year:</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="overdosesLastYear" value="0" checked /> None</label><label class="radio-pill"><input type="radio" name="overdosesLastYear" value="1" /> 1</label><label class="radio-pill"><input type="radio" name="overdosesLastYear" value="2+" /> 2 or more</label></div>
+      </div>
+      <div class="field-row-2">
+        <div class="field-group"><label class="field-label"># of prior treatment attempts:</label><input class="field-input" type="number" name="priorTreatmentAttempts" min="0" placeholder="0" /></div>
+        <div class="field-group"><label class="field-label">Longest sobriety period:</label><input class="field-input" type="text" name="longestSobriety" placeholder="e.g. 6 months, 2 years, never" /></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Do you use tobacco or nicotine?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="tobaccoUse" value="no" /> No</label><label class="radio-pill"><input type="radio" name="tobaccoUse" value="yes" /> Yes — type: <input type="text" name="tobaccoType" style="width:140px;border:none;border-bottom:1px solid #cbd5e1;background:transparent;font-size:0.9rem;margin-left:4px;" /></label></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Have you ever overdosed and then used substances within 24 hours?</label>
+        <div class="radio-row flex-wrap">
+          <label class="radio-pill"><input type="radio" name="usedAfterOD" value="na" checked /> Never overdosed</label>
+          <label class="radio-pill"><input type="radio" name="usedAfterOD" value="no" /> Overdosed — did NOT use within 24 hrs</label>
+          <label class="radio-pill"><input type="radio" name="usedAfterOD" value="yes" /> Yes, used within 24 hrs after OD</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Do you have any issues with gambling?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="gamblingIssues" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="gamblingIssues" value="yes" /> Yes</label></div>
+      </div>
+    </div>
+
+    <!-- =================== S11: DRUG TABLE =================== -->
+    <div class="form-section sud-section" id="s11" data-label="Drugs Used">
+      <div class="section-header">
+        <div class="section-icon">📊</div>
+        <h2>Primary Drugs Used</h2>
+        <p>List the main substances you use. Add as many rows as you need.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="med-table-wrap">
+        <table class="med-table">
+          <thead><tr><th>Drug</th><th>Severity</th><th>Route</th><th>Age of 1st Use</th><th>Last Date Used</th><th></th></tr></thead>
+          <tbody id="drug-body">
+            <tr>
+              <td><input type="text" name="drugs[0][name]" placeholder="e.g. Alcohol" /></td>
+              <td><select name="drugs[0][severity]"><option value="">Select...</option><option>Mild</option><option>Moderate</option><option>Severe</option></select></td>
+              <td><select name="drugs[0][route]"><option value="">Select...</option><option>Inject</option><option>Smoke</option><option>Snort</option><option>Oral</option><option>Other</option></select></td>
+              <td><input type="number" name="drugs[0][ageFirst]" min="1" max="100" placeholder="Age" /></td>
+              <td><input type="date" name="drugs[0][lastUsed]" /></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <button type="button" class="btn-add-row" id="add-drug">+ Add another drug</button>
+    </div>
+
+    <!-- =================== S12: LEGAL =================== -->
+    <div class="form-section sud-section" id="s12" data-label="Legal History">
+      <div class="section-header">
+        <div class="section-icon">⚖️</div>
+        <h2>Legal History</h2>
+        <p>This information is confidential and only used to coordinate your care.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Have you ever been incarcerated?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="everIncarcerated" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="everIncarcerated" value="yes" /> Yes</label></div>
+        <div id="incarceration-when" style="display:none; margin-top:10px;">
+          <p class="field-hint">When?</p>
+          <div class="checkbox-grid" style="margin-top:4px;">
+            <label class="checkbox-pill"><input type="checkbox" name="incarcerationWhen[]" value="30d" /> Within last 30 days</label>
+            <label class="checkbox-pill"><input type="checkbox" name="incarcerationWhen[]" value="60d" /> Within last 60 days</label>
+            <label class="checkbox-pill"><input type="checkbox" name="incarcerationWhen[]" value="12mo" /> Within last 12 months</label>
+            <label class="checkbox-pill"><input type="checkbox" name="incarcerationWhen[]" value="1yr+" /> More than 1 year ago</label>
+          </div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Did you use substances while incarcerated?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="usedWhileIncarcerated" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="usedWhileIncarcerated" value="yes" /> Yes</label><label class="radio-pill"><input type="radio" name="usedWhileIncarcerated" value="na" /> N/A</label></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Are you currently on any of the following?</label>
+        <div class="checkbox-grid">
+          <label class="checkbox-pill"><input type="checkbox" name="legal_status[]" value="home_detention" /> Home Detention</label>
+          <label class="checkbox-pill"><input type="checkbox" name="legal_status[]" value="parole" id="parole-check" /> Parole</label>
+          <label class="checkbox-pill"><input type="checkbox" name="legal_status[]" value="probation" id="probation-check" /> Probation</label>
+        </div>
+      </div>
+      <div id="agent-section" style="display:none;">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Start Date</label><input class="field-input" type="date" name="legalStartDate" /></div>
+          <div class="field-group"><label class="field-label">End Date</label><input class="field-input" type="date" name="legalEndDate" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Agent/Officer Name</label><input class="field-input" type="text" name="agentName" /></div>
+          <div class="field-group"><label class="field-label">Agent Phone</label><input class="field-input" type="tel" name="agentPhone" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Agent Address</label><input class="field-input" type="text" name="agentAddress" /></div>
+          <div class="field-group"><label class="field-label">Agent Email</label><input class="field-input" type="email" name="agentEmail" /></div>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Do you have any pending charges?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="pendingCharges" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="pendingCharges" value="yes" /> Yes</label></div>
+        <textarea class="field-input" id="pending-charges-detail" name="pendingChargesDetail" rows="2" placeholder="Describe pending charges..." style="display:none; margin-top:8px;"></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Are there any crisis situations we should know about right now?</label>
+        <div class="radio-row"><label class="radio-pill"><input type="radio" name="hasCrisis" value="no" checked /> No</label><label class="radio-pill"><input type="radio" name="hasCrisis" value="yes" /> Yes</label></div>
+        <textarea class="field-input" id="crisis-detail" name="crisisDetail" rows="3" placeholder="Please describe..." style="display:none; margin-top:8px;"></textarea>
+      </div>
+      <div class="field-row-2" style="margin-top:12px;">
+        <div class="field-group"><label class="field-label autofill-label">Client Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="facesheetSig" readonly /></div>
+        <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="facesheetSigDate" readonly /></div>
+      </div>
+    </div>
+
+    <!-- =================== S13: MINOR SECTION =================== -->
+    <div class="form-section" id="s13" data-label="For Minors (if applicable)">
+      <div class="section-header">
+        <div class="section-icon">👨‍👩‍👧</div>
+        <h2>For Children &amp; Teens Under 18</h2>
+        <p>Skip this if you are 18 or older.</p>
+      </div>
+      <label class="checkbox-pill"><input type="checkbox" name="isAdult" id="is-adult" checked /> I am 18 or older — skip this section</label>
+      <div id="guardian-fields" style="display:none; margin-top:16px;">
+        <div class="field-group"><label class="field-label">Parent / Guardian Name</label><input class="field-input" type="text" name="guardianName" /></div>
+        <div class="field-group"><label class="field-label">Guardian Address (if different)</label><input class="field-input" type="text" name="guardianAddress" /></div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Cell</label><input class="field-input" type="tel" name="guardianCell" /></div>
+          <div class="field-group"><label class="field-label">Home</label><input class="field-input" type="tel" name="guardianHome" /></div>
+          <div class="field-group"><label class="field-label">Work</label><input class="field-input" type="tel" name="guardianWork" /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Guardian Email</label><input class="field-input" type="email" name="guardianEmail" /></div>
+        <div class="field-group">
+          <label class="field-label">Guardian Preferred Communication</label>
+          <div class="radio-row"><label class="radio-pill"><input type="checkbox" name="guardianCommEmail" /> Email</label><label class="radio-pill"><input type="checkbox" name="guardianCommPhone" /> Phone</label><label class="radio-pill"><input type="checkbox" name="guardianCommText" /> Text</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S14: CONSENT — SERVICES =================== -->
+    <div class="form-section" id="s14" data-label="Consent — Services">
+      <div class="section-header">
+        <div class="section-icon">📄</div>
+        <h2>Consent for Treatment</h2>
+        <p class="consent-subtitle">Read each section and check the box to confirm. Your initials are already filled in.</p>
+      </div>
+      <div class="consent-card">
+        <div class="consent-card-header">
+          <h3>Our Services</h3>
+          <div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_services" readonly /></div>
+        </div>
+        <div class="consent-body">
+          <p><strong>Substance Abuse Services (SUD):</strong> SUD programming includes individual, group, and family counseling, and may include medication-assisted recovery support. The WEL Foundation provides outpatient treatment for up to 9 hours/week and Intensive Outpatient services up to 19 hours/week (ASAM).</p>
+          <p><strong>Crisis Services:</strong> Call the office during business hours if you're in crisis. After hours, contact one of the crisis lines below.</p>
+          <div class="crisis-box"><strong>Crisis Lines:</strong><ul><li>988 — Suicide &amp; Crisis Lifeline (call or text)</li><li>Baltimore City: 410-433-5175</li><li>Maryland Hotline: 800-422-0009</li></ul></div>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_services" required /> I have read and understand the information about Our Services.</label>
+      </div>
+    </div>
+
+    <!-- =================== S15: CONSENT — PARTICIPATION + ATTENDANCE =================== -->
+    <div class="form-section" id="s15" data-label="Consent — Participation">
+      <div class="section-header">
+        <div class="section-icon">🤝</div>
+        <h2>Participation &amp; Attendance</h2>
+      </div>
+      <div class="consent-card">
+        <div class="consent-card-header"><h3>Voluntary Participation</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_participation" readonly /></div></div>
+        <div class="consent-body"><p>You chose to be here and can stop at any time without penalty. If the program isn't the right fit, your therapist will help you find another clinician.</p></div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_participation" required /> I understand my participation is fully voluntary.</label>
+      </div>
+      <div class="consent-card" style="margin-top:12px;">
+        <div class="consent-card-header"><h3>Attendance &amp; Missed Appointments</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_attendance" readonly /></div></div>
+        <div class="consent-body"><p>Please attend all sessions and give 24 hours' notice if you need to cancel. After 3 no-shows, we may not be able to hold your spot — please reach out if anything comes up.</p></div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_attendance" required /> I understand the attendance and cancellation policy.</label>
+      </div>
+    </div>
+
+    <!-- =================== S16: CONSENT — CONFIDENTIALITY + UA =================== -->
+    <div class="form-section" id="s16" data-label="Consent — Privacy & UA">
+      <div class="section-header">
+        <div class="section-icon">🔒</div>
+        <h2>Confidentiality &amp; Urinalysis Consent</h2>
+      </div>
+      <div class="consent-card">
+        <div class="consent-card-header"><h3>Confidentiality</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_confidentiality" readonly /></div></div>
+        <div class="consent-body">
+          <p>Everything you share is confidential. We only break confidentiality when you're a danger to yourself/others, there's suspected abuse of a child or vulnerable adult, or a court order requires it.</p>
+          <p>Your SUD records also have extra protections under <strong>Federal Law 42 CFR Part 2</strong> — we cannot share your SUD treatment information without your written consent except in very limited situations.</p>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_confidentiality" required /> I understand my confidentiality rights.</label>
+      </div>
+      <div class="consent-card sud-only-card" style="margin-top:12px;">
+        <div class="sud-badge" style="margin-bottom:8px;">SUD Only</div>
+        <div class="consent-card-header"><h3>Consent for Urinalysis (UA) Testing</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_ua" readonly /></div></div>
+        <div class="consent-body">
+          <p>As part of SUD treatment, you must consent to random urine testing. UA results help guide your treatment — they are NOT used to get you in trouble.</p>
+          <p>Tests screen for: Buprenorphine, Opiates, THC, Cocaine, MDMA, Oxycodone, Tricyclics, Amphetamines, Methadone, Barbiturates, Benzodiazepines, Fentanyl, and more.</p>
+          <p>Important: Multiple positive results may lead to a higher level of care referral. <strong>The WEL Foundation will never discharge you solely for a positive UA.</strong></p>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_ua" required /> I understand and consent to random UA testing as part of my SUD treatment.</label>
+      </div>
+    </div>
+
+    <!-- =================== S17: CONSENT — TELEHEALTH =================== -->
+    <div class="form-section" id="s17" data-label="Consent — Telehealth">
+      <div class="section-header">
+        <div class="section-icon">💻</div>
+        <h2>Telehealth &amp; Communication Consent</h2>
+      </div>
+      <div class="consent-card">
+        <div class="consent-card-header"><h3>Telehealth &amp; Electronic Communication</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_telehealth" readonly /></div></div>
+        <div class="consent-body"><p>You may attend sessions by phone or video. If you prefer in-person, that is always available. Your clinician may require in-person visits when appropriate.</p></div>
+        <div class="field-row-2" style="margin-bottom:10px;">
+          <label class="checkbox-pill"><input type="checkbox" name="commEmail" id="comm-email-check" /> Email: <input type="email" name="commEmailAddress" id="comm-email-addr" placeholder="your@email.com" style="display:none; width:160px; border:none; border-bottom:1px solid #cbd5e1; background:transparent; margin-left:4px; font-size:0.9rem;" /></label>
+          <label class="checkbox-pill"><input type="checkbox" name="commText" id="comm-text-check" /> Text: <input type="tel" name="commTextNumber" id="comm-text-num" placeholder="(   )   -    " style="display:none; width:140px; border:none; border-bottom:1px solid #cbd5e1; background:transparent; margin-left:4px; font-size:0.9rem;" /></label>
+        </div>
+        <div class="field-group"><label class="field-label">Telehealth Address (where you'll be during video sessions)</label><input class="field-input" type="text" name="telehealthAddress" /></div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Telehealth Emergency Contact</label><input class="field-input" type="text" name="telehealthEmgContact" /></div>
+          <div class="field-group"><label class="field-label">Their Phone</label><input class="field-input" type="tel" name="telehealthEmgPhone" /></div>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_telehealth" required /> I understand the telehealth and electronic communication policy.</label>
+      </div>
+      <div class="consent-card" style="margin-top:12px;">
+        <div class="consent-card-header"><h3>Client Rights &amp; Responsibilities</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_rights" readonly /></div></div>
+        <div class="consent-body">
+          <p><strong>Rights:</strong> Privacy, dignity, freedom from abuse, informed consent, access to records, right to file a grievance.</p>
+          <p><strong>Responsibilities:</strong> Attend sessions sober, treat all with respect, participate in your treatment plan, notify us of insurance changes.</p>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_rights" required /> I understand my rights and responsibilities.</label>
+      </div>
+    </div>
+
+    <!-- =================== S18: CONSENT — HIPAA + PHOTO + DIRECTIVE =================== -->
+    <div class="form-section" id="s18" data-label="Consent — HIPAA & Choices">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2>Privacy, Photos &amp; Advance Directive</h2>
+      </div>
+      <div class="consent-card">
+        <div class="consent-card-header"><h3>Notice of Privacy Practices (HIPAA)</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_hipaa" readonly /></div></div>
+        <div class="consent-body"><p>We protect your health information per federal HIPAA law. We may use it for treatment, payment, and healthcare operations. You can access your records, request corrections, and restrict certain uses.</p></div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_hipaa" required /> I acknowledge receipt of the Notice of Privacy Practices.</label>
+      </div>
+      <div class="consent-card" style="margin-top:12px;">
+        <div class="consent-card-header"><h3>Photo &amp; Video Consent</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_photo" readonly /></div></div>
+        <div class="consent-body"><p>We may occasionally take photos/videos. Please select your preference:</p></div>
+        <div class="field-group">
+          <label class="checkbox-pill"><input type="checkbox" name="photoEducational" /> Educational (training/teaching)</label>
+          <label class="checkbox-pill" style="margin-top:4px;"><input type="checkbox" name="photoMarketing" /> Marketing (website, print, social media)</label>
+          <label class="checkbox-pill" style="margin-top:4px;"><input type="checkbox" name="photoMedicalOnly" /> Medical record only</label>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_photo" required /> I have made my photo/video selection above.</label>
+      </div>
+      <div class="consent-card" style="margin-top:12px;">
+        <div class="consent-card-header"><h3>Mental Health Advance Directive</h3><div class="initials-box-wrap"><span class="initials-label">Initials:</span><input type="text" class="initials-box name-initials-field" name="init_directive" readonly /></div></div>
+        <div class="consent-body"><p>Maryland law allows those 16+ to create an advance directive for mental health care decisions when you're unable to make them yourself.</p></div>
+        <div class="field-group">
+          <div class="radio-stack">
+            <label class="radio-card"><input type="radio" name="advanceDirective" value="minor" /> I am under 18 — my guardian will help set up a directive</label>
+            <label class="radio-card"><input type="radio" name="advanceDirective" value="have" /> I already have a directive and will provide a copy</label>
+            <label class="radio-card"><input type="radio" name="advanceDirective" value="not_now" /> Not interested at this time</label>
+            <label class="radio-card"><input type="radio" name="advanceDirective" value="learn_more" /> I'd like to learn more</label>
+          </div>
+        </div>
+        <label class="ack-check required-field"><input type="checkbox" name="ack_directive" required /> I have reviewed the Advance Directive section.</label>
+      </div>
+    </div>
+
+    <!-- =================== S19: CONSENT SIGNATURE =================== -->
+    <div class="form-section" id="s19" data-label="Sign Consent">
+      <div class="section-header">
+        <div class="section-icon">✍️</div>
+        <h2>Sign Your Consent</h2>
+        <p>You confirm that you've read and agree to all policies above.</p>
+      </div>
+      <div class="signature-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="consent_name" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="consent_date" readonly /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Date of Birth <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="consent_dob" readonly /></div>
+          <div class="field-group"><label class="field-label">Assigned Counselor (if known)</label><input class="field-input" type="text" name="assignedCounselor" /></div>
+        </div>
+        <hr class="sig-divider" />
+        <p class="sig-note">If someone is signing on behalf of this client:</p>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Representative Name</label><input class="field-input" type="text" name="repName" /></div>
+          <div class="field-group"><label class="field-label">Relationship to Client</label><input class="field-input" type="text" name="repRelationship" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S20: RELEASE OF INFORMATION =================== -->
+    <div class="form-section" id="s20" data-label="Release of Information">
+      <div class="section-header">
+        <div class="section-icon">📤</div>
+        <h2>Authorization to Release Information</h2>
+        <p>Authorize WEL to share your records with an agency you choose. Skip the details if you don't want records shared.</p>
+      </div>
+      <div class="form-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="roi_name" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date of Birth <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="roi_dob" readonly /></div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Address</label><input class="field-input" type="text" name="roi_address" /></div>
+          <div class="field-group"><label class="field-label">Phone</label><input class="field-input" type="tel" name="roi_phone" /></div>
+          <div class="field-group"><label class="field-label">Email</label><input class="field-input" type="email" name="roi_email" /></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Authorize WEL to:</label>
+          <div class="radio-row flex-wrap">
+            <label class="radio-pill"><input type="radio" name="roiDirection" value="release_to" /> Release info TO</label>
+            <label class="radio-pill"><input type="radio" name="roiDirection" value="receive_from" /> Receive info FROM</label>
+            <label class="radio-pill"><input type="radio" name="roiDirection" value="both" /> Both</label>
+          </div>
+        </div>
+        <h4 class="sub-heading">Agency:</h4>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Agency Name</label><input class="field-input" type="text" name="roiAgencyName" /></div>
+          <div class="field-group"><label class="field-label">Agency Address</label><input class="field-input" type="text" name="roiAgencyAddress" /></div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Phone</label><input class="field-input" type="tel" name="roiAgencyPhone" /></div>
+          <div class="field-group"><label class="field-label">Email</label><input class="field-input" type="email" name="roiAgencyEmail" /></div>
+          <div class="field-group"><label class="field-label">Fax</label><input class="field-input" type="tel" name="roiAgencyFax" /></div>
+        </div>
+        <h4 class="sub-heading">What Records?</h4>
+        <div class="checkbox-grid">
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="diagnostic" /> Diagnostic Assessment</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="progress" /> Progress Notes</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="treatment_plan" /> Treatment Plans</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="psychiatric" /> Psychiatric Evaluation</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="medication" /> Medication Notes</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="assessment_sud" /> SUD Weekly Summary Notes</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="discharge_sud" /> SUD Discharge Summary</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="billing" /> Billing Records</label>
+          <label class="checkbox-pill"><input type="checkbox" name="roiRecords[]" value="other_rec" /> Other</label>
+        </div>
+        <h4 class="sub-heading">Preferred Delivery:</h4>
+        <div class="radio-row flex-wrap">
+          <label class="radio-pill"><input type="radio" name="roiDelivery" value="mail" /> Mail</label>
+          <label class="radio-pill"><input type="radio" name="roiDelivery" value="fax" /> Fax</label>
+          <label class="radio-pill"><input type="radio" name="roiDelivery" value="email" /> Email</label>
+          <label class="radio-pill"><input type="radio" name="roiDelivery" value="pickup" /> Pick-up</label>
+        </div>
+        <div class="field-row-2" style="margin-top:12px;">
+          <div class="field-group"><label class="field-label">Records From</label><input class="field-input" type="date" name="roiDateFrom" /></div>
+          <div class="field-group"><label class="field-label">Records To</label><input class="field-input" type="date" name="roiDateTo" /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Expires On</label><input class="field-input" type="date" name="roiExpiry" /><p class="field-hint">Defaults to 1 year from signature date if left blank.</p></div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="roi_signature" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="roi_sigDate" readonly /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S21: CARELON ROI =================== -->
+    <div class="form-section" id="s21" data-label="Carelon Authorization">
+      <div class="section-header">
+        <div class="section-icon">📋</div>
+        <h2>Authorization — Carelon Behavioral Health</h2>
+        <p>Allows your provider to release specific records to Carelon Behavioral Health for coordination of care.</p>
+      </div>
+      <div class="form-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Participant Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="carelon_name" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date of Birth <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="carelon_dob" readonly /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Provider to Release Information (Name, Address, or Phone)</label><input class="field-input" type="text" name="carelon_providerInfo" /></div>
+        <h4 class="sub-heading">Method of Release:</h4>
+        <div class="radio-row flex-wrap">
+          <label class="radio-pill"><input type="radio" name="carelon_method" value="verbal_phone" /> Verbal/Phone # <input type="text" name="carelon_phone" style="width:110px;border:none;border-bottom:1px solid #cbd5e1;background:transparent;font-size:0.85rem;margin-left:4px;" /></label>
+          <label class="radio-pill"><input type="radio" name="carelon_method" value="fax" /> Fax # <input type="text" name="carelon_fax" style="width:110px;border:none;border-bottom:1px solid #cbd5e1;background:transparent;font-size:0.85rem;margin-left:4px;" /></label>
+          <label class="radio-pill"><input type="radio" name="carelon_method" value="mail" /> U.S. Mail / In-person</label>
+        </div>
+        <h4 class="sub-heading">I consent to release the following:</h4>
+        <div class="checkbox-grid">
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="discharge" /> Discharge Summary</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="psych_testing" /> Psychological Testing</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="psych_eval" /> Psychiatric Evaluation</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="progress" /> Progress Notes</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="lab" /> Laboratory Data</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="medical_record" /> Complete Medical Record</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="history" /> History and Physical</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="treatment_plan" /> Treatment Plan</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="alcohol_drug" /> Alcohol and Drug Abuse Info</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="mental_health_hist" /> History of Mental Health Treatment</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="hiv" /> HIV/AIDS Information</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_records[]" value="other_carelon" /> Other</label>
+        </div>
+        <h4 class="sub-heading">This information is needed for:</h4>
+        <div class="checkbox-grid">
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_purpose[]" value="coordination" /> Coordination of Care</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_purpose[]" value="case_mgmt" /> Case Management</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_purpose[]" value="patient_care" /> Patient Care</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_purpose[]" value="quality" /> Quality of Care Review</label>
+          <label class="checkbox-pill"><input type="checkbox" name="carelon_purpose[]" value="other" /> Other</label>
+        </div>
+        <div class="field-row-2" style="margin-top:12px;">
+          <div class="field-group"><label class="field-label">Date of Service From</label><input class="field-input" type="date" name="carelon_dateFrom" /></div>
+          <div class="field-group"><label class="field-label">To</label><input class="field-input" type="date" name="carelon_dateTo" /></div>
+        </div>
+        <div class="consent-body" style="margin-top:12px; font-size:0.8rem;">
+          <p>I understand my records are protected under state and federal law. I may withdraw this consent at any time. Unless a specific expiration date is given, this consent expires 12 months from signature date. Carelon Behavioral Health will not condition payment or treatment based on whether I sign this authorization.</p>
+        </div>
+        <div class="field-group"><label class="field-label">Authorization Expires</label><input class="field-input" type="date" name="carelon_expiry" /></div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Participant Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="carelon_sig" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="carelon_sigDate" readonly /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Legal Guardian / Parent Signature (if applicable)</label><input class="field-input" type="text" name="carelon_guardianSig" /></div>
+          <div class="field-group"><label class="field-label">Relationship</label><input class="field-input" type="text" name="carelon_relationship" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Signature of Participant (if under 18)</label><input class="field-input" type="text" name="carelon_minor_sig" /></div>
+          <div class="field-group"><label class="field-label">Witness</label><input class="field-input" type="text" name="carelon_witness" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S22: COMMUNICABLE DISEASE SCREENING =================== -->
+    <div class="form-section sud-section" id="s22" data-label="Disease Screening">
+      <div class="section-header">
+        <div class="section-icon">🩺</div>
+        <h2>Communicable Disease Screening</h2>
+        <p>These questions help us connect you with the right health resources and education.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="form-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="cds_name" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="cds_date" readonly /></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">What drugs do you usually use? (Check all that apply)</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="heroin" /> Heroin</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="other_opiates" /> Other Opiates</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="cocaine" /> Cocaine</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="alcohol" /> Alcohol</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="methadone" /> Methadone</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="benzos" /> Benzodiazepines</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="inhalants" /> Inhalants</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="marijuana" /> Marijuana</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="amphetamines" /> Amphetamines</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugsUsed[]" value="na" /> N/A</label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">How do you use? (Check all that apply)</label>
+          <div class="checkbox-grid">
+            <label class="checkbox-pill"><input type="checkbox" name="drugRoute[]" value="inject" /> Inject</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugRoute[]" value="oral" /> Oral</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugRoute[]" value="smoke" /> Smoke</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugRoute[]" value="snort" /> Snort</label>
+            <label class="checkbox-pill"><input type="checkbox" name="drugRoute[]" value="na" /> N/A</label>
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label class="field-label">If you inject, how often do you use new/clean needles?</label>
+            <div class="radio-row"><label class="radio-pill"><input type="radio" name="newNeedles" value="always" /> Always</label><label class="radio-pill"><input type="radio" name="newNeedles" value="sometimes" /> Sometimes</label><label class="radio-pill"><input type="radio" name="newNeedles" value="never" /> Never</label><label class="radio-pill"><input type="radio" name="newNeedles" value="na" /> N/A</label></div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Do you share needles or equipment?</label>
+            <div class="radio-row"><label class="radio-pill"><input type="radio" name="sharesNeedles" value="no" /> No</label><label class="radio-pill"><input type="radio" name="sharesNeedles" value="yes" /> Yes</label><label class="radio-pill"><input type="radio" name="sharesNeedles" value="na" /> N/A</label></div>
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label class="field-label">How often do you use protection against infections?</label>
+            <div class="radio-row"><label class="radio-pill"><input type="radio" name="protectionFrequency" value="always" /> Always</label><label class="radio-pill"><input type="radio" name="protectionFrequency" value="sometimes" /> Sometimes</label><label class="radio-pill"><input type="radio" name="protectionFrequency" value="never" /> Never</label><label class="radio-pill"><input type="radio" name="protectionFrequency" value="na" /> N/A</label></div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Have you traded sex for money, drugs, or other necessities?</label>
+            <div class="radio-row"><label class="radio-pill"><input type="radio" name="transactionalSex" value="no" /> No</label><label class="radio-pill"><input type="radio" name="transactionalSex" value="yes" /> Yes</label></div>
+          </div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group">
+            <label class="field-label">When was your last HIV test?</label>
+            <input class="field-input" type="date" name="lastHIVTest" />
+            <label class="checkbox-pill" style="margin-top:5px;"><input type="checkbox" name="neverTestedHIV" /> Never been tested</label>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Did you receive your HIV test results?</label>
+            <div class="radio-row"><label class="radio-pill"><input type="radio" name="receivedHIVResults" value="yes" /> Yes</label><label class="radio-pill"><input type="radio" name="receivedHIVResults" value="no" /> No</label><label class="radio-pill"><input type="radio" name="receivedHIVResults" value="na" /> N/A</label></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Would you like more info about HIV testing or treatment?</label>
+          <div class="radio-row"><label class="radio-pill"><input type="radio" name="wantsHIVInfo" value="yes" /> Yes</label><label class="radio-pill"><input type="radio" name="wantsHIVInfo" value="no" /> No</label></div>
+        </div>
+        <div class="field-group"><label class="field-label">Notes / Recommendations:</label><textarea class="field-input" name="cdsNotes" rows="2"></textarea></div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="cds_sig" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="cds_sigDate" readonly /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S23: GAST =================== -->
+    <div class="form-section sud-section" id="s23" data-label="Gambling Screen (GAST)">
+      <div class="section-header">
+        <div class="section-icon">🎲</div>
+        <h2>Gamblers Anonymous Screening Test</h2>
+        <p>Answer Yes or No for each question about your behavior in the <strong>past 12 months</strong>. If gambling isn't an issue, mark No for all.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="gast-list">
+        {[
+          "Did you ever lose time from work or school due to gambling?",
+          "Has gambling ever made your home life unhappy?",
+          "Did gambling affect your reputation?",
+          "Did you ever gamble to get money to pay debts or solve financial problems?",
+          "Did gambling cause a decrease in your ambition or efficiency?",
+          "After losing, did you feel you must return as soon as possible to win back losses?",
+          "After a win, did you have a strong urge to return and win more?",
+          "Did you often gamble until your last dollar was gone?",
+          "Did you ever borrow to finance your gambling?",
+          "Have you ever sold anything to finance gambling?",
+          "Were you reluctant to use \"gambling money\" for normal expenses?",
+          "Did gambling make you careless of your welfare or your family's?",
+          "Did you ever gamble longer than you had planned?",
+          "Have you ever gambled to escape worry or trouble?",
+          "Have you ever committed or considered an illegal act to finance gambling?",
+          "Did gambling ever cause you difficulty sleeping?",
+          "Do arguments, disappointments, or frustrations create an urge to gamble?",
+          "Did you ever have an urge to celebrate good fortune by gambling?",
+          "Have you ever considered self-destruction or suicide as a result of gambling?"
+        ].map((q, i) => (
+          <div class="gast-row">
+            <span class="gast-num">{i + 1}</span>
+            <span class="gast-q">{q}</span>
+            <div class="gast-btns">
+              <label class="radio-pill sm"><input type="radio" name={`gast_${i}`} value="yes" /> Yes</label>
+              <label class="radio-pill sm"><input type="radio" name={`gast_${i}`} value="no" defaultChecked /> No</label>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- =================== S24: INTAKE QUESTIONNAIRE =================== -->
+    <div class="form-section" id="s24" data-label="Intake Questionnaire">
+      <div class="section-header">
+        <div class="section-icon">📝</div>
+        <h2>Client Intake Questionnaire</h2>
+        <p>Helps your clinician understand your full background. Skip anything you're not comfortable with.<br/><em style="font-size:0.8rem; color:var(--muted);">Please complete this 5 days before your initial assessment.</em></p>
+      </div>
+      <div class="form-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Today's Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="ciq_today" readonly /></div>
+          <div class="field-group"><label class="field-label">Date of Intake</label><input class="field-input" type="date" name="ciq_dateOfIntake" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="ciq_clientName" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date of Birth <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="ciq_dob" readonly /></div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Age</label><input class="field-input" type="number" name="ciq_age" min="1" max="120" /></div>
+          <div class="field-group"><label class="field-label">Gender</label><input class="field-input" type="text" name="ciq_gender" /></div>
+          <div class="field-group"><label class="field-label">Gender Identity</label><input class="field-input" type="text" name="ciq_genderIdentity" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Race</label><input class="field-input" type="text" name="ciq_race" /></div>
+          <div class="field-group"><label class="field-label">Cultural Identity</label><input class="field-input" type="text" name="ciq_culturalIdentity" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Religious Affiliation / Spirituality <span class="field-opt">(optional)</span></label><input class="field-input" type="text" name="ciq_religion" /><label class="checkbox-pill" style="margin-top:5px;"><input type="checkbox" name="ciq_religionNA" /> N/A</label></div>
+          <div class="field-group"><label class="field-label">Chosen Pronouns</label><input class="field-input" type="text" name="ciq_pronouns" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Sexual Orientation <span class="field-opt">(optional)</span></label><input class="field-input" type="text" name="ciq_sexualOrientation" /></div>
+          <div class="field-group"><label class="field-label">Medicaid / MA #</label><input class="field-input" type="text" name="ciq_maNumber" /></div>
+        </div>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">MCO Name</label><input class="field-input" type="text" name="ciq_mcoName" /></div>
+          <div class="field-group"><label class="field-label">Other Insurance # / Group #</label><input class="field-input" type="text" name="ciq_otherInsurance" /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Street Address</label><input class="field-input" type="text" name="ciq_street" /></div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">City</label><input class="field-input" type="text" name="ciq_city" /></div>
+          <div class="field-group"><label class="field-label">State</label><input class="field-input" type="text" name="ciq_state" placeholder="MD" /></div>
+          <div class="field-group"><label class="field-label">Zip</label><input class="field-input" type="text" name="ciq_zip" /></div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">Cell</label><input class="field-input" type="tel" name="ciq_cell" /></div>
+          <div class="field-group"><label class="field-label">Home</label><input class="field-input" type="tel" name="ciq_home" /></div>
+          <div class="field-group"><label class="field-label">Work</label><input class="field-input" type="tel" name="ciq_work" /></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Preferred Communication</label>
+          <div class="radio-row"><label class="radio-pill"><input type="checkbox" name="ciq_commPref[]" value="email" /> Email</label><label class="radio-pill"><input type="checkbox" name="ciq_commPref[]" value="phone" /> Phone</label><label class="radio-pill"><input type="checkbox" name="ciq_commPref[]" value="text" /> Text</label></div>
+        </div>
+        <div class="field-group"><label class="field-label">Email</label><input class="field-input" type="email" name="ciq_email" /></div>
+        <div class="field-group">
+          <label class="field-label">Employment</label>
+          <label class="checkbox-pill" style="margin-bottom:8px;"><input type="checkbox" name="ciq_notEmployed" /> I am NOT currently employed</label>
+          <input class="field-input" type="text" name="ciq_employer" placeholder="Employer name" />
+          <input class="field-input" type="text" name="ciq_employerAddress" placeholder="Employer address" style="margin-top:6px;" />
+          <input class="field-input" type="tel" name="ciq_employerPhone" placeholder="Employer phone" style="margin-top:6px;" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Marital Status</label>
+          <div class="radio-row flex-wrap">
+            <label class="radio-pill"><input type="radio" name="ciq_marital" value="single" /> Single</label>
+            <label class="radio-pill"><input type="radio" name="ciq_marital" value="married" /> Married</label>
+            <label class="radio-pill"><input type="radio" name="ciq_marital" value="separated" /> Separated</label>
+            <label class="radio-pill"><input type="radio" name="ciq_marital" value="divorced" /> Divorced</label>
+            <label class="radio-pill"><input type="radio" name="ciq_marital" value="widowed" /> Widowed</label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Preferred Language</label>
+          <div class="radio-row flex-wrap">
+            <label class="radio-pill"><input type="radio" name="ciq_language" value="english" /> English</label>
+            <label class="radio-pill"><input type="radio" name="ciq_language" value="spanish" /> Spanish</label>
+            <label class="radio-pill"><input type="radio" name="ciq_language" value="asl" /> ASL</label>
+            <label class="radio-pill"><input type="radio" name="ciq_language" value="other" /> Other: <input type="text" name="ciq_langOther" style="width:120px;border:none;border-bottom:1px solid #cbd5e1;background:transparent;font-size:0.9rem;margin-left:4px;" /></label>
+          </div>
+        </div>
+        <label class="checkbox-pill"><input type="checkbox" name="ciq_noPCP" /> I do not have a PCP and will notify WEL when I find one</label>
+        <div class="field-row-2" style="margin-top:10px;">
+          <div class="field-group"><label class="field-label">PCP Name</label><input class="field-input" type="text" name="ciq_pcpName" /></div>
+          <div class="field-group"><label class="field-label">PCP Phone</label><input class="field-input" type="tel" name="ciq_pcpPhone" /></div>
+        </div>
+        <div class="field-row-3">
+          <div class="field-group"><label class="field-label">PCP Street</label><input class="field-input" type="text" name="ciq_pcpStreet" /></div>
+          <div class="field-group"><label class="field-label">PCP City</label><input class="field-input" type="text" name="ciq_pcpCity" /></div>
+          <div class="field-group"><label class="field-label">Last Exam</label><input class="field-input" type="date" name="ciq_lastExam" /></div>
+        </div>
+        <h4 class="sub-heading">Emergency Contact #1</h4>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label">Name</label><input class="field-input" type="text" name="ciq_emg1Name" /></div>
+          <div class="field-group"><label class="field-label">Relationship</label><input class="field-input" type="text" name="ciq_emg1Rel" /></div>
+        </div>
+        <div class="field-group"><label class="field-label">Address</label><input class="field-input" type="text" name="ciq_emg1Address" /><label class="checkbox-pill" style="margin-top:5px;"><input type="checkbox" name="ciq_emg1Unknown" /> Address unknown</label></div>
+      </div>
+    </div>
+
+    <!-- =================== S25: HEALTH EDUCATION ACKNOWLEDGMENT =================== -->
+    <div class="form-section sud-section" id="s25" data-label="Health Education">
+      <div class="section-header">
+        <div class="section-icon">📚</div>
+        <h2>Health Education Acknowledgment</h2>
+        <p>Maryland regulations require that you receive health education on these topics as part of treatment. Please confirm each one.</p>
+        <div class="sud-badge">SUD Section</div>
+      </div>
+      <div class="form-card">
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Client Name <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="text" name="hed_name" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="hed_date" readonly /></div>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px; font-weight: 600;">I acknowledge that I have received written and/or verbal education about:</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label class="ack-check required-field"><input type="checkbox" name="hed_tobacco" required /> 🚬 <strong>Tobacco &amp; Nicotine Use</strong> — Health risks, benefits of quitting, and cessation resources</label>
+          <label class="ack-check required-field"><input type="checkbox" name="hed_sti" required /> 🏥 <strong>Sexually Transmitted Infections (STIs/STDs)</strong> — Prevention, testing, and treatment</label>
+          <label class="ack-check required-field"><input type="checkbox" name="hed_communicable" required /> 🧬 <strong>Communicable Diseases</strong> — Prevention, symptoms, and when to seek care</label>
+          <label class="ack-check required-field"><input type="checkbox" name="hed_overdose" required /> 💊 <strong>Overdose Prevention</strong> — Signs of overdose, naloxone use, and how to respond</label>
+          <label class="ack-check required-field"><input type="checkbox" name="hed_harm_reduction" required /> 🛡️ <strong>Harm Reduction</strong> — Strategies to reduce risks from substance use</label>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
+          <label class="ack-check"><input type="checkbox" name="hed_packet" /> I received a copy of the Health Education &amp; Wellness Information Packet</label>
+          <label class="ack-check"><input type="checkbox" name="hed_questions" /> I had the opportunity to ask questions</label>
+          <label class="ack-check"><input type="checkbox" name="hed_resources" /> I received resource and contact information for Baltimore &amp; Maryland services</label>
+          <label class="ack-check"><input type="checkbox" name="hed_annual" /> I understand this education will be reviewed with me annually</label>
+        </div>
+        <div class="field-row-2" style="margin-top:16px;">
+          <div class="field-group"><label class="field-label autofill-label">Client Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="hed_sig" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="hed_sigDate" readonly /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================== S26: REVIEW & SUBMIT =================== -->
+    <div class="form-section" id="s26" data-label="Review & Submit">
+      <div class="section-header">
+        <div class="section-icon">🎉</div>
+        <h2>Almost Done!</h2>
+        <p>Review your info and sign to submit.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-row"><span class="review-lbl">Program:</span><span class="review-val">SUD — Substance Use Disorder</span></div>
+        <div class="review-row"><span class="review-lbl">Name:</span><span class="review-val" id="rv-name">—</span></div>
+        <div class="review-row"><span class="review-lbl">Date of Birth:</span><span class="review-val" id="rv-dob">—</span></div>
+        <div class="review-row"><span class="review-lbl">Emergency Contact:</span><span class="review-val" id="rv-emg">—</span></div>
+        <div class="review-row"><span class="review-lbl">Government ID:</span><span class="review-val" id="rv-govid">—</span></div>
+        <div class="review-row"><span class="review-lbl">Insurance Card:</span><span class="review-val" id="rv-insurance">—</span></div>
+      </div>
+      <div class="signature-card" style="margin-top:16px;">
+        <h3 class="sig-title">Final Signature</h3>
+        <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px;">By submitting, you confirm all information is accurate and complete.</p>
+        <div class="field-row-2">
+          <div class="field-group"><label class="field-label autofill-label">Signature <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input signature-style" type="text" name="finalSignature" readonly /></div>
+          <div class="field-group"><label class="field-label autofill-label">Date <span class="autofill-tag">Auto</span></label><input class="field-input autofill-input" type="date" name="finalDate" readonly /></div>
+        </div>
+      </div>
+      <div id="form-error-banner" class="error-banner" style="display:none;" role="alert">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="error-msg-text">Something went wrong. Please try again.</span>
+      </div>
+      <button type="submit" class="btn-submit" id="submit-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Submit My SUD Intake
+      </button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="form-section success-slide" id="s-success" style="display:none; text-align:center; padding: 60px 0;">
+      <div class="success-ring"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <h2 style="margin: 20px 0 10px;">Form Submitted!</h2>
+      <p style="color:var(--muted); max-width:480px; margin-inline:auto; line-height:1.7;">Thank you! We'll review your SUD intake form and reach out within <strong>1–2 business days</strong>. Questions? Call <a href="tel:443-826-2770">443-826-2770</a>.</p>
+      <a href="/" class="btn-submit" style="display:inline-flex; margin-top:24px; text-decoration:none;">Return to Home</a>
+    </div>
+
+  </form>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav" id="bottom-nav">
+    <button type="button" class="nav-btn nav-back" id="btn-back" style="visibility:hidden;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back
+    </button>
+    <button type="button" class="nav-btn nav-next" id="btn-next">
+      Continue <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+</div>
+
+<style>
+  :root {
+    --sud-accent: #b45309;
+    --sud-accent-light: rgba(180,83,9,0.08);
+    --success: #16a34a;
+    --danger: #dc2626;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  .intake-shell { min-height: 100vh; background: var(--bg); padding-bottom: 100px; }
+
+  .intake-topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: white; border-bottom: 1px solid var(--border); box-shadow: 0 1px 8px rgba(0,0,0,0.04); }
+  .back-link { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+  .back-link:hover { color: var(--sud-accent); }
+  .topbar-badge { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sud-accent); background: var(--sud-accent-light); padding: 4px 12px; border-radius: 40px; }
+  .topbar-pct { font-size: 0.9rem; font-weight: 800; color: var(--sud-accent); min-width: 40px; text-align: right; }
+
+  .progress-rail { height: 4px; background: var(--border); position: sticky; top: 53px; z-index: 99; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sud-accent), #d97706); border-radius: 0 2px 2px 0; transition: width 0.5s cubic-bezier(0.65,0,0.35,1); }
+
+  .section-meta { text-align: center; font-size: 0.78rem; font-weight: 600; color: var(--muted); padding: 10px 20px 0; letter-spacing: 0.02em; text-transform: uppercase; }
+
+  .form-section { display: none; max-width: 680px; margin: 0 auto; padding: 24px 20px 0; animation: sectionIn 0.38s cubic-bezier(0.4,0,0.2,1); }
+  .form-section.active { display: block; }
+  @keyframes sectionIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header { text-align: center; margin-bottom: 24px; }
+  .section-icon { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+  .section-header h2 { font-size: clamp(1.4rem,3.5vw,1.9rem); font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+  .section-header p { font-size: 0.93rem; color: var(--muted); line-height: 1.6; max-width: 480px; margin-inline: auto; }
+
+  .consent-subtitle { background: rgba(180,83,9,0.07); border: 1px solid rgba(180,83,9,0.2); border-radius: 8px; padding: 10px 14px; font-size: 0.88rem !important; color: var(--sud-accent) !important; }
+
+  .sud-badge { display: inline-block; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sud-accent); background: var(--sud-accent-light); padding: 3px 10px; border-radius: 20px; }
+  .sud-section { }
+  .sud-only-card { background: rgba(180,83,9,0.03); border-left: 3px solid var(--sud-accent); }
+
+  .form-card, .consent-card, .signature-card, .review-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .signature-card { border-top: 3px solid var(--sud-accent); }
+
+  .field-group { margin-bottom: 16px; }
+  .field-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .field-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; color: var(--text); background: #fff; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+  .field-input:focus { outline: none; border-color: var(--sud-accent); box-shadow: 0 0 0 3px rgba(180,83,9,0.1); }
+  select.field-input { cursor: pointer; }
+  textarea.field-input { resize: vertical; min-height: 80px; }
+  .field-error { display: none; font-size: 0.78rem; color: var(--danger); margin-top: 4px; font-weight: 600; }
+  .field-hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; display: block; }
+  .field-opt { font-size: 0.78rem; font-weight: 400; color: var(--muted); }
+  .req { color: var(--danger); }
+
+  .autofill-input { background: #eff6ff !important; border-color: #bfdbfe !important; cursor: default; }
+  .autofill-label { color: var(--sud-accent) !important; }
+  .autofill-tag { display: inline-block; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sud-accent); background: var(--sud-accent-light); padding: 2px 7px; border-radius: 20px; margin-left: 5px; }
+  .autofill-pill { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; border-radius: 8px; padding: 9px 14px; margin-bottom: 16px; font-weight: 600; }
+  .signature-style { font-family: 'Georgia','Times New Roman',serif !important; font-style: italic; font-size: 1.05rem !important; }
+
+  .field-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px) { .field-row-2, .field-row-3 { grid-template-columns: 1fr; } }
+
+  .radio-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .radio-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 40px; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: all 0.15s; color: var(--text); background: white; }
+  .radio-pill.sm { padding: 5px 10px; font-size: 0.82rem; }
+  .radio-pill:has(input:checked) { border-color: var(--sud-accent); background: var(--sud-accent-light); color: var(--sud-accent); font-weight: 700; }
+  .radio-pill input { width: 14px; height: 14px; accent-color: var(--sud-accent); flex-shrink: 0; }
+  .checkbox-pill { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--text); cursor: pointer; padding: 4px 0; }
+  .checkbox-pill input { width: 16px; height: 16px; accent-color: var(--sud-accent); flex-shrink: 0; }
+  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 8px; margin-top: 8px; }
+  .radio-stack { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .radio-card { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.88rem; cursor: pointer; transition: all 0.15s; background: white; }
+  .radio-card:has(input:checked) { border-color: var(--sud-accent); background: var(--sud-accent-light); color: var(--sud-accent); font-weight: 600; }
+  .radio-card input { width: 16px; height: 16px; accent-color: var(--sud-accent); flex-shrink: 0; margin-top: 2px; }
+
+  .consent-card { padding: 18px; border-left: 3px solid var(--sud-accent); }
+  .consent-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .consent-card-header h3 { font-size: 0.98rem; font-weight: 800; color: var(--text); margin: 0; }
+  .initials-box-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .initials-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+  .initials-box { width: 72px !important; padding: 5px 8px !important; text-align: center; font-style: italic; font-family: 'Georgia',serif !important; font-size: 1rem !important; background: #eff6ff !important; border-color: #bfdbfe !important; border-radius: 6px; border: 1.5px solid; }
+  .consent-body { font-size: 0.86rem; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+  .consent-body p { margin-bottom: 8px; }
+  .consent-body ul { padding-left: 18px; margin-bottom: 8px; }
+  .crisis-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; font-size: 0.84rem; color: #7f1d1d; margin-top: 8px; }
+  .crisis-box ul { color: #991b1b; }
+  .ack-check { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; background: #f8fafc; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.86rem; font-weight: 700; cursor: pointer; color: var(--text); transition: all 0.15s; }
+  .ack-check:has(input:checked) { background: rgba(180,83,9,0.05); border-color: var(--sud-accent); color: var(--sud-accent); }
+  .ack-check input { width: 16px; height: 16px; accent-color: var(--sud-accent); flex-shrink: 0; margin-top: 1px; }
+
+  .upload-zone { position: relative; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; transition: all 0.2s; background: white; overflow: hidden; }
+  .upload-zone:hover { border-color: var(--sud-accent); background: var(--sud-accent-light); }
+  .upload-zone.uploaded { border-color: var(--success); border-style: solid; }
+  .upload-zone-inner { padding: 36px 24px; pointer-events: none; }
+  .upload-zone svg { color: var(--muted); margin-bottom: 10px; transition: color 0.2s; }
+  .upload-zone:hover svg { color: var(--sud-accent); }
+  .upload-zone.uploaded svg { color: var(--success); }
+  .upload-title { font-weight: 700; font-size: 0.98rem; color: var(--text); margin: 0 0 4px; }
+  .upload-hint { font-size: 0.78rem; color: var(--muted); }
+  .upload-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-success { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 0.85rem; font-weight: 600; color: var(--success); }
+
+  .med-table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .med-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .med-table th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-size: 0.73rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .med-table td { padding: 6px; border-bottom: 1px solid var(--border); }
+  .med-table tr:last-child td { border-bottom: none; }
+  .med-table input, .med-table select { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; font-family: inherit; background: white; }
+  .btn-add-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; background: none; border: 1.5px dashed var(--border); border-radius: 8px; padding: 8px 14px; font-size: 0.84rem; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.2s; }
+  .btn-add-row:hover { border-color: var(--sud-accent); color: var(--sud-accent); }
+
+  /* GAST */
+  .gast-list { display: flex; flex-direction: column; gap: 6px; }
+  .gast-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: white; border: 1px solid var(--border); border-radius: 10px; font-size: 0.86rem; }
+  .gast-row:nth-child(even) { background: #f8fafc; }
+  .gast-num { font-weight: 800; color: var(--muted); min-width: 22px; font-size: 0.78rem; flex-shrink: 0; }
+  .gast-q { flex: 1; color: var(--text); line-height: 1.4; }
+  .gast-btns { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .review-card { padding: 0; overflow: hidden; }
+  .review-row { display: flex; padding: 12px 20px; border-bottom: 1px solid var(--border); gap: 16px; align-items: center; }
+  .review-row:last-child { border-bottom: none; }
+  .review-lbl { font-size: 0.82rem; font-weight: 700; color: var(--muted); min-width: 140px; }
+  .review-val { font-size: 0.92rem; color: var(--text); font-weight: 500; }
+
+  .sig-title { font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+  .sig-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .sig-note { font-size: 0.82rem; color: var(--muted); margin-bottom: 10px; }
+  .sub-heading { font-size: 0.88rem; font-weight: 800; color: var(--text); margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: white; border-top: 1px solid var(--border); box-shadow: 0 -4px 24px rgba(0,0,0,0.07); z-index: 100; }
+  .nav-btn { display: flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 40px; font-size: 0.92rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+  .nav-back { background: #f1f5f9; color: var(--muted); }
+  .nav-back:hover { background: #e2e8f0; color: var(--text); }
+  .nav-next { background: var(--sud-accent); color: white; box-shadow: 0 4px 14px rgba(180,83,9,0.3); }
+  .nav-next:hover { background: #92400e; box-shadow: 0 6px 20px rgba(180,83,9,0.4); transform: translateY(-1px); }
+
+  .btn-submit { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; border-radius: 40px; font-size: 1rem; font-weight: 800; cursor: pointer; border: none; background: linear-gradient(135deg, #16a34a, #15803d); color: white; box-shadow: 0 4px 20px rgba(22,163,74,0.3); margin-top: 20px; transition: all 0.2s; }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(22,163,74,0.4); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .error-banner { display: flex; align-items: center; gap: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 12px 16px; color: #991b1b; font-size: 0.9rem; font-weight: 600; margin-top: 16px; }
+  .success-ring { display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; background: rgba(22,163,74,0.1); color: var(--success); margin-bottom: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spin { animation: spin 0.9s linear infinite; }
+</style>
+
+<script>
+  // @ts-nocheck
+  document.addEventListener('astro:page-load', () => {
+    const TOTAL = 26;
+    let current = 1;
+
+    const nameInput = document.getElementById('fullname');
+    const dobInput = document.getElementById('dob');
+
+    function initials(name) {
+      const parts = (name || '').trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return '';
+      const f = parts[0][0]?.toUpperCase();
+      const l = parts.length > 1 ? parts[parts.length-1][0]?.toUpperCase() : '';
+      return l ? `${f}.${l}.` : `${f}.`;
+    }
+
+    function populate() {
+      const name = nameInput?.value || '';
+      const dob = dobInput?.value || '';
+      const ini = initials(name);
+      const today = new Date().toISOString().split('T')[0];
+
+      document.querySelectorAll('.name-initials-field').forEach(el => el.value = ini);
+      document.querySelectorAll('.signature-style').forEach(el => { if (el.readOnly) el.value = name; });
+      document.querySelectorAll('.autofill-input:not([type="date"])').forEach(el => {
+        if (el.readOnly && !el.classList.contains('signature-style')) el.value = name;
+      });
+      document.querySelectorAll('.autofill-input[type="date"]').forEach(el => {
+        if (el.readOnly) {
+          const n = el.name || '';
+          if (n.toLowerCase().includes('dob')) el.value = dob;
+          else el.value = today;
+        }
+      });
+    }
+
+    nameInput?.addEventListener('input', populate);
+    dobInput?.addEventListener('change', populate);
+    populate();
+
+    function setProgress(step) {
+      const pct = Math.round(((step-1)/(TOTAL-1))*100);
+      const fill = document.getElementById('progress-fill');
+      const disp = document.getElementById('pct-display');
+      if (fill) fill.style.width = pct + '%';
+      if (disp) disp.textContent = pct + '%';
+    }
+
+    function showSection(n) {
+      document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+      const t = document.getElementById(`s${n}`);
+      if (t) t.classList.add('active');
+      const meta = document.getElementById('section-meta');
+      if (meta) meta.innerHTML = `Section ${n} of ${TOTAL} &mdash; <span>${t?.dataset.label||''}</span>`;
+      const back = document.getElementById('btn-back');
+      if (back) back.style.visibility = n === 1 ? 'hidden' : 'visible';
+      const nav = document.getElementById('bottom-nav');
+      if (nav) nav.style.display = n === TOTAL ? 'none' : 'flex';
+      setProgress(n);
+      current = n;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function validateCurrent() {
+      const section = document.getElementById(`s${current}`);
+      if (!section) return true;
+      let valid = true;
+
+      section.querySelectorAll('input[required], select[required]').forEach(input => {
+        const errEl = document.getElementById(`err-${input.id}`);
+        if (!input.value.trim()) {
+          input.setAttribute('aria-invalid','true');
+          input.style.borderColor = '#dc2626';
+          if (errEl) errEl.style.display = 'block';
+          valid = false;
+        } else {
+          input.removeAttribute('aria-invalid');
+          input.style.borderColor = '';
+          if (errEl) errEl.style.display = 'none';
+        }
+      });
+
+      section.querySelectorAll('input[type="file"][required]').forEach(input => {
+        const errEl = document.getElementById(`err-${input.id}`);
+        if (!input.files?.length) {
+          const zone = input.closest('.upload-zone');
+          if (zone) zone.style.borderColor = '#dc2626';
+          if (errEl) errEl.style.display = 'block';
+          valid = false;
+        } else {
+          const zone = input.closest('.upload-zone');
+          if (zone) zone.style.borderColor = '';
+          if (errEl) errEl.style.display = 'none';
+        }
+      });
+
+      section.querySelectorAll('.ack-check.required-field input[type="checkbox"]').forEach(cb => {
+        const ack = cb.closest('.ack-check');
+        if (!cb.checked) {
+          if (ack) { ack.style.borderColor = '#dc2626'; ack.style.background = '#fef2f2'; }
+          valid = false;
+        } else {
+          if (ack) { ack.style.borderColor = ''; ack.style.background = ''; }
+        }
+      });
+
+      if (!valid) {
+        const first = section.querySelector('[aria-invalid="true"]');
+        first?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+      }
+      return valid;
+    }
+
+    document.getElementById('btn-next')?.addEventListener('click', () => {
+      if (!validateCurrent()) return;
+      populate();
+      updateReview();
+      if (current < TOTAL) showSection(current + 1);
+    });
+
+    document.getElementById('btn-back')?.addEventListener('click', () => {
+      if (current > 1) showSection(current - 1);
+    });
+
+    // Uploads
+    function setupUpload(inputId, zoneId, successId, filenameId) {
+      const input = document.getElementById(inputId);
+      const zone = document.getElementById(zoneId);
+      const success = document.getElementById(successId);
+      if (!input || !zone) return;
+      input.addEventListener('change', () => {
+        const file = input.files?.[0];
+        if (file) {
+          zone.classList.add('uploaded');
+          zone.querySelector('.upload-title').textContent = '✓ ' + file.name;
+          if (success) success.style.display = 'flex';
+          const fn = document.getElementById(filenameId);
+          if (fn) fn.textContent = file.name;
+          const e = document.getElementById(`err-${inputId}`);
+          if (e) e.style.display = 'none';
+        }
+      });
+    }
+
+    setupUpload('gov-id','govid-zone','govid-success','govid-filename');
+    setupUpload('insurance-card','insurance-zone','insurance-success','insurance-filename');
+
+    // Conditionals
+    document.querySelectorAll('input[name="hasPCP"]').forEach(r => r.addEventListener('change', () => {
+      const d = document.getElementById('pcp-fields');
+      if (d) d.style.display = r.value === 'yes' ? 'block' : 'none';
+    }));
+
+    document.querySelectorAll('input[name="isOnMAT"]').forEach(r => r.addEventListener('change', () => {
+      const d = document.getElementById('mat-dose');
+      if (d) d.style.display = r.value === 'yes' ? 'block' : 'none';
+    }));
+
+    document.querySelectorAll('input[name="everIncarcerated"]').forEach(r => r.addEventListener('change', () => {
+      const d = document.getElementById('incarceration-when');
+      if (d) d.style.display = r.value === 'yes' ? 'block' : 'none';
+    }));
+
+    const paroleCheck = document.getElementById('parole-check');
+    const probationCheck = document.getElementById('probation-check');
+    const agentSection = document.getElementById('agent-section');
+
+    function updateAgentSection() {
+      if (agentSection) agentSection.style.display = (paroleCheck?.checked || probationCheck?.checked) ? 'block' : 'none';
+    }
+    paroleCheck?.addEventListener('change', updateAgentSection);
+    probationCheck?.addEventListener('change', updateAgentSection);
+
+    document.querySelectorAll('input[name="pendingCharges"]').forEach(r => r.addEventListener('change', () => {
+      const d = document.getElementById('pending-charges-detail');
+      if (d) d.style.display = r.value === 'yes' ? 'block' : 'none';
+    }));
+
+    document.querySelectorAll('input[name="hasCrisis"]').forEach(r => r.addEventListener('change', () => {
+      const d = document.getElementById('crisis-detail');
+      if (d) d.style.display = r.value === 'yes' ? 'block' : 'none';
+    }));
+
+    document.getElementById('is-adult')?.addEventListener('change', function() {
+      const gf = document.getElementById('guardian-fields');
+      if (gf) gf.style.display = this.checked ? 'none' : 'block';
+    });
+
+    document.getElementById('comm-email-check')?.addEventListener('change', function() {
+      const a = document.getElementById('comm-email-addr');
+      if (a) a.style.display = this.checked ? 'inline-block' : 'none';
+    });
+    document.getElementById('comm-text-check')?.addEventListener('change', function() {
+      const a = document.getElementById('comm-text-num');
+      if (a) a.style.display = this.checked ? 'inline-block' : 'none';
+    });
+
+    // Med table
+    let medCount = 1;
+    document.getElementById('add-med')?.addEventListener('click', () => {
+      const body = document.getElementById('med-body');
+      const i = medCount++;
+      const row = document.createElement('tr');
+      row.innerHTML = `<td><input type="text" name="meds[${i}][name]" /></td><td><input type="text" name="meds[${i}][dose]" /></td><td><input type="text" name="meds[${i}][prescriber]" /></td><td><input type="date" name="meds[${i}][startDate]" /></td><td><button type="button" onclick="this.closest('tr').remove()" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:1rem;padding:4px;">✕</button></td>`;
+      body?.appendChild(row);
+    });
+
+    let drugCount = 1;
+    document.getElementById('add-drug')?.addEventListener('click', () => {
+      const body = document.getElementById('drug-body');
+      const i = drugCount++;
+      const row = document.createElement('tr');
+      row.innerHTML = `<td><input type="text" name="drugs[${i}][name]" /></td><td><select name="drugs[${i}][severity]"><option value="">Select...</option><option>Mild</option><option>Moderate</option><option>Severe</option></select></td><td><select name="drugs[${i}][route]"><option value="">Select...</option><option>Inject</option><option>Smoke</option><option>Snort</option><option>Oral</option><option>Other</option></select></td><td><input type="number" name="drugs[${i}][ageFirst]" min="1" max="100" /></td><td><input type="date" name="drugs[${i}][lastUsed]" /></td><td><button type="button" onclick="this.closest('tr').remove()" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:1rem;padding:4px;">✕</button></td>`;
+      body?.appendChild(row);
+    });
+
+    function updateReview() {
+      const name = nameInput?.value || '—';
+      const dob = dobInput?.value || '—';
+      const emgN = document.querySelector('[name="emergencyContactName"]')?.value || '—';
+      const emgP = document.querySelector('[name="emergencyContactPhone"]')?.value || '';
+      const gid = document.getElementById('gov-id');
+      const ins = document.getElementById('insurance-card');
+      const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+      set('rv-name', name);
+      set('rv-dob', dob);
+      set('rv-emg', emgN + (emgP ? ` — ${emgP}` : ''));
+      set('rv-govid', gid?.files?.[0]?.name || 'Not uploaded');
+      set('rv-insurance', ins?.files?.[0]?.name || 'Not uploaded');
+    }
+
+    document.getElementById('sud-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validateCurrent()) return;
+      const btn = document.getElementById('submit-btn');
+      const errBanner = document.getElementById('form-error-banner');
+      const errText = document.getElementById('error-msg-text');
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Submitting...`;
+      try {
+        const fd = new FormData(document.getElementById('sud-form'));
+        fd.set('program', 'SUD');
+        const baseUrl = (window.__ENV__ || {}).PUBLIC_SUPABASE_URL || '';
+        if (!baseUrl) throw new Error('Config error — please contact support');
+        const res = await fetch(`${baseUrl}/functions/v1/intake-submit`, { method: 'POST', body: fd });
+        if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `Error ${res.status}`); }
+        document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+        document.getElementById('s-success').style.display = 'block';
+        document.getElementById('bottom-nav').style.display = 'none';
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('pct-display').textContent = '100%';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        if (errBanner) errBanner.style.display = 'flex';
+        if (errText) errText.textContent = err.message;
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Submit My SUD Intake`;
+      }
+    });
+
+    showSection(1);
+  });
+</script>
+
+</Layout>

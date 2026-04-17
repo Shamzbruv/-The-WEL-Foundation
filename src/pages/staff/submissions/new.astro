@@ -1,0 +1,75 @@
+---
+import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="New Submissions Queue">
+    <div class="card">
+        <h2>Intake Triage Queue</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Recent submissions awaiting absolute initial review or assignment.</p>
+        
+        <table class="portal-table" id="new-submissions-table">
+            <thead>
+                <tr>
+                    <th>Date Received</th>
+                    <th>Applicant</th>
+                    <th>Type</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6">Loading triage queue...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#new-submissions-table tbody');
+            if(!tbody) return;
+
+            // RLS filters automatically 
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('id, created_at, submitted_by_name, submitted_by_email, type, internal_priority, status')
+                .eq('status', 'New')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error loading submissions: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #94a3b8;">Queue empty. No new submissions pending triage.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(sub => {
+                const row = document.createElement('tr');
+                const rDate = new Date(sub.created_at).toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${rDate}</td>
+                    <td><strong>${sub.submitted_by_name}</strong><br/>
+                        <span style="color:#64748b; font-size:0.85rem;">${sub.submitted_by_email}</span>
+                    </td>
+                    <td>${(sub.type || '').toUpperCase()}</td>
+                    <td>${sub.internal_priority || 'Normal'}</td>
+                    <td><span class="status-pill status-${sub.status.replace(/\s+/g, '')}">${sub.status}</span></td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Triage</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>

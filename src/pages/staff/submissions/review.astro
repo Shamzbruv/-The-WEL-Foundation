@@ -1,0 +1,74 @@
+---
+import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="In Review">
+    <div class="card">
+        <h2>Active Review Pipeline</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Submissions currently undergoing active evaluation or missing information.</p>
+        
+        <table class="portal-table" id="review-queue-table">
+            <thead>
+                <tr>
+                    <th>Last Action</th>
+                    <th>Applicant</th>
+                    <th>Type</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6">Loading review queue...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#review-queue-table tbody');
+            if(!tbody) return;
+
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('id, last_action_at, created_at, submitted_by_name, submitted_by_email, type, internal_priority, status')
+                .in('status', ['In Review', 'Needs More Info', 'Assigned'])
+                .order('last_action_at', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="color:red;">Error loading submissions: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #94a3b8;">No submissions currently in review.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(sub => {
+                const row = document.createElement('tr');
+                const lastAct = sub.last_action_at ? new Date(sub.last_action_at).toLocaleString() : new Date(sub.created_at).toLocaleString();
+                
+                row.innerHTML = `
+                    <td>${lastAct}</td>
+                    <td><strong>${sub.submitted_by_name}</strong><br/>
+                        <span style="color:#64748b; font-size:0.85rem;">${sub.submitted_by_email}</span>
+                    </td>
+                    <td>${(sub.type || '').toUpperCase()}</td>
+                    <td>${sub.internal_priority || 'Normal'}</td>
+                    <td><span class="status-pill status-${sub.status.replace(/\\s+/g, '')}">${sub.status}</span></td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Evaluate</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>

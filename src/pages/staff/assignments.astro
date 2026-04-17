@@ -1,0 +1,71 @@
+---
+import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
+---
+<StaffPortalLayout title="Assignment Queue">
+    <div class="card">
+        <h2>Intake Coordinator Allocation</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Unassigned items requiring distribution to standard processing staff.</p>
+        
+        <table class="portal-table" id="assignment-queue-table">
+            <thead>
+                <tr>
+                    <th>Date Received</th>
+                    <th>Applicant</th>
+                    <th>Type</th>
+                    <th>Priority</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="5">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        import { createClient } from '@supabase/supabase-js';
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+
+        document.addEventListener('astro:page-load', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/staff/login/'; return; }
+
+            const tbody = document.querySelector('#assignment-queue-table tbody');
+            if(!tbody) return;
+
+            const { data, error } = await supabase
+                .from('submissions')
+                .select('id, created_at, submitted_by_name, type, internal_priority')
+                .is('assigned_to', null)
+                .neq('status', 'Completed')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="5" style="color:red;">Error loading queue: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #10b981;">No pending assignments.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(sub => {
+                const row = document.createElement('tr');
+                const crDt = new Date(sub.created_at).toLocaleDateString();
+                
+                row.innerHTML = `
+                    <td>${crDt}</td>
+                    <td><strong>${sub.submitted_by_name}</strong></td>
+                    <td>${(sub.type || '').toUpperCase()}</td>
+                    <td>${sub.internal_priority || 'Normal'}</td>
+                    <td>
+                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Allocate</a>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
+    </script>
+</StaffPortalLayout>
