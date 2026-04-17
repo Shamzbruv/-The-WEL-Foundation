@@ -25,7 +25,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
 
     <script>
         import { createClient } from '@supabase/supabase-js';
-        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ""); } const supabase = (window as any).supabase;
+        if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "public-anon-key"); } const supabase = (window as any).supabase;
 
         document.addEventListener('astro:page-load', async () => {
             const { data: { session } } = await supabase.auth.getSession();
