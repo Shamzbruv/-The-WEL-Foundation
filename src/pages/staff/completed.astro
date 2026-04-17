@@ -6,7 +6,8 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
         <h2>Historical Pipeline</h2>
         <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Submissions securely processed and marked complete.</p>
         
-        <table class="portal-table" id="completed-queue-table">
+        <div class="table-responsive">
+<table class="portal-table" id="completed-queue-table">
             <thead>
                 <tr>
                     <th>Date Received</th>
@@ -21,6 +22,7 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
                 <tr><td colspan="6">Loading history...</td></tr>
             </tbody>
         </table>
+</div>
     </div>
 
     <script>

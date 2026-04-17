@@ -45,7 +45,8 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
         <h2>Administrator Console</h2>
         <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Manage platform access and role allocation.</p>
         
-        <table class="portal-table" id="staff-table">
+        <div class="table-responsive">
+<table class="portal-table" id="staff-table">
             <thead>
                 <tr>
                     <th>Staff Member</th>
@@ -58,6 +59,7 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
                 <tr><td colspan="4">Loading staff...</td></tr>
             </tbody>
         </table>
+</div>
     </div>
 
     <script>

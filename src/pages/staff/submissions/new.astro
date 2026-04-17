@@ -6,7 +6,8 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
         <h2>Intake Triage Queue</h2>
         <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Recent submissions awaiting absolute initial review or assignment.</p>
         
-        <table class="portal-table" id="new-submissions-table">
+        <div class="table-responsive">
+<table class="portal-table" id="new-submissions-table">
             <thead>
                 <tr>
                     <th>Date Received</th>
@@ -21,6 +22,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 <tr><td colspan="6">Loading triage queue...</td></tr>
             </tbody>
         </table>
+</div>
     </div>
 
     <script>
