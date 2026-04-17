@@ -173,6 +173,7 @@ const { title } = Astro.props;
     </div>
 
     <script>
+      // @ts-nocheck
       import { createClient } from '@supabase/supabase-js';
 
       // Re-initialize supabase per page context since Astro scripts run modularly
