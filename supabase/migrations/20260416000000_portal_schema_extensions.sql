@@ -396,3 +396,7 @@ BEGIN
     END IF;
 END
 $$;
+
+-- Enable Admins to manually edit user roles directly from the platform
+CREATE POLICY "Admins can update roles" ON user_roles FOR UPDATE TO authenticated USING (is_admin());
+

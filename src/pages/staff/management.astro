@@ -118,7 +118,64 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
 
                 document.querySelectorAll('.promote-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        alert('Role management editing logic requires future sprint Implementation slated for dedicated user management release.');
+                        const target = e.target as HTMLButtonElement;
+                        const staffId = target.getAttribute('data-id');
+                        const staffName = target.closest('tr')?.querySelector('strong')?.innerText || 'Staff Member';
+                        // Get current role safely
+                        const currentRoleLabel = target.closest('tr')?.querySelector('.status-pill')?.innerText;
+                        
+                        let currentRoleVal = 'staff';
+                        if (currentRoleLabel === 'Administrator') currentRoleVal = 'admin';
+                        if (currentRoleLabel === 'Intake Coordinator') currentRoleVal = 'intake_coordinator';
+
+                        const htmlContent = `
+                            <p style="margin-top:0;">Select a new platform access level for <strong>${staffName}</strong>.</p>
+                            <label for="edit_role" style="display:block; margin-bottom:0.3rem; font-weight:500; font-size:0.9rem;">Access Level</label>
+                            <select id="edit_role" class="field-input" style="width:100%; border:1px solid var(--color-border); padding:0.5rem; border-radius:4px;">
+                                <option value="staff" ${currentRoleVal === 'staff' ? 'selected' : ''}>General Staff (Limited Access)</option>
+                                <option value="intake_coordinator" ${currentRoleVal === 'intake_coordinator' ? 'selected' : ''}>Intake Coordinator (Mid-level)</option>
+                                <option value="admin" ${currentRoleVal === 'admin' ? 'selected' : ''}>Administrator (Full Access)</option>
+                            </select>
+                            <div id="edit-role-status" style="margin-top:1rem; font-size:0.85rem; font-weight:500;"></div>
+                        `;
+                        
+                        const buttonsHtml = `
+                            <button class="btn-outline" id="portal-modal-cancel">Cancel</button>
+                            <button class="btn-primary" id="portal-modal-save">Save Changes</button>
+                        `;
+
+                        window.PortalUI.custom('Edit Staff Access', htmlContent, buttonsHtml, (dialog) => {
+                            document.getElementById('portal-modal-cancel').addEventListener('click', () => dialog.close());
+                            
+                            document.getElementById('portal-modal-save').addEventListener('click', async () => {
+                                const newRole = (document.getElementById('edit_role') as HTMLSelectElement).value;
+                                const saveBtn = document.getElementById('portal-modal-save') as HTMLButtonElement;
+                                const status = document.getElementById('edit-role-status');
+                                
+                                saveBtn.disabled = true;
+                                saveBtn.textContent = 'Saving...';
+                                status.textContent = '';
+                                
+                                try {
+                                    // Update the user_roles table securely
+                                    const { error } = await supabase
+                                        .from('user_roles')
+                                        .update({ role: newRole })
+                                        .eq('user_id', staffId);
+                                        
+                                    if(error) throw new Error(error.message);
+                                    
+                                    dialog.close();
+                                    window.PortalUI.alert('Success', `${staffName}'s access level was updated successfully.`);
+                                    await loadStaff(); // Refresh table
+                                } catch(err) {
+                                    status.style.color = '#dc2626';
+                                    status.textContent = 'Error: ' + err.message;
+                                    saveBtn.disabled = false;
+                                    saveBtn.textContent = 'Save Changes';
+                                }
+                            });
+                        });
                     });
                 });
             }
@@ -128,7 +185,8 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
             // Handle creation form
             const createForm = document.getElementById('create-staff-form');
             const statusDiv = document.getElementById('create-status');
-            const createBtn = document.getElementById('create-btn');
+            const createBtn = (document.getElementById('create-btn') as HTMLButtonElement);
+
 
             if (createForm) {
                 createForm.addEventListener('submit', async (e) => {

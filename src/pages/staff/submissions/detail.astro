@@ -152,9 +152,9 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 const assigned_to = document.getElementById('ctrl-assignment').value || null;
                 
                 const { error } = await supabase.from('submissions').update({ status, internal_priority: priority, assigned_to }).eq('id', currentSubmissionId);
-                if(error) alert('Error updating workflow: ' + error.message);
+                if(error) window.PortalUI.alert('Notice', 'Error updating workflow: ' + error.message);
                 else {
-                    alert('Workflow updated safely.');
+                    window.PortalUI.alert('Notice', 'Workflow updated safely.');
                     loadDetail();
                 }
             });
@@ -162,15 +162,15 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
             document.getElementById('save-notes-btn').addEventListener('click', async () => {
                 const notes = document.getElementById('internal-notes').value;
                 const { error } = await supabase.from('submissions').update({ internal_notes: notes }).eq('id', currentSubmissionId);
-                if(error) alert('Error: ' + error.message);
-                else alert('Notes saved safely.');
+                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
+                else window.PortalUI.alert('Notice', 'Notes saved safely.');
             });
 
             // Verification Module Events
             document.getElementById('vrf-approve').addEventListener('click', async () => {
                 if(!currentWorkingFileId) return;
                 const { error } = await supabase.from('submission_files').update({ review_status: 'Verified', rejection_reason: null }).eq('id', currentWorkingFileId);
-                if(error) alert('Error: ' + error.message);
+                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
                 else {
                     document.getElementById('validation-panel').classList.add('hidden');
                     loadDetail();
@@ -184,10 +184,10 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
             document.getElementById('vrf-confirm-reject').addEventListener('click', async () => {
                 if(!currentWorkingFileId) return;
                 const reason = document.getElementById('vrf-reason').value;
-                if(!reason) { alert('Rejection reason is absolutely mandatory.'); return; }
+                if(!reason) { window.PortalUI.alert('Notice', 'Rejection reason is absolutely mandatory.'); return; }
 
                 const { error } = await supabase.from('submission_files').update({ review_status: 'Needs Replacement', rejection_reason: reason }).eq('id', currentWorkingFileId);
-                if(error) alert('Error: ' + error.message);
+                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
                 else {
                     document.getElementById('validation-panel').classList.add('hidden');
                     document.getElementById('vrf-reject-zone').classList.add('hidden');
