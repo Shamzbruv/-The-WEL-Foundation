@@ -55,7 +55,7 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
             }
 
             tbody.innerHTML = '';
-            data.forEach(file => {
+            data.forEach((file: any) => {
                 const row = document.createElement('tr');
                 const uDate = new Date(file.created_at).toLocaleDateString();
                 const dueStr = file.review_due_at ? new Date(file.review_due_at).toLocaleDateString() : 'N/A';

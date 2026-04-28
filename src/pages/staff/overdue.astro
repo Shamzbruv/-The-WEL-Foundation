@@ -55,7 +55,7 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
             }
 
             tbody.innerHTML = '';
-            data.forEach(sub => {
+            data.forEach((sub: any) => {
                 const row = document.createElement('tr');
                 const dueDt = sub.due_at ? new Date(sub.due_at).toLocaleDateString() : 'N/A';
                 const breachDt = sub.sla_breached_at ? new Date(sub.sla_breached_at).toLocaleString() : 'N/A';

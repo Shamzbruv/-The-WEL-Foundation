@@ -53,7 +53,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
             }
 
             tbody.innerHTML = '';
-            data.forEach(sub => {
+            data.forEach((sub: any) => {
                 const row = document.createElement('tr');
                 const lastAct = sub.last_action_at ? new Date(sub.last_action_at).toLocaleString() : new Date(sub.created_at).toLocaleString();
                 
