@@ -10,7 +10,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
     <div id="error" style="display:none; padding: 2rem; color: #c53030; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 6px;"></div>
 
     <div id="detail-content" style="display:none; grid-template-columns: 2fr 1fr; gap: 2rem;">
-        <!-- Left Column: Docs & Activity -->
+        <!-- Left Column -->
         <div style="display: flex; flex-direction: column; gap: 2rem;">
             <!-- Applicant Info -->
             <div class="card">
@@ -26,13 +26,38 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                     <div><strong>Priority:</strong> <span id="app-priority">...</span></div>
                     <div><strong>Submitted:</strong> <span id="app-date">...</span></div>
                     <div><strong>SLA Deadline:</strong> <span id="app-due" style="font-weight:700; color:var(--color-primary-navy);">...</span></div>
+                    <div><strong>Program:</strong> <span id="app-program">...</span></div>
+                </div>
+            </div>
+
+            <!-- Intake PDF Export -->
+            <div class="card" id="export-card">
+                <h2 style="margin-top:0; margin-bottom:1rem;">Intake Packet (PDF)</h2>
+                <div id="export-loading" style="color:#64748b; font-size:0.9rem;">Loading...</div>
+                <div id="export-available" style="display:none;">
+                    <p style="font-size:0.9rem; color:#475569; margin-bottom:1rem;" id="export-filename"></p>
+                    <button id="download-pdf-btn" class="btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem;">
+                        <i class="fa-solid fa-file-arrow-down"></i> Download Intake PDF
+                    </button>
+                    <p style="font-size:0.75rem; color:#94a3b8; margin-top:0.75rem;" id="export-expiry-note"></p>
+                </div>
+                <div id="export-expired" style="display:none;">
+                    <p style="font-size:0.9rem; color:#64748b;">
+                        <i class="fa-solid fa-clock" style="margin-right:6px;"></i>
+                        No longer available for download.
+                    </p>
+                    <p style="font-size:0.8rem; color:#94a3b8;" id="export-expired-date"></p>
+                    <p style="font-size:0.8rem; color:#94a3b8;">Staff downloads are available for 90 days after submission. Files are automatically removed to protect privacy.</p>
+                </div>
+                <div id="export-none" style="display:none; font-size:0.9rem; color:#94a3b8;">
+                    No intake PDF generated yet for this submission.
                 </div>
             </div>
 
             <!-- Documents -->
             <div class="card">
                 <h2 style="margin-top:0; margin-bottom:1rem; display:flex; justify-content:space-between;">
-                    <span>Documents</span>
+                    <span>Uploaded Documents</span>
                 </h2>
                 <div class="table-responsive">
 <table class="portal-table" id="docs-table">
@@ -48,7 +73,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 </table>
 </div>
             </div>
-            
+
             <!-- Notes -->
             <div class="card">
                 <h2 style="margin-top:0;">Internal Notes</h2>
@@ -61,7 +86,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
         <div style="display: flex; flex-direction: column; gap: 2rem;">
             <div class="card">
                 <h3 style="margin-top:0; border-bottom:1px solid var(--color-border); padding-bottom:0.5rem;">Workflow Controls</h3>
-                
+
                 <div style="margin-top:1rem;">
                     <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:#475569;">Submission Status</label>
                     <select id="ctrl-status" style="width:100%; padding:0.5rem; border:1px solid var(--color-border); border-radius:4px; margin-bottom:1rem;">
@@ -69,6 +94,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                        <option value="In Review">In Review</option>
                        <option value="Needs More Info">Needs More Info</option>
                        <option value="Assigned">Assigned</option>
+                       <option value="Overdue">Overdue</option>
                        <option value="Completed">Completed</option>
                     </select>
                 </div>
@@ -93,17 +119,20 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 <button id="save-workflow-btn" class="btn-primary" style="width:100%; justify-content:center;">Update Workflow</button>
             </div>
 
-            <!-- Validation Modal Layer for documents (hidden by default) -->
+            <!-- File Review Panel -->
             <div id="validation-panel" class="card hidden" style="border: 1px solid #fbbf24; background: #fffbeb;">
                 <h3 style="margin-top:0;">File Review</h3>
                 <p id="vrf-filename" style="font-size:0.85rem; word-break:break-all; font-weight:600;"></p>
                 <div style="display:flex; gap:0.5rem; margin-top:1rem;">
                     <button class="btn-primary" id="vrf-approve" style="background:#22c55e; flex:1;">Approve</button>
-                    <button class="btn-primary" id="vrf-reject" style="background:#ef4444; flex:1;">Reject</button>
+                    <button class="btn-primary" id="vrf-reject" style="background:#ef4444; flex:1;">Request Replacement</button>
                 </div>
                 <div id="vrf-reject-zone" class="hidden" style="margin-top:1rem;">
-                    <textarea id="vrf-reason" placeholder="Reason for rejection (mandatory)..." rows="2" style="width:100%; padding:0.5rem; border:1px solid #fca5a5; border-radius:4px; margin-bottom:0.5rem;"></textarea>
-                    <button class="btn-primary" id="vrf-confirm-reject" style="width:100%; background:#b91c1c;">Confirm Rejection</button>
+                    <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:0.4rem; color:#475569;">
+                        Add a short note so the client knows what to replace:
+                    </label>
+                    <textarea id="vrf-reason" placeholder="e.g. Image is blurry — please re-upload a clear photo." rows="2" style="width:100%; padding:0.5rem; border:1px solid #fca5a5; border-radius:4px; margin-bottom:0.5rem;"></textarea>
+                    <button class="btn-primary" id="vrf-confirm-reject" style="width:100%; background:#b91c1c;">Confirm &amp; Notify</button>
                 </div>
             </div>
         </div>
@@ -112,87 +141,107 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
     <script>
         import { createClient } from '@supabase/supabase-js';
         if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "public-anon-key"); } const supabase = (window as any).supabase;
-        
-        let currentSubmissionId = null;
-        let currentWorkingFileId = null;
+
+        let currentSubmissionId: string | null = null;
+        let currentWorkingFileId: string | null = null;
+        let currentExportObjectPath: string | null = null;
+
+        // ── Safe text setter (never innerHTML for user data) ──────────
+        function safeSet(id: string, text: string) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
 
         document.addEventListener('astro:page-load', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             currentSubmissionId = urlParams.get('id');
 
-            if(!currentSubmissionId) {
-                document.getElementById('loading').style.display = 'none';
-                const errEl = document.getElementById('error');
+            if (!currentSubmissionId) {
+                document.getElementById('loading')!.style.display = 'none';
+                const errEl = document.getElementById('error')!;
                 errEl.style.display = 'block';
-                errEl.textContent = 'Invalid Request: Missing Submission ID parameter.';
+                errEl.textContent = 'Invalid request — missing submission ID.';
                 return;
             }
 
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { window.location.href = '/staff/login/'; return; }
 
-            // Fetch Profiles for Assignment dropdown
-            const { data: profiles } = await supabase.from('profiles').select('id, full_name, role');
-            const assignSelect = document.getElementById('ctrl-assignment');
-            if(profiles) {
-                profiles.forEach(p => {
-                    if(['admin', 'staff', 'intake_coordinator'].includes(p.role)) {
+            // ── Assignment dropdown — join user_roles for the actual role ──
+            const { data: profiles } = await supabase
+                .from('profiles')
+                .select('id, full_name, user_roles(role)');
+            const assignSelect = document.getElementById('ctrl-assignment')!;
+            if (profiles) {
+                profiles.forEach((p: any) => {
+                    const role = Array.isArray(p.user_roles) ? p.user_roles[0]?.role : p.user_roles?.role;
+                    if (role && ['admin', 'staff', 'intake_coordinator'].includes(role)) {
                         const opt = document.createElement('option');
                         opt.value = p.id;
-                        opt.textContent = `${p.full_name} (${p.role})`;
+                        // Safe: these come from the profiles table (internal, not public form input)
+                        opt.textContent = `${p.full_name} (${role.replace('_', ' ')})`;
                         assignSelect.appendChild(opt);
                     }
                 });
             }
 
             await loadDetail();
-            
-            // Handlers
-            document.getElementById('save-workflow-btn').addEventListener('click', async () => {
-                const status = document.getElementById('ctrl-status').value;
-                const priority = document.getElementById('ctrl-priority').value;
-                const assigned_to = document.getElementById('ctrl-assignment').value || null;
-                
+
+            // ── Workflow save ──────────────────────────────────────────
+            document.getElementById('save-workflow-btn')!.addEventListener('click', async () => {
+                const status      = (document.getElementById('ctrl-status') as HTMLSelectElement).value;
+                const priority    = (document.getElementById('ctrl-priority') as HTMLSelectElement).value;
+                const assigned_to = (document.getElementById('ctrl-assignment') as HTMLSelectElement).value || null;
                 const { error } = await supabase.from('submissions').update({ status, internal_priority: priority, assigned_to }).eq('id', currentSubmissionId);
-                if(error) window.PortalUI.alert('Notice', 'Error updating workflow: ' + error.message);
-                else {
-                    window.PortalUI.alert('Notice', 'Workflow updated safely.');
-                    loadDetail();
-                }
+                if (error) (window as any).PortalUI.alert('Notice', 'Error updating workflow: ' + error.message);
+                else { (window as any).PortalUI.alert('Notice', 'Workflow updated.'); loadDetail(); }
             });
 
-            document.getElementById('save-notes-btn').addEventListener('click', async () => {
-                const notes = document.getElementById('internal-notes').value;
+            // ── Notes save ────────────────────────────────────────────
+            document.getElementById('save-notes-btn')!.addEventListener('click', async () => {
+                const notes = (document.getElementById('internal-notes') as HTMLTextAreaElement).value;
                 const { error } = await supabase.from('submissions').update({ internal_notes: notes }).eq('id', currentSubmissionId);
-                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
-                else window.PortalUI.alert('Notice', 'Notes saved safely.');
+                if (error) (window as any).PortalUI.alert('Notice', 'Error: ' + error.message);
+                else (window as any).PortalUI.alert('Notice', 'Notes saved.');
             });
 
-            // Verification Module Events
-            document.getElementById('vrf-approve').addEventListener('click', async () => {
-                if(!currentWorkingFileId) return;
-                const { error } = await supabase.from('submission_files').update({ review_status: 'Verified', rejection_reason: null }).eq('id', currentWorkingFileId);
-                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
-                else {
-                    document.getElementById('validation-panel').classList.add('hidden');
-                    loadDetail();
+            // ── PDF download ──────────────────────────────────────────
+            document.getElementById('download-pdf-btn')?.addEventListener('click', async () => {
+                if (!currentExportObjectPath) return;
+                const { data: sData, error } = await supabase.storage
+                    .from('private_uploads')
+                    .createSignedUrl(currentExportObjectPath, 300); // 5-minute link
+                if (error || !sData?.signedUrl) {
+                    (window as any).PortalUI.alert('Notice', 'Could not generate download link. Please try again.');
+                    return;
                 }
+                window.open(sData.signedUrl, '_blank', 'noopener,noreferrer');
             });
 
-            document.getElementById('vrf-reject').addEventListener('click', () => {
-                document.getElementById('vrf-reject-zone').classList.remove('hidden');
+            // ── File review events ────────────────────────────────────
+            document.getElementById('vrf-approve')!.addEventListener('click', async () => {
+                if (!currentWorkingFileId) return;
+                const { error } = await supabase.from('submission_files').update({ review_status: 'Verified', rejection_reason: null }).eq('id', currentWorkingFileId);
+                if (error) (window as any).PortalUI.alert('Notice', 'Error: ' + error.message);
+                else { document.getElementById('validation-panel')!.classList.add('hidden'); loadDetail(); }
             });
 
-            document.getElementById('vrf-confirm-reject').addEventListener('click', async () => {
-                if(!currentWorkingFileId) return;
-                const reason = document.getElementById('vrf-reason').value;
-                if(!reason) { window.PortalUI.alert('Notice', 'Rejection reason is absolutely mandatory.'); return; }
+            document.getElementById('vrf-reject')!.addEventListener('click', () => {
+                document.getElementById('vrf-reject-zone')!.classList.remove('hidden');
+            });
 
+            document.getElementById('vrf-confirm-reject')!.addEventListener('click', async () => {
+                if (!currentWorkingFileId) return;
+                const reason = (document.getElementById('vrf-reason') as HTMLTextAreaElement).value;
+                if (!reason.trim()) {
+                    (window as any).PortalUI.alert('Notice', 'Please add a short note so the client knows what to replace.');
+                    return;
+                }
                 const { error } = await supabase.from('submission_files').update({ review_status: 'Needs Replacement', rejection_reason: reason }).eq('id', currentWorkingFileId);
-                if(error) window.PortalUI.alert('Notice', 'Error: ' + error.message);
+                if (error) (window as any).PortalUI.alert('Notice', 'Error: ' + error.message);
                 else {
-                    document.getElementById('validation-panel').classList.add('hidden');
-                    document.getElementById('vrf-reject-zone').classList.add('hidden');
+                    document.getElementById('validation-panel')!.classList.add('hidden');
+                    document.getElementById('vrf-reject-zone')!.classList.add('hidden');
                     loadDetail();
                 }
             });
@@ -201,75 +250,137 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
         async function loadDetail() {
             const { data, error } = await supabase
                 .from('submissions')
-                .select('*, submission_files(*)')
+                .select('*, submission_files(*), submission_exports(*)')
                 .eq('id', currentSubmissionId)
                 .single();
 
             if (error || !data) {
-                document.getElementById('loading').style.display = 'none';
-                const errEl = document.getElementById('error');
+                document.getElementById('loading')!.style.display = 'none';
+                const errEl = document.getElementById('error')!;
                 errEl.style.display = 'block';
-                errEl.textContent = 'Error loading submission: You may not have permission to view it, or it does not exist.';
-                document.getElementById('detail-content').style.display = 'none';
+                errEl.textContent = 'Error loading submission. You may not have permission, or it does not exist.';
                 return;
             }
 
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('detail-content').style.display = 'grid';
+            document.getElementById('loading')!.style.display = 'none';
+            document.getElementById('detail-content')!.style.display = 'grid';
 
-            // Populate Map
-            document.getElementById('app-name').textContent = data.submitted_by_name;
-            document.getElementById('app-email').textContent = data.submitted_by_email;
-            document.getElementById('app-type').textContent = (data.type || '').toUpperCase();
-            document.getElementById('app-priority').textContent = data.internal_priority;
-            document.getElementById('app-date').textContent = new Date(data.created_at).toLocaleString();
-            document.getElementById('app-due').textContent = data.due_at ? new Date(data.due_at).toLocaleString() : 'N/A';
-            
-            const pStatus = document.getElementById('app-status');
+            // ── Safe DOM population — textContent only, never innerHTML for user data ──
+            safeSet('app-name',     data.submitted_by_name);
+            safeSet('app-email',    data.submitted_by_email);
+            safeSet('app-type',     (data.type || '').toUpperCase());
+            safeSet('app-program',  data.program_code || '—');
+            safeSet('app-priority', data.internal_priority);
+            safeSet('app-date',     new Date(data.created_at).toLocaleString());
+            safeSet('app-due',      data.due_at ? new Date(data.due_at).toLocaleString() : 'N/A');
+
+            const pStatus = document.getElementById('app-status')!;
             pStatus.textContent = data.status;
-            pStatus.className = `status-pill status-${data.status.replace(/\\s+/g, '')}`;
+            pStatus.className = `status-pill status-${(data.status || '').replace(/\s+/g, '')}`;
 
-            document.getElementById('ctrl-status').value = data.status;
-            document.getElementById('ctrl-assignment').value = data.assigned_to || '';
-            document.getElementById('ctrl-priority').value = data.internal_priority;
-            document.getElementById('internal-notes').value = data.internal_notes || '';
+            (document.getElementById('ctrl-status') as HTMLSelectElement).value   = data.status;
+            (document.getElementById('ctrl-assignment') as HTMLSelectElement).value = data.assigned_to || '';
+            (document.getElementById('ctrl-priority') as HTMLSelectElement).value  = data.internal_priority;
+            (document.getElementById('internal-notes') as HTMLTextAreaElement).value = data.internal_notes || '';
 
-            // Docs Map
-            const tb = document.querySelector('#docs-table tbody');
-            tb.innerHTML = '';
-            
-            if(!data.submission_files || data.submission_files.length === 0) {
-                tb.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">No documents uploaded.</td></tr>`;
+            // ── PDF Export panel ──────────────────────────────────────
+            const exportLoading  = document.getElementById('export-loading')!;
+            const exportAvail    = document.getElementById('export-available')!;
+            const exportExpired  = document.getElementById('export-expired')!;
+            const exportNone     = document.getElementById('export-none')!;
+            exportLoading.style.display = 'none';
+
+            const exports: any[] = data.submission_exports || [];
+            const pdfExport = exports.find((e: any) => e.export_type === 'flattened_form_pdf');
+
+            if (!pdfExport) {
+                exportNone.style.display = 'block';
+            } else if (pdfExport.purge_status === 'active' || pdfExport.purge_status === 'expiring_soon') {
+                currentExportObjectPath = pdfExport.object_path;
+                exportAvail.style.display = 'block';
+                safeSet('export-filename', pdfExport.file_name);
+                const expiresAt = new Date(pdfExport.expires_at);
+                safeSet('export-expiry-note', `Available until ${expiresAt.toLocaleDateString()} (90 days from submission)`);
             } else {
-                for(let f of data.submission_files) {
-                    const row = document.createElement('tr');
-                    
-                    // Retrieve temporary signed link safely through DB relation
-                    let urlLink = '#';
-                    let safeName = (f.file_name || 'Document').replace(/</g, "&lt;");
-                    try {
-                        const { data: sData } = await supabase.storage.from('private_uploads').createSignedUrl(f.object_path, 3600);
-                        if(sData && sData.signedUrl) urlLink = sData.signedUrl;
-                    } catch(e) {}
+                exportExpired.style.display = 'block';
+                const expiredDate = pdfExport.expired_at ? new Date(pdfExport.expired_at).toLocaleDateString() : 'Unknown';
+                safeSet('export-expired-date', `Removed on: ${expiredDate}`);
+            }
 
-                    row.innerHTML = `
-                        <td><a href="${urlLink}" target="_blank" style="color:var(--color-primary-navy); font-weight:500;">${safeName}</a></td>
-                        <td>${f.document_category || 'General'}</td>
-                        <td><span class="status-pill status-${f.review_status.replace(/\\s+/g, '')}">${f.review_status}</span></td>
-                        <td>
-                           <button class="btn-outline file-review-binder" data-id="${f.id}" data-name="${safeName}" style="padding:0.25rem 0.5rem; font-size:0.8rem;">Review</button>
-                        </td>
-                    `;
+            // ── Documents table — XSS-safe DOM construction ───────────
+            const tb = document.querySelector('#docs-table tbody')!;
+            tb.innerHTML = '';
+
+            const files: any[] = data.submission_files || [];
+            if (files.length === 0) {
+                const row = document.createElement('tr');
+                const td  = document.createElement('td');
+                td.colSpan = 4;
+                td.style.textAlign = 'center';
+                td.style.color     = '#94a3b8';
+                td.textContent     = 'No documents uploaded.';
+                row.appendChild(td);
+                tb.appendChild(row);
+            } else {
+                for (const f of files) {
+                    let signedUrl = '#';
+                    try {
+                        const { data: sData } = await supabase.storage
+                            .from('private_uploads')
+                            .createSignedUrl(f.object_path, 3600);
+                        if (sData?.signedUrl) signedUrl = sData.signedUrl;
+                    } catch (_) {}
+
+                    const row = document.createElement('tr');
+
+                    // Col 1: File name link
+                    const tdName = document.createElement('td');
+                    const a = document.createElement('a');
+                    a.href   = signedUrl;
+                    a.target = '_blank';
+                    a.rel    = 'noopener noreferrer';
+                    a.style.color      = 'var(--color-primary-navy)';
+                    a.style.fontWeight = '500';
+                    a.textContent = f.file_name || 'Document'; // textContent — safe
+                    tdName.appendChild(a);
+
+                    // Col 2: Category
+                    const tdCat = document.createElement('td');
+                    tdCat.textContent = f.document_category || 'General';
+
+                    // Col 3: Review status pill
+                    const tdStatus = document.createElement('td');
+                    const pill = document.createElement('span');
+                    const statusClass = (f.review_status || 'Pending').replace(/\s+/g, '');
+                    pill.className   = `status-pill status-${statusClass}`;
+                    pill.textContent = f.review_status || 'Pending';
+                    tdStatus.appendChild(pill);
+
+                    // Col 4: Review button
+                    const tdAction = document.createElement('td');
+                    const btn = document.createElement('button');
+                    btn.className    = 'btn-outline file-review-binder';
+                    btn.dataset.id   = f.id;
+                    // Store safe file name in dataset (used only in textContent elsewhere)
+                    btn.dataset.name = f.file_name || 'Document';
+                    btn.style.padding   = '0.25rem 0.5rem';
+                    btn.style.fontSize  = '0.8rem';
+                    btn.textContent     = 'Review';
+                    tdAction.appendChild(btn);
+
+                    row.append(tdName, tdCat, tdStatus, tdAction);
                     tb.appendChild(row);
                 }
 
                 document.querySelectorAll('.file-review-binder').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        currentWorkingFileId = e.target.dataset.id;
-                        document.getElementById('vrf-filename').textContent = "Reviewing: " + e.target.dataset.name;
-                        document.getElementById('validation-panel').classList.remove('hidden');
-                        document.getElementById('vrf-reject-zone').classList.add('hidden');
-                        document.getElementById('vrf-reason').value = '';
+                        const target = e.currentTarget as HTMLButtonElement;
+                        currentWorkingFileId = target.dataset.id || null;
+                        // textContent — safe
+                        safeSet('vrf-filename', 'Reviewing: ' + (target.dataset.name || 'Document'));
+                        document.getElementById('validation-panel')!.classList.remove('hidden');
+                        document.getElementById('vrf-reject-zone')!.classList.add('hidden');
+                        (document.getElementById('vrf-reason') as HTMLTextAreaElement).value = '';
                     });
                 });
             }

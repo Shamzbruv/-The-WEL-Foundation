@@ -4,7 +4,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
 <StaffPortalLayout title="New Submissions Queue">
     <div class="card">
         <h2>Intake Triage Queue</h2>
-        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Recent submissions awaiting absolute initial review or assignment.</p>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">Recent submissions waiting for initial review or assignment.</p>
         
         <div class="table-responsive">
 <table class="portal-table" id="new-submissions-table">
@@ -54,22 +54,54 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
             }
 
             tbody.innerHTML = '';
-            data.forEach(sub => {
+            data.forEach((sub: any) => {
                 const row = document.createElement('tr');
                 const rDate = new Date(sub.created_at).toLocaleString();
-                
-                row.innerHTML = `
-                    <td>${rDate}</td>
-                    <td><strong>${sub.submitted_by_name}</strong><br/>
-                        <span style="color:#64748b; font-size:0.85rem;">${sub.submitted_by_email}</span>
-                    </td>
-                    <td>${(sub.type || '').toUpperCase()}</td>
-                    <td>${sub.internal_priority || 'Normal'}</td>
-                    <td><span class="status-pill status-${sub.status.replace(/\s+/g, '')}">${sub.status}</span></td>
-                    <td>
-                        <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block; font-size:0.85rem; padding:0.4rem 0.8rem;">Triage</a>
-                    </td>
-                `;
+
+                // Col: Date
+                const tdDate = document.createElement('td');
+                tdDate.textContent = rDate;
+
+                // Col: Applicant — XSS-safe: use textContent, never innerHTML for user-submitted values
+                const tdApplicant = document.createElement('td');
+                const nameStrong = document.createElement('strong');
+                nameStrong.textContent = sub.submitted_by_name;
+                const emailSpan = document.createElement('span');
+                emailSpan.style.color = '#64748b';
+                emailSpan.style.fontSize = '0.85rem';
+                emailSpan.textContent = sub.submitted_by_email;
+                tdApplicant.appendChild(nameStrong);
+                tdApplicant.appendChild(document.createElement('br'));
+                tdApplicant.appendChild(emailSpan);
+
+                // Col: Type (internal enum value — safe)
+                const tdType = document.createElement('td');
+                tdType.textContent = (sub.type || '').toUpperCase();
+
+                // Col: Priority (internal enum value — safe)
+                const tdPriority = document.createElement('td');
+                tdPriority.textContent = sub.internal_priority || 'Normal';
+
+                // Col: Status pill (internal enum value — safe)
+                const tdStatus = document.createElement('td');
+                const pill = document.createElement('span');
+                pill.className = `status-pill status-${(sub.status || '').replace(/\s+/g, '')}`;
+                pill.textContent = sub.status;
+                tdStatus.appendChild(pill);
+
+                // Col: Action link
+                const tdAction = document.createElement('td');
+                const link = document.createElement('a');
+                link.href = `/staff/submissions/detail?id=${sub.id}`;
+                link.className = 'btn-primary';
+                link.style.textDecoration = 'none';
+                link.style.display = 'inline-block';
+                link.style.fontSize = '0.85rem';
+                link.style.padding = '0.4rem 0.8rem';
+                link.textContent = 'Review';
+                tdAction.appendChild(link);
+
+                row.append(tdDate, tdApplicant, tdType, tdPriority, tdStatus, tdAction);
                 tbody.appendChild(row);
             });
         });

@@ -60,21 +60,62 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #94a3b8;">No active assignments. Great job!</td></tr>`;
             } else {
                 tbody.innerHTML = '';
-                data.forEach(sub => {
+                data.forEach((sub: any) => {
                     const row = document.createElement('tr');
                     const sDate = new Date(sub.created_at).toLocaleDateString();
                     const dueStr = sub.due_at ? new Date(sub.due_at).toLocaleDateString() : 'N/A';
-                    
-                    row.innerHTML = `
-                        <td>${sDate}</td>
-                        <td><strong>${sub.submitted_by_name}</strong><br/>${sub.submitted_by_email}</td>
-                        <td>${sub.type.toUpperCase()}<br/><span style="font-size:0.8em; color:gray;">Priority: ${sub.internal_priority}</span></td>
-                        <td><strong>${dueStr}</strong></td>
-                        <td><span class="status-pill status-${sub.status.replace(/\s+/g, '')}">${sub.status}</span></td>
-                        <td>
-                          <a href="/staff/submissions/detail?id=${sub.id}" class="btn-primary" style="text-decoration:none; display:inline-block;">Process</a>
-                        </td>
-                    `;
+
+                    // Col: Date
+                    const tdDate = document.createElement('td');
+                    tdDate.textContent = sDate;
+
+                    // Col: Applicant — XSS-safe
+                    const tdApplicant = document.createElement('td');
+                    const nameStrong = document.createElement('strong');
+                    nameStrong.textContent = sub.submitted_by_name;
+                    const emailSpan = document.createElement('span');
+                    emailSpan.style.display = 'block';
+                    emailSpan.style.color = '#64748b';
+                    emailSpan.style.fontSize = '0.85rem';
+                    emailSpan.textContent = sub.submitted_by_email;
+                    tdApplicant.appendChild(nameStrong);
+                    tdApplicant.appendChild(emailSpan);
+
+                    // Col: Type + Priority (internal enum values — safe)
+                    const tdType = document.createElement('td');
+                    const typeText = document.createElement('span');
+                    typeText.textContent = (sub.type || '').toUpperCase();
+                    const prioritySmall = document.createElement('small');
+                    prioritySmall.style.display = 'block';
+                    prioritySmall.style.color = 'gray';
+                    prioritySmall.textContent = 'Priority: ' + (sub.internal_priority || 'Normal');
+                    tdType.appendChild(typeText);
+                    tdType.appendChild(prioritySmall);
+
+                    // Col: SLA Due
+                    const tdDue = document.createElement('td');
+                    const dueStrong = document.createElement('strong');
+                    dueStrong.textContent = dueStr;
+                    tdDue.appendChild(dueStrong);
+
+                    // Col: Status pill (internal enum value — safe)
+                    const tdStatus = document.createElement('td');
+                    const pill = document.createElement('span');
+                    pill.className = `status-pill status-${(sub.status || '').replace(/\s+/g, '')}`;
+                    pill.textContent = sub.status;
+                    tdStatus.appendChild(pill);
+
+                    // Col: Action link
+                    const tdAction = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = `/staff/submissions/detail?id=${sub.id}`;
+                    link.className = 'btn-primary';
+                    link.style.textDecoration = 'none';
+                    link.style.display = 'inline-block';
+                    link.textContent = 'Process';
+                    tdAction.appendChild(link);
+
+                    row.append(tdDate, tdApplicant, tdType, tdDue, tdStatus, tdAction);
                     tbody.appendChild(row);
                 });
             }
@@ -98,7 +139,7 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
                   feed.innerHTML = '<span style="color:#94a3b8; font-size: 0.9rem;">No new notifications.</span>'; 
               } else {
                   feed.innerHTML = '';
-                  notifs.forEach(n => {
+                  notifs.forEach((n: any) => {
                       const d = document.createElement('div');
                       d.style = "padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.9rem; position: relative;";
                       
@@ -128,17 +169,20 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
                   // Bind mark-as-read buttons
                   document.querySelectorAll('.mark-read-btn').forEach(btn => {
                       btn.addEventListener('click', async (e) => {
-                          const nId = e.currentTarget.dataset.id;
+                          const target = e.currentTarget as HTMLButtonElement;
+                          const nId = target.dataset.id;
                           await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', nId);
-                          e.currentTarget.closest('div').parentElement.style.opacity = '0.5';
-                          e.currentTarget.remove();
+                          const container = target.closest('div')?.parentElement as HTMLElement | null;
+                          if (container) container.style.opacity = '0.5';
+                          target.remove();
                       });
                   });
                   
                   // Bind explicit clickthrough links to Auto-Mark as read
                   document.querySelectorAll('.notif-link').forEach(link => {
                       link.addEventListener('click', async (e) => {
-                          const nId = e.currentTarget.dataset.id;
+                          const target = e.currentTarget as HTMLAnchorElement;
+                          const nId = target.dataset.id;
                           await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', nId);
                       });
                   });
