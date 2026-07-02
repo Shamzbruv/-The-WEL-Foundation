@@ -169,6 +169,163 @@ async function generateIntakePdf(
   return await doc.save()
 }
 
+function generateHtmlEmail(submissionId: string, program: string, name: string, payload: Record<string, string>) {
+  const pLabel = program === 'PRP' ? 'Psychiatric Rehabilitation Program (PRP)' : program === 'SUD' ? 'Substance Use Disorder (SUD) Program' : program;
+  const metaDate = new Date(payload['submittedAt'] || Date.now()).toLocaleString('en-US', { timeZone: 'America/New_York' });
+  
+  let html = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #0d1b2a; }
+      .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; border-top: 5px solid #0d1b2a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+      .header { border-bottom: 2px solid #d97706; padding-bottom: 20px; margin-bottom: 25px; }
+      .header h1 { margin: 0; font-size: 24px; color: #0d1b2a; letter-spacing: 0.5px; }
+      .header h2 { margin: 5px 0 0 0; font-size: 16px; color: #d97706; font-weight: 500; }
+      .meta { font-size: 12px; color: #64748b; margin-top: 10px; }
+      .section { margin-bottom: 25px; }
+      .section-title { background-color: #0d1b2a; color: #ffffff; padding: 8px 12px; font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; border-radius: 4px; }
+      .field { margin-bottom: 12px; display: flex; flex-wrap: wrap; }
+      .field-label { font-weight: bold; color: #475569; width: 180px; font-size: 13px; }
+      .field-value { flex: 1; color: #0f172a; font-size: 14px; }
+      .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>THE WEL FOUNDATION</h1>
+        <h2>Confidential Intake Record &mdash; ${pLabel}</h2>
+        <div class="meta">Submission ID: ${submissionId} | Submitted: ${metaDate} ET</div>
+      </div>
+  `;
+
+  const addSection = (title: string) => { html += \`<div class="section"><div class="section-title">\${title}</div>\`; };
+  const closeSection = () => { html += \`</div>\`; };
+  const addField = (label: string, value: string | undefined) => {
+    const val = (value || '—').trim();
+    html += \`<div class="field"><div class="field-label">\${label}:</div><div class="field-value">\${val}</div></div>\`;
+  };
+
+  addSection('1 — Client Identification');
+  addField('Full Legal Name', payload['fullName']);
+  addField('Date of Birth', payload['dateOfBirth']);
+  addField('Home Address', payload['address']);
+  addField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No');
+  addField('Cell Phone', payload['cellPhone']);
+  addField('Home Phone', payload['homePhone']);
+  closeSection();
+
+  addSection('2 — Personal Details');
+  addField('Age', payload['age']);
+  addField('Race', payload['race']);
+  addField('Gender Identity', payload['genderIdentity']);
+  addField('Pronouns', payload['pronouns']);
+  addField('Cultural Identity', payload['culturalIdentity']);
+  addField('Education Level', payload['educationLevel']);
+  addField('Employment Status', payload['employmentStatus']);
+  addField('Marital Status', payload['maritalStatus']);
+  addField('Preferred Language', payload['language'] || payload['ciq_language']);
+  closeSection();
+
+  addSection('3 — Emergency Contact');
+  addField('Name', payload['emergencyContactName']);
+  addField('Relationship', payload['emergencyContactRelationship']);
+  addField('Phone', payload['emergencyContactPhone']);
+  closeSection();
+
+  addSection('4 — Medical & Insurance');
+  addField('Medicaid / MA#', payload['maNumber']);
+  addField('MCO Name', payload['mcoName']);
+  addField('Medical Issues', payload['medicalIssues']);
+  addField('Mental Health Dx', payload['mentalHealthDiagnosis']);
+  addField('Allergies', payload['allergies']);
+  closeSection();
+
+  addSection('5 — Primary Care Physician');
+  addField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No');
+  if (payload['hasPCP'] === 'yes') {
+    addField('Doctor Name', payload['pcpName']);
+    addField('Phone', payload['pcpPhone']);
+    addField('Last Exam', payload['pcpLastExam']);
+  }
+  closeSection();
+
+  addSection('6 — Medications');
+  if (payload['noMeds']) {
+    html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No current medications (client indicated).</div>\`;
+  } else {
+    let mi = 0;
+    while (payload[\`meds[\${mi}][name]\`]) {
+      addField(\`Med \${mi + 1}\`, \`\${payload[\`meds[\${mi}][name]\`]} | Dose: \${payload[\`meds[\${mi}][dose]\`] || '—'} | Dr: \${payload[\`meds[\${mi}][prescriber]\`] || '—'}\`);
+      mi++;
+    }
+    if (mi === 0) {
+      html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">None listed.</div>\`;
+    }
+  }
+  closeSection();
+
+  if (program === 'SUD') {
+    addSection('7 — Substance Use History');
+    addField('Currently on MAT', payload['isOnMAT']);
+    addField('Overdoses Last Year', payload['overdosesLastYear']);
+    addField('Prior Treatment Attempts', payload['priorTreatmentAttempts']);
+    addField('Longest Sobriety', payload['longestSobriety']);
+    addField('Gambling Issues', payload['gamblingIssues']);
+    closeSection();
+    
+    addSection('8 — Drugs Used');
+    let di = 0;
+    while (payload[\`drugs[\${di}][name]\`]) {
+      addField(\`Drug \${di + 1}\`, \`\${payload[\`drugs[\${di}][name]\`]} | Severity: \${payload[\`drugs[\${di}][severity]\`] || '—'} | Route: \${payload[\`drugs[\${di}][route]\`] || '—'}\`);
+      di++;
+    }
+    closeSection();
+
+    addSection('9 — Legal History');
+    addField('Ever Incarcerated', payload['everIncarcerated']);
+    addField('Pending Charges', payload['pendingCharges']);
+    if (payload['pendingChargesDetail']) addField('Details', payload['pendingChargesDetail']);
+    closeSection();
+  }
+
+  const consentNum = program === 'SUD' ? '10' : '7';
+  addSection(\`\${consentNum} — Consent Acknowledgments\`);
+  const consents = [['Services', payload['ack_services']], ['Participation', payload['ack_participation']], ['Attendance', payload['ack_attendance']], ['Confidentiality', payload['ack_confidentiality']], ['HIPAA', payload['ack_hipaa']], ['Telehealth', payload['ack_telehealth']], ['Client Rights', payload['ack_rights']], ['Photo / Video', payload['ack_photo']], ['Advance Directive', payload['ack_directive']]];
+  if (program === 'SUD') consents.push(['Urinalysis (UA)', payload['ack_ua']]);
+  consents.forEach(([label, val]) => addField(\`\${label}\`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'));
+  closeSection();
+
+  const sigNum = program === 'SUD' ? '11' : '8';
+  addSection(\`\${sigNum} — Signature\`);
+  addField('Client Name (typed)', payload['consent_name'] || payload['fullName']);
+  addField('Date', payload['consent_date']);
+  addField('Representative (if applicable)', payload['repName']);
+  closeSection();
+
+  addSection('Appendix — Uploaded Files');
+  if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
+  if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
+  if (!payload['__file_govId'] && !payload['__file_insuranceCard']) {
+     html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No files uploaded.</div>\`;
+  }
+  closeSection();
+
+  html += \`
+      <div class="footer">
+        The WEL Foundation &bull; 5858 Belair Rd, Baltimore MD 21206 &bull; 443-826-2770<br>
+        CONFIDENTIAL — Authorized clinical personnel only. Do not distribute.
+      </div>
+    </div>
+  </body>
+  </html>
+  \`;
+  return html;
+}
+
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
@@ -254,25 +411,41 @@ serve(async (req: Request) => {
       }
     } catch (pdfErr) { console.error('PDF generation error (non-fatal):', pdfErr) }
 
-    // Admin email (non-fatal)
+    // Admin and User emails (non-fatal)
     try {
-      const { data: recipients } = await supabase.from('admin_notification_recipients').select('email').eq('active', true)
-      if (recipients && recipients.length > 0 && resendApiKey) {
-        const portalBase = supabaseUrl.replace('https://', 'https://').replace('.supabase.co', '') || ''
-        await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            from: 'WEL Intake System <intake@thewelfoundation.org>',
-            to: recipients.map((r: { email: string }) => r.email),
-            subject: `New intake submitted — ${program} — ${name}`,
-            text: `New intake submission received.\n\nProgram: ${program}\nName: ${name}\nEmail: ${email}\nID: ${submissionId}\nTime: ${new Date().toLocaleString('en-US', { timeZone: 'America/New_York' })} ET\n\nOpen case in portal — search submission ID: ${submissionId}\n\n---\nAutomated notification. Do not include clinical details in replies.`,
-          }),
-        })
-      } else if (!resendApiKey) {
-        console.warn('RESEND_API_KEY not configured. Set it in Supabase Edge Function Secrets to enable admin emails.')
+      if (resendApiKey) {
+        const emailHtml = generateHtmlEmail(submissionId, program, name, formPayload);
+        const { data: recipients } = await supabase.from('admin_notification_recipients').select('email').eq('active', true);
+        const adminEmails = recipients && recipients.length > 0 ? recipients.map((r: { email: string }) => r.email) : [];
+        
+        const sendEmail = async (toEmails: string[], subjectPrefix: string) => {
+          if (toEmails.length === 0) return;
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              from: 'WEL Intake System <intake@thewelfoundation.org>',
+              to: toEmails,
+              subject: `${subjectPrefix} — ${program} Intake — ${name}`,
+              html: emailHtml,
+            }),
+          });
+        };
+
+        // Send to Admins
+        if (adminEmails.length > 0) {
+          await sendEmail(adminEmails, 'New Submission');
+        }
+
+        // Send to User
+        if (email) {
+          await sendEmail([email], 'Your Copy');
+        }
+
+      } else {
+        console.warn('RESEND_API_KEY not configured. Set it in Supabase Edge Function Secrets to enable emails.')
       }
-    } catch (emailErr) { console.error('Admin email error (non-fatal):', emailErr) }
+    } catch (emailErr) { console.error('Email error (non-fatal):', emailErr) }
 
     return new Response(JSON.stringify({ success: true, submissionId }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 })
 
