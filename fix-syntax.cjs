@@ -5,7 +5,8 @@ const filesToFix = [
   'src/pages/referral/start/index.astro',
   'src/pages/staff/index.astro',
   'src/pages/contact/index.astro',
-  'src/pages/intake/start/index.astro'
+  'src/pages/intake/start/index.astro',
+  'supabase/functions/intake-submit/index.ts'
 ];
 
 filesToFix.forEach(relPath => {

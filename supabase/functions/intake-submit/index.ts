@@ -202,11 +202,11 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
       </div>
   `;
 
-  const addSection = (title: string) => { html += \`<div class="section"><div class="section-title">\${title}</div>\`; };
-  const closeSection = () => { html += \`</div>\`; };
+  const addSection = (title: string) => { html += `<div class="section"><div class="section-title">${title}</div>`; };
+  const closeSection = () => { html += `</div>`; };
   const addField = (label: string, value: string | undefined) => {
     const val = (value || '—').trim();
-    html += \`<div class="field"><div class="field-label">\${label}:</div><div class="field-value">\${val}</div></div>\`;
+    html += `<div class="field"><div class="field-label">${label}:</div><div class="field-value">${val}</div></div>`;
   };
 
   addSection('1 — Client Identification');
@@ -255,15 +255,15 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
 
   addSection('6 — Medications');
   if (payload['noMeds']) {
-    html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No current medications (client indicated).</div>\`;
+    html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No current medications (client indicated).</div>`;
   } else {
     let mi = 0;
-    while (payload[\`meds[\${mi}][name]\`]) {
-      addField(\`Med \${mi + 1}\`, \`\${payload[\`meds[\${mi}][name]\`]} | Dose: \${payload[\`meds[\${mi}][dose]\`] || '—'} | Dr: \${payload[\`meds[\${mi}][prescriber]\`] || '—'}\`);
+    while (payload[`meds[${mi}][name]`]) {
+      addField(`Med ${mi + 1}`, `${payload[`meds[${mi}][name]`]} | Dose: ${payload[`meds[${mi}][dose]`] || '—'} | Dr: ${payload[`meds[${mi}][prescriber]`] || '—'}`);
       mi++;
     }
     if (mi === 0) {
-      html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">None listed.</div>\`;
+      html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">None listed.</div>`;
     }
   }
   closeSection();
@@ -279,8 +279,8 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
     
     addSection('8 — Drugs Used');
     let di = 0;
-    while (payload[\`drugs[\${di}][name]\`]) {
-      addField(\`Drug \${di + 1}\`, \`\${payload[\`drugs[\${di}][name]\`]} | Severity: \${payload[\`drugs[\${di}][severity]\`] || '—'} | Route: \${payload[\`drugs[\${di}][route]\`] || '—'}\`);
+    while (payload[`drugs[${di}][name]`]) {
+      addField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]} | Severity: ${payload[`drugs[${di}][severity]`] || '—'} | Route: ${payload[`drugs[${di}][route]`] || '—'}`);
       di++;
     }
     closeSection();
@@ -293,14 +293,14 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
   }
 
   const consentNum = program === 'SUD' ? '10' : '7';
-  addSection(\`\${consentNum} — Consent Acknowledgments\`);
+  addSection(`${consentNum} — Consent Acknowledgments`);
   const consents = [['Services', payload['ack_services']], ['Participation', payload['ack_participation']], ['Attendance', payload['ack_attendance']], ['Confidentiality', payload['ack_confidentiality']], ['HIPAA', payload['ack_hipaa']], ['Telehealth', payload['ack_telehealth']], ['Client Rights', payload['ack_rights']], ['Photo / Video', payload['ack_photo']], ['Advance Directive', payload['ack_directive']]];
   if (program === 'SUD') consents.push(['Urinalysis (UA)', payload['ack_ua']]);
-  consents.forEach(([label, val]) => addField(\`\${label}\`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'));
+  consents.forEach(([label, val]) => addField(`${label}`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'));
   closeSection();
 
   const sigNum = program === 'SUD' ? '11' : '8';
-  addSection(\`\${sigNum} — Signature\`);
+  addSection(`${sigNum} — Signature`);
   addField('Client Name (typed)', payload['consent_name'] || payload['fullName']);
   addField('Date', payload['consent_date']);
   addField('Representative (if applicable)', payload['repName']);
@@ -310,11 +310,11 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
   if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
   if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
   if (!payload['__file_govId'] && !payload['__file_insuranceCard']) {
-     html += \`<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No files uploaded.</div>\`;
+     html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No files uploaded.</div>`;
   }
   closeSection();
 
-  html += \`
+  html += `
       <div class="footer">
         The WEL Foundation &bull; 5858 Belair Rd, Baltimore MD 21206 &bull; 443-826-2770<br>
         CONFIDENTIAL — Authorized clinical personnel only. Do not distribute.
@@ -322,7 +322,7 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
     </div>
   </body>
   </html>
-  \`;
+  `;
   return html;
 }
 
