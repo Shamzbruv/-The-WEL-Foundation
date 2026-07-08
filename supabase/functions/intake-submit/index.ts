@@ -18,7 +18,8 @@ const WHITE = rgb(1, 1, 1)
 async function generateIntakePdf(
   submissionId: string,
   programCode: string,
-  payload: Record<string, string>
+  payload: Record<string, string>,
+  formType: string = 'intake'
 ): Promise<Uint8Array> {
   const doc = await PDFDocument.create()
   const boldFont    = await doc.embedFont(StandardFonts.HelveticaBold)
@@ -60,7 +61,8 @@ async function generateIntakePdf(
   page.drawRectangle({ x: 0, y: PAGE_H - 110, width: PAGE_W, height: 110, color: NAVY })
   page.drawRectangle({ x: 0, y: PAGE_H - 114, width: PAGE_W, height: 4,   color: GOLD })
   page.drawText('THE WEL FOUNDATION', { x: MARGIN, y: PAGE_H - 52, size: 18, font: boldFont, color: WHITE })
-  page.drawText('Confidential Intake Record', { x: MARGIN, y: PAGE_H - 72, size: 11, font: regularFont, color: rgb(0.8, 0.8, 0.85) })
+  const docTitle = formType === 'referral' ? 'Client Referral Record' : 'Confidential Intake Record'
+  page.drawText(docTitle, { x: MARGIN, y: PAGE_H - 72, size: 11, font: regularFont, color: rgb(0.8, 0.8, 0.85) })
   const pLabel = programCode === 'PRP' ? 'Psychiatric Rehabilitation Program (PRP)' : programCode === 'SUD' ? 'Substance Use Disorder (SUD) Program' : programCode
   page.drawText(pLabel, { x: MARGIN, y: PAGE_H - 90, size: 10, font: regularFont, color: GOLD })
   y = PAGE_H - 134
@@ -70,94 +72,110 @@ async function generateIntakePdf(
   page.drawLine({ start: { x: MARGIN, y }, end: { x: PAGE_W - MARGIN, y }, thickness: 0.5, color: rgb(0.8, 0.8, 0.8) })
   y -= 10
 
-  // Sections
-  drawSection('1 — Client Identification')
-  drawField('Full Legal Name', payload['fullName'])
-  drawField('Date of Birth', payload['dateOfBirth'])
-  drawField('Home Address', payload['address'])
-  drawField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No')
-  drawField('Cell Phone', payload['cellPhone'])
-  drawField('Home Phone', payload['homePhone'])
+  // --- REFERRAL: compact 1-page PDF ---
+  if (formType === 'referral') {
+    drawSection('Referral Details')
+    drawField('Client Name', payload['fullName'])
+    drawField('Contact Email', payload['email'])
+    drawField('Target Program', pLabel)
+    drawField('Submitted', metaDate + ' ET')
 
-  drawSection('2 — Personal Details')
-  drawField('Age', payload['age'])
-  drawField('Race', payload['race'])
-  drawField('Gender Identity', payload['genderIdentity'])
-  drawField('Pronouns', payload['pronouns'])
-  drawField('Cultural Identity', payload['culturalIdentity'])
-  drawField('Education Level', payload['educationLevel'])
-  drawField('Employment Status', payload['employmentStatus'])
-  drawField('Marital Status', payload['maritalStatus'])
-  drawField('Preferred Language', payload['language'] || payload['ciq_language'])
-
-  drawSection('3 — Emergency Contact')
-  drawField('Name', payload['emergencyContactName'])
-  drawField('Relationship', payload['emergencyContactRelationship'])
-  drawField('Phone', payload['emergencyContactPhone'])
-
-  drawSection('4 — Medical & Insurance')
-  drawField('Medicaid / MA#', payload['maNumber'])
-  drawField('MCO Name', payload['mcoName'])
-  drawField('Medical Issues', payload['medicalIssues'])
-  drawField('Mental Health Dx', payload['mentalHealthDiagnosis'])
-  drawField('Allergies', payload['allergies'])
-
-  drawSection('5 — Primary Care Physician')
-  drawField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No')
-  if (payload['hasPCP'] === 'yes') {
-    drawField('Doctor Name', payload['pcpName'])
-    drawField('Phone', payload['pcpPhone'])
-    drawField('Last Exam', payload['pcpLastExam'])
-  }
-
-  drawSection('6 — Medications')
-  if (payload['noMeds']) {
-    page.drawText('No current medications (client indicated).', { x: MARGIN + 10, y, size: 10, font: regularFont, color: MUTED })
-    y -= 14
+    drawSection('Attached Documents')
+    if (payload['__file_govId']) drawField('Client Record / Proof of Identity', payload['__file_govId'])
+    if (payload['__file_insuranceCard']) drawField('Clinical Justification', payload['__file_insuranceCard'])
+    if (!payload['__file_govId'] && !payload['__file_insuranceCard']) {
+      page.drawText('No files uploaded.', { x: MARGIN + 10, y, size: 10, font: regularFont, color: MUTED }); y -= 14
+    }
   } else {
-    let mi = 0
-    while (payload[`meds[${mi}][name]`]) {
-      drawField(`Med ${mi + 1}`, `${payload[`meds[${mi}][name]`]} | Dose: ${payload[`meds[${mi}][dose]`] || '—'} | Dr: ${payload[`meds[${mi}][prescriber]`] || '—'}`)
-      mi++
+    // --- FULL INTAKE: multi-page PDF ---
+    drawSection('1 — Client Identification')
+    drawField('Full Legal Name', payload['fullName'])
+    drawField('Date of Birth', payload['dateOfBirth'])
+    drawField('Home Address', payload['address'])
+    drawField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No')
+    drawField('Cell Phone', payload['cellPhone'])
+    drawField('Home Phone', payload['homePhone'])
+
+    drawSection('2 — Personal Details')
+    drawField('Age', payload['age'])
+    drawField('Race', payload['race'])
+    drawField('Gender Identity', payload['genderIdentity'])
+    drawField('Pronouns', payload['pronouns'])
+    drawField('Cultural Identity', payload['culturalIdentity'])
+    drawField('Education Level', payload['educationLevel'])
+    drawField('Employment Status', payload['employmentStatus'])
+    drawField('Marital Status', payload['maritalStatus'])
+    drawField('Preferred Language', payload['language'] || payload['ciq_language'])
+
+    drawSection('3 — Emergency Contact')
+    drawField('Name', payload['emergencyContactName'])
+    drawField('Relationship', payload['emergencyContactRelationship'])
+    drawField('Phone', payload['emergencyContactPhone'])
+
+    drawSection('4 — Medical & Insurance')
+    drawField('Medicaid / MA#', payload['maNumber'])
+    drawField('MCO Name', payload['mcoName'])
+    drawField('Medical Issues', payload['medicalIssues'])
+    drawField('Mental Health Dx', payload['mentalHealthDiagnosis'])
+    drawField('Allergies', payload['allergies'])
+
+    drawSection('5 — Primary Care Physician')
+    drawField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No')
+    if (payload['hasPCP'] === 'yes') {
+      drawField('Doctor Name', payload['pcpName'])
+      drawField('Phone', payload['pcpPhone'])
+      drawField('Last Exam', payload['pcpLastExam'])
     }
-    if (mi === 0) { page.drawText('None listed.', { x: MARGIN + 10, y, size: 10, font: regularFont, color: MUTED }); y -= 14 }
-  }
 
-  if (programCode === 'SUD') {
-    drawSection('7 — Substance Use History')
-    drawField('Currently on MAT', payload['isOnMAT'])
-    drawField('Overdoses Last Year', payload['overdosesLastYear'])
-    drawField('Prior Treatment Attempts', payload['priorTreatmentAttempts'])
-    drawField('Longest Sobriety', payload['longestSobriety'])
-    drawField('Gambling Issues', payload['gamblingIssues'])
-    drawSection('8 — Drugs Used')
-    let di = 0
-    while (payload[`drugs[${di}][name]`]) {
-      drawField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]} | Severity: ${payload[`drugs[${di}][severity]`] || '—'} | Route: ${payload[`drugs[${di}][route]`] || '—'}`)
-      di++
+    drawSection('6 — Medications')
+    if (payload['noMeds']) {
+      page.drawText('No current medications (client indicated).', { x: MARGIN + 10, y, size: 10, font: regularFont, color: MUTED })
+      y -= 14
+    } else {
+      let mi = 0
+      while (payload[`meds[${mi}][name]`]) {
+        drawField(`Med ${mi + 1}`, `${payload[`meds[${mi}][name]`]} | Dose: ${payload[`meds[${mi}][dose]`] || '—'} | Dr: ${payload[`meds[${mi}][prescriber]`] || '—'}`)
+        mi++
+      }
+      if (mi === 0) { page.drawText('None listed.', { x: MARGIN + 10, y, size: 10, font: regularFont, color: MUTED }); y -= 14 }
     }
-    drawSection('9 — Legal History')
-    drawField('Ever Incarcerated', payload['everIncarcerated'])
-    drawField('Pending Charges', payload['pendingCharges'])
-    if (payload['pendingChargesDetail']) drawField('Details', payload['pendingChargesDetail'])
+
+    if (programCode === 'SUD') {
+      drawSection('7 — Substance Use History')
+      drawField('Currently on MAT', payload['isOnMAT'])
+      drawField('Overdoses Last Year', payload['overdosesLastYear'])
+      drawField('Prior Treatment Attempts', payload['priorTreatmentAttempts'])
+      drawField('Longest Sobriety', payload['longestSobriety'])
+      drawField('Gambling Issues', payload['gamblingIssues'])
+      drawSection('8 — Drugs Used')
+      let di = 0
+      while (payload[`drugs[${di}][name]`]) {
+        drawField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]} | Severity: ${payload[`drugs[${di}][severity]`] || '—'} | Route: ${payload[`drugs[${di}][route]`] || '—'}`)
+        di++
+      }
+      drawSection('9 — Legal History')
+      drawField('Ever Incarcerated', payload['everIncarcerated'])
+      drawField('Pending Charges', payload['pendingCharges'])
+      if (payload['pendingChargesDetail']) drawField('Details', payload['pendingChargesDetail'])
+    }
+
+    const consentNum = programCode === 'SUD' ? '10' : '7'
+    drawSection(`${consentNum} — Consent Acknowledgments`)
+    const consents = [['Services', payload['ack_services']], ['Participation', payload['ack_participation']], ['Attendance', payload['ack_attendance']], ['Confidentiality', payload['ack_confidentiality']], ['HIPAA', payload['ack_hipaa']], ['Telehealth', payload['ack_telehealth']], ['Client Rights', payload['ack_rights']], ['Photo / Video', payload['ack_photo']], ['Advance Directive', payload['ack_directive']]]
+    if (programCode === 'SUD') consents.push(['Urinalysis (UA)', payload['ack_ua']])
+    consents.forEach(([label, val]) => drawField(`${label}`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'))
+
+    const sigNum = programCode === 'SUD' ? '11' : '8'
+    drawSection(`${sigNum} — Signature`)
+    drawField('Client Name (typed)', payload['consent_name'] || payload['fullName'])
+    drawField('Date', payload['consent_date'])
+    drawField('Representative (if applicable)', payload['repName'])
+
+    drawSection('Appendix — Uploaded Files')
+    page.drawText('Files stored in the secure document portal:', { x: MARGIN, y, size: 9, font: regularFont, color: MUTED }); y -= 14
+    if (payload['__file_govId']) drawField('Photo ID', payload['__file_govId'])
+    if (payload['__file_insuranceCard']) drawField('Insurance Card', payload['__file_insuranceCard'])
   }
-
-  const consentNum = programCode === 'SUD' ? '10' : '7'
-  drawSection(`${consentNum} — Consent Acknowledgments`)
-  const consents = [['Services', payload['ack_services']], ['Participation', payload['ack_participation']], ['Attendance', payload['ack_attendance']], ['Confidentiality', payload['ack_confidentiality']], ['HIPAA', payload['ack_hipaa']], ['Telehealth', payload['ack_telehealth']], ['Client Rights', payload['ack_rights']], ['Photo / Video', payload['ack_photo']], ['Advance Directive', payload['ack_directive']]]
-  if (programCode === 'SUD') consents.push(['Urinalysis (UA)', payload['ack_ua']])
-  consents.forEach(([label, val]) => drawField(`${label}`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'))
-
-  const sigNum = programCode === 'SUD' ? '11' : '8'
-  drawSection(`${sigNum} — Signature`)
-  drawField('Client Name (typed)', payload['consent_name'] || payload['fullName'])
-  drawField('Date', payload['consent_date'])
-  drawField('Representative (if applicable)', payload['repName'])
-
-  drawSection('Appendix — Uploaded Files')
-  page.drawText('Files stored in the secure document portal:', { x: MARGIN, y, size: 9, font: regularFont, color: MUTED }); y -= 14
-  if (payload['__file_govId']) drawField('Photo ID', payload['__file_govId'])
-  if (payload['__file_insuranceCard']) drawField('Insurance Card', payload['__file_insuranceCard'])
 
   // Footer on every page
   const pages = doc.getPages()
@@ -169,7 +187,7 @@ async function generateIntakePdf(
   return await doc.save()
 }
 
-function generateHtmlEmail(submissionId: string, program: string, name: string, payload: Record<string, string>) {
+function generateHtmlEmail(submissionId: string, program: string, name: string, payload: Record<string, string>, formType: string = 'intake') {
   const pLabel = program === 'PRP' ? 'Psychiatric Rehabilitation Program (PRP)' : program === 'SUD' ? 'Substance Use Disorder (SUD) Program' : program;
   const pColor = program === 'PRP' ? '#7c3aed' : program === 'SUD' ? '#0284c7' : '#d97706';
   const pBgLight = program === 'PRP' ? '#f5f3ff' : program === 'SUD' ? '#e0f2fe' : '#fef3c7';
@@ -222,107 +240,123 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
       </td></tr>`;
   };
 
-  // --- Build field sections ---
-  addSection('Client Identification', '\u{1F464}');
-  addField('Full Legal Name', payload['fullName']);
-  addField('Date of Birth', payload['dateOfBirth']);
-  addField('Home Address', payload['address']);
-  addField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No');
-  addField('Cell Phone', payload['cellPhone']);
-  addField('Home Phone', payload['homePhone']);
+  // --- Build field sections based on form type ---
+  if (formType === 'referral') {
+    // REFERRAL: concise summary
+    addSection('Referral Details', '\u{1F4CB}');
+    addField('Client Name', payload['fullName']);
+    addField('Contact Email', payload['email']);
+    addField('Target Program', pLabel);
 
-  addSection('Personal Details', '\u{1F3F7}');
-  addField('Age', payload['age']);
-  addField('Race', payload['race']);
-  addField('Gender Identity', payload['genderIdentity']);
-  addField('Pronouns', payload['pronouns']);
-  addField('Cultural Identity', payload['culturalIdentity']);
-  addField('Education Level', payload['educationLevel']);
-  addField('Employment Status', payload['employmentStatus']);
-  addField('Marital Status', payload['maritalStatus']);
-  addField('Preferred Language', payload['language'] || payload['ciq_language']);
-
-  addSection('Emergency Contact', '\u{1F6A8}');
-  addField('Name', payload['emergencyContactName']);
-  addField('Relationship', payload['emergencyContactRelationship']);
-  addField('Phone', payload['emergencyContactPhone']);
-
-  addSection('Medical & Insurance', '\u{1F3E5}');
-  addField('Medicaid / MA#', payload['maNumber']);
-  addField('MCO Name', payload['mcoName']);
-  addField('Medical Issues', payload['medicalIssues']);
-  addField('Mental Health Dx', payload['mentalHealthDiagnosis']);
-  addField('Allergies', payload['allergies']);
-
-  addSection('Primary Care Physician', '\u2695\uFE0F');
-  addField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No');
-  if (payload['hasPCP'] === 'yes') {
-    addField('Doctor Name', payload['pcpName']);
-    addField('Phone', payload['pcpPhone']);
-    addField('Last Exam', payload['pcpLastExam']);
-  }
-
-  addSection('Medications', '\u{1F48A}');
-  if (payload['noMeds']) {
-    fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No current medications (client indicated).</td></tr>';
+    addSection('Attached Documents', '\u{1F4CE}');
+    if (payload['__file_govId']) addField('Client Record / Proof of Identity', payload['__file_govId']);
+    if (payload['__file_insuranceCard']) addField('Clinical Justification', payload['__file_insuranceCard']);
+    if (!payload['__file_govId'] && !payload['__file_insuranceCard']) {
+      fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No files uploaded.</td></tr>';
+    }
   } else {
-    let mi = 0;
-    while (payload[`meds[${mi}][name]`]) {
-      addField(`Medication ${mi + 1}`, `${payload[`meds[${mi}][name]`]}  \u00B7  Dose: ${payload[`meds[${mi}][dose]`] || '\u2014'}  \u00B7  Prescriber: ${payload[`meds[${mi}][prescriber]`] || '\u2014'}`);
-      mi++;
+    // FULL INTAKE: all sections
+    addSection('Client Identification', '\u{1F464}');
+    addField('Full Legal Name', payload['fullName']);
+    addField('Date of Birth', payload['dateOfBirth']);
+    addField('Home Address', payload['address']);
+    addField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No');
+    addField('Cell Phone', payload['cellPhone']);
+    addField('Home Phone', payload['homePhone']);
+
+    addSection('Personal Details', '\u{1F3F7}');
+    addField('Age', payload['age']);
+    addField('Race', payload['race']);
+    addField('Gender Identity', payload['genderIdentity']);
+    addField('Pronouns', payload['pronouns']);
+    addField('Cultural Identity', payload['culturalIdentity']);
+    addField('Education Level', payload['educationLevel']);
+    addField('Employment Status', payload['employmentStatus']);
+    addField('Marital Status', payload['maritalStatus']);
+    addField('Preferred Language', payload['language'] || payload['ciq_language']);
+
+    addSection('Emergency Contact', '\u{1F6A8}');
+    addField('Name', payload['emergencyContactName']);
+    addField('Relationship', payload['emergencyContactRelationship']);
+    addField('Phone', payload['emergencyContactPhone']);
+
+    addSection('Medical & Insurance', '\u{1F3E5}');
+    addField('Medicaid / MA#', payload['maNumber']);
+    addField('MCO Name', payload['mcoName']);
+    addField('Medical Issues', payload['medicalIssues']);
+    addField('Mental Health Dx', payload['mentalHealthDiagnosis']);
+    addField('Allergies', payload['allergies']);
+
+    addSection('Primary Care Physician', '\u2695\uFE0F');
+    addField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No');
+    if (payload['hasPCP'] === 'yes') {
+      addField('Doctor Name', payload['pcpName']);
+      addField('Phone', payload['pcpPhone']);
+      addField('Last Exam', payload['pcpLastExam']);
     }
-    if (mi === 0) {
-      fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">None listed.</td></tr>';
-    }
-  }
 
-  if (program === 'SUD') {
-    addSection('Substance Use History', '\u{1F4CB}');
-    addField('Currently on MAT', payload['isOnMAT']);
-    addField('Overdoses Last Year', payload['overdosesLastYear']);
-    addField('Prior Treatment Attempts', payload['priorTreatmentAttempts']);
-    addField('Longest Sobriety', payload['longestSobriety']);
-    addField('Gambling Issues', payload['gamblingIssues']);
-
-    addSection('Drugs Used', '\u26A0\uFE0F');
-    let di = 0;
-    while (payload[`drugs[${di}][name]`]) {
-      addField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]}  \u00B7  Severity: ${payload[`drugs[${di}][severity]`] || '\u2014'}  \u00B7  Route: ${payload[`drugs[${di}][route]`] || '\u2014'}`);
-      di++;
+    addSection('Medications', '\u{1F48A}');
+    if (payload['noMeds']) {
+      fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No current medications (client indicated).</td></tr>';
+    } else {
+      let mi = 0;
+      while (payload[`meds[${mi}][name]`]) {
+        addField(`Medication ${mi + 1}`, `${payload[`meds[${mi}][name]`]}  \u00B7  Dose: ${payload[`meds[${mi}][dose]`] || '\u2014'}  \u00B7  Prescriber: ${payload[`meds[${mi}][prescriber]`] || '\u2014'}`);
+        mi++;
+      }
+      if (mi === 0) {
+        fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">None listed.</td></tr>';
+      }
     }
 
-    addSection('Legal History', '\u2696\uFE0F');
-    addField('Ever Incarcerated', payload['everIncarcerated']);
-    addField('Pending Charges', payload['pendingCharges']);
-    if (payload['pendingChargesDetail']) addField('Details', payload['pendingChargesDetail']);
-  }
+    if (program === 'SUD') {
+      addSection('Substance Use History', '\u{1F4CB}');
+      addField('Currently on MAT', payload['isOnMAT']);
+      addField('Overdoses Last Year', payload['overdosesLastYear']);
+      addField('Prior Treatment Attempts', payload['priorTreatmentAttempts']);
+      addField('Longest Sobriety', payload['longestSobriety']);
+      addField('Gambling Issues', payload['gamblingIssues']);
 
-  addSection('Consent Acknowledgments', '\u2705');
-  const consentsEmail: [string, string | undefined][] = [
-    ['Services', payload['ack_services']],
-    ['Voluntary Participation', payload['ack_participation']],
-    ['Attendance Policy', payload['ack_attendance']],
-    ['Confidentiality', payload['ack_confidentiality']],
-    ['HIPAA Privacy Practices', payload['ack_hipaa']],
-    ['Telehealth & Communication', payload['ack_telehealth']],
-    ['Client Rights & Responsibilities', payload['ack_rights']],
-    ['Photo / Video Consent', payload['ack_photo']],
-    ['Mental Health Advance Directive', payload['ack_directive']]
-  ];
-  if (program === 'SUD') consentsEmail.push(['Urinalysis (UA)', payload['ack_ua']]);
-  consentsEmail.forEach(([label, val]) => addConsent(label, val));
+      addSection('Drugs Used', '\u26A0\uFE0F');
+      let di = 0;
+      while (payload[`drugs[${di}][name]`]) {
+        addField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]}  \u00B7  Severity: ${payload[`drugs[${di}][severity]`] || '\u2014'}  \u00B7  Route: ${payload[`drugs[${di}][route]`] || '\u2014'}`);
+        di++;
+      }
 
-  addSection('Signature', '\u270D\uFE0F');
-  addField('Client Name (typed)', payload['consent_name'] || payload['fullName']);
-  addField('Date Signed', payload['consent_date']);
-  addField('Representative (if applicable)', payload['repName']);
+      addSection('Legal History', '\u2696\uFE0F');
+      addField('Ever Incarcerated', payload['everIncarcerated']);
+      addField('Pending Charges', payload['pendingCharges']);
+      if (payload['pendingChargesDetail']) addField('Details', payload['pendingChargesDetail']);
+    }
 
-  addSection('Uploaded Files', '\u{1F4CE}');
-  if (payload['__file_govId'] || payload['__file_insuranceCard']) {
-    if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
-    if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
-  } else {
-    fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No files uploaded.</td></tr>';
+    addSection('Consent Acknowledgments', '\u2705');
+    const consentsEmail: [string, string | undefined][] = [
+      ['Services', payload['ack_services']],
+      ['Voluntary Participation', payload['ack_participation']],
+      ['Attendance Policy', payload['ack_attendance']],
+      ['Confidentiality', payload['ack_confidentiality']],
+      ['HIPAA Privacy Practices', payload['ack_hipaa']],
+      ['Telehealth & Communication', payload['ack_telehealth']],
+      ['Client Rights & Responsibilities', payload['ack_rights']],
+      ['Photo / Video Consent', payload['ack_photo']],
+      ['Mental Health Advance Directive', payload['ack_directive']]
+    ];
+    if (program === 'SUD') consentsEmail.push(['Urinalysis (UA)', payload['ack_ua']]);
+    consentsEmail.forEach(([label, val]) => addConsent(label, val));
+
+    addSection('Signature', '\u270D\uFE0F');
+    addField('Client Name (typed)', payload['consent_name'] || payload['fullName']);
+    addField('Date Signed', payload['consent_date']);
+    addField('Representative (if applicable)', payload['repName']);
+
+    addSection('Uploaded Files', '\u{1F4CE}');
+    if (payload['__file_govId'] || payload['__file_insuranceCard']) {
+      if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
+      if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
+    } else {
+      fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No files uploaded.</td></tr>';
+    }
   }
 
   const portalUrl = 'https://the-wel-foundation-production.up.railway.app/staff/submissions/new';
@@ -334,7 +368,7 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
-  <title>New ${program} Intake \u2014 ${name}</title>
+  <title>New ${program} ${formType === 'referral' ? 'Referral' : 'Intake'} \u2014 ${name}</title>
   <!--[if mso]><style>table{border-collapse:collapse;}td{font-family:Arial,sans-serif;}</style><![endif]-->
 </head>
 <body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;">
@@ -359,8 +393,8 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
               <tr><td style="height: 3px; background-color: #d9a441; border-radius: 2px;"></td></tr>
             </table>
             <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #d9a441; margin-bottom: 12px;">The WEL Foundation</div>
-            <div style="font-size: 28px; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 8px;">New Intake Submission</div>
-            <div style="font-size: 15px; color: #94a3b8; font-weight: 400; line-height: 1.5;">A new form has been submitted and is awaiting your review.</div>
+            <div style="font-size: 28px; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 8px;">New ${formType === 'referral' ? 'Client Referral' : 'Intake Submission'}</div>
+            <div style="font-size: 15px; color: #94a3b8; font-weight: 400; line-height: 1.5;">${formType === 'referral' ? 'A new client referral has been submitted for review.' : 'A new form has been submitted and is awaiting your review.'}</div>
           </td>
         </tr>
 
@@ -507,8 +541,8 @@ serve(async (req: Request) => {
     const audience = (formData.get('audience') as string) || 'self'
     const name     = formData.get('fullName') as string
     const email    = formData.get('email') as string
-    // FIX: frontend sends 'program' not 'programSelect'
-    const program  = (formData.get('program') as string) || ''
+    // FIX: intake forms send 'program', referral forms send 'programSelect'
+    const program  = (formData.get('program') as string) || (formData.get('programSelect') as string) || ''
 
     if (!name) {
       return new Response(JSON.stringify({ error: 'Missing required fields: name is required.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -567,18 +601,19 @@ serve(async (req: Request) => {
 
     // Generate PDF (non-fatal)
     try {
-      const pdfBytes = await generateIntakePdf(submissionId, program, formPayload)
+      const pdfBytes = await generateIntakePdf(submissionId, program, formPayload, type)
       const pdfPath  = `exports/${submissionId}.pdf`
+      const pdfLabel = type === 'referral' ? 'Referral' : 'Intake'
       const { error: pdfErr } = await supabase.storage.from('private_uploads').upload(pdfPath, new Blob([pdfBytes], { type: 'application/pdf' }), { contentType: 'application/pdf', upsert: true })
       if (!pdfErr) {
-        await supabase.from('submission_exports').insert({ submission_id: submissionId, export_type: 'flattened_form_pdf', bucket: 'private_uploads', object_path: pdfPath, file_name: `${program}_Intake_${name.replace(/\s+/g, '_')}_${submissionId.slice(0, 8)}.pdf`, file_size: pdfBytes.length })
+        await supabase.from('submission_exports').insert({ submission_id: submissionId, export_type: 'flattened_form_pdf', bucket: 'private_uploads', object_path: pdfPath, file_name: `${program}_${pdfLabel}_${name.replace(/\s+/g, '_')}_${submissionId.slice(0, 8)}.pdf`, file_size: pdfBytes.length })
       }
     } catch (pdfErr) { console.error('PDF generation error (non-fatal):', pdfErr) }
 
     // Admin and User emails (non-fatal)
     try {
       if (resendApiKey) {
-        const emailHtml = generateHtmlEmail(submissionId, program, name, formPayload);
+        const emailHtml = generateHtmlEmail(submissionId, program, name, formPayload, type);
         const { data: recipients, error: recipientError } = await supabase.from('admin_notification_recipients').select('email').eq('active', true);
         
         if (recipientError) {
