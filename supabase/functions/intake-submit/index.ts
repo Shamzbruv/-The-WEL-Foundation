@@ -346,8 +346,8 @@ serve(async (req: Request) => {
     // FIX: frontend sends 'program' not 'programSelect'
     const program  = (formData.get('program') as string) || ''
 
-    if (!name || !email) {
-      return new Response(JSON.stringify({ error: 'Missing required fields: name and email are required.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    if (!name) {
+      return new Response(JSON.stringify({ error: 'Missing required fields: name is required.' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
     // Build full payload snapshot
