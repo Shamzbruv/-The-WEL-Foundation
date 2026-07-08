@@ -171,54 +171,67 @@ async function generateIntakePdf(
 
 function generateHtmlEmail(submissionId: string, program: string, name: string, payload: Record<string, string>) {
   const pLabel = program === 'PRP' ? 'Psychiatric Rehabilitation Program (PRP)' : program === 'SUD' ? 'Substance Use Disorder (SUD) Program' : program;
-  const metaDate = new Date(payload['submittedAt'] || Date.now()).toLocaleString('en-US', { timeZone: 'America/New_York' });
+  const pColor = program === 'PRP' ? '#7c3aed' : program === 'SUD' ? '#0284c7' : '#d97706';
+  const pBgLight = program === 'PRP' ? '#f5f3ff' : program === 'SUD' ? '#e0f2fe' : '#fef3c7';
+  const metaDate = new Date(payload['submittedAt'] || Date.now()).toLocaleString('en-US', { timeZone: 'America/New_York', dateStyle: 'full', timeStyle: 'short' });
+  const shortId = submissionId.slice(0, 8).toUpperCase();
   
-  let html = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <style>
-      body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #0d1b2a; }
-      .container { max-width: 650px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 8px; border-top: 5px solid #0d1b2a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-      .header { border-bottom: 2px solid #d97706; padding-bottom: 20px; margin-bottom: 25px; }
-      .header h1 { margin: 0; font-size: 24px; color: #0d1b2a; letter-spacing: 0.5px; }
-      .header h2 { margin: 5px 0 0 0; font-size: 16px; color: #d97706; font-weight: 500; }
-      .meta { font-size: 12px; color: #64748b; margin-top: 10px; }
-      .section { margin-bottom: 25px; }
-      .section-title { background-color: #0d1b2a; color: #ffffff; padding: 8px 12px; font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; border-radius: 4px; }
-      .field { margin-bottom: 12px; display: flex; flex-wrap: wrap; }
-      .field-label { font-weight: bold; color: #475569; width: 180px; font-size: 13px; }
-      .field-value { flex: 1; color: #0f172a; font-size: 14px; }
-      .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; text-align: center; }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>THE WEL FOUNDATION</h1>
-        <h2>Confidential Intake Record &mdash; ${pLabel}</h2>
-        <div class="meta">Submission ID: ${submissionId} | Submitted: ${metaDate} ET</div>
-      </div>
-  `;
+  let fieldsHtml = '';
 
-  const addSection = (title: string) => { html += `<div class="section"><div class="section-title">${title}</div>`; };
-  const closeSection = () => { html += `</div>`; };
-  const addField = (label: string, value: string | undefined) => {
-    const val = (value || '—').trim();
-    html += `<div class="field"><div class="field-label">${label}:</div><div class="field-value">${val}</div></div>`;
+  const addSection = (title: string, icon: string) => {
+    fieldsHtml += `
+      <tr><td style="padding: 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 28px; margin-bottom: 4px;">
+          <tr>
+            <td style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #0d1b2a; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0;">
+              ${icon}&nbsp;&nbsp;${title}
+            </td>
+          </tr>
+        </table>
+      </td></tr>`;
   };
 
-  addSection('1 — Client Identification');
+  const addField = (label: string, value: string | undefined) => {
+    const val = (value || '\u2014').trim();
+    fieldsHtml += `
+      <tr><td style="padding: 0;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="40%" style="padding: 8px 12px 8px 0; font-size: 13px; color: #64748b; font-weight: 500; vertical-align: top; border-bottom: 1px solid #f1f5f9;">${label}</td>
+            <td width="60%" style="padding: 8px 0; font-size: 14px; color: #0f172a; font-weight: 400; vertical-align: top; border-bottom: 1px solid #f1f5f9;">${val}</td>
+          </tr>
+        </table>
+      </td></tr>`;
+  };
+
+  const addConsent = (label: string, val: string | undefined) => {
+    const ack = val === 'on' || val === 'true';
+    const dotColor = ack ? '#16a34a' : '#dc2626';
+    const dotBg = ack ? '#dcfce7' : '#fef2f2';
+    const statusText = ack ? 'Acknowledged' : 'Pending';
+    fieldsHtml += `
+      <tr><td style="padding: 0;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="60%" style="padding: 7px 12px 7px 0; font-size: 13px; color: #334155; vertical-align: middle; border-bottom: 1px solid #f1f5f9;">${label}</td>
+            <td width="40%" style="padding: 7px 0; vertical-align: middle; border-bottom: 1px solid #f1f5f9; text-align: right;">
+              <span style="display: inline-block; background-color: ${dotBg}; color: ${dotColor}; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px;">${ack ? '\u2713' : '\u2717'} ${statusText}</span>
+            </td>
+          </tr>
+        </table>
+      </td></tr>`;
+  };
+
+  // --- Build field sections ---
+  addSection('Client Identification', '\u{1F464}');
   addField('Full Legal Name', payload['fullName']);
   addField('Date of Birth', payload['dateOfBirth']);
   addField('Home Address', payload['address']);
   addField('Currently Homeless', payload['isHomeless'] === 'yes' ? 'Yes' : 'No');
   addField('Cell Phone', payload['cellPhone']);
   addField('Home Phone', payload['homePhone']);
-  closeSection();
 
-  addSection('2 — Personal Details');
+  addSection('Personal Details', '\u{1F3F7}');
   addField('Age', payload['age']);
   addField('Race', payload['race']);
   addField('Gender Identity', payload['genderIdentity']);
@@ -228,101 +241,253 @@ function generateHtmlEmail(submissionId: string, program: string, name: string, 
   addField('Employment Status', payload['employmentStatus']);
   addField('Marital Status', payload['maritalStatus']);
   addField('Preferred Language', payload['language'] || payload['ciq_language']);
-  closeSection();
 
-  addSection('3 — Emergency Contact');
+  addSection('Emergency Contact', '\u{1F6A8}');
   addField('Name', payload['emergencyContactName']);
   addField('Relationship', payload['emergencyContactRelationship']);
   addField('Phone', payload['emergencyContactPhone']);
-  closeSection();
 
-  addSection('4 — Medical & Insurance');
+  addSection('Medical & Insurance', '\u{1F3E5}');
   addField('Medicaid / MA#', payload['maNumber']);
   addField('MCO Name', payload['mcoName']);
   addField('Medical Issues', payload['medicalIssues']);
   addField('Mental Health Dx', payload['mentalHealthDiagnosis']);
   addField('Allergies', payload['allergies']);
-  closeSection();
 
-  addSection('5 — Primary Care Physician');
+  addSection('Primary Care Physician', '\u2695\uFE0F');
   addField('Has PCP', payload['hasPCP'] === 'yes' ? 'Yes' : 'No');
   if (payload['hasPCP'] === 'yes') {
     addField('Doctor Name', payload['pcpName']);
     addField('Phone', payload['pcpPhone']);
     addField('Last Exam', payload['pcpLastExam']);
   }
-  closeSection();
 
-  addSection('6 — Medications');
+  addSection('Medications', '\u{1F48A}');
   if (payload['noMeds']) {
-    html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No current medications (client indicated).</div>`;
+    fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No current medications (client indicated).</td></tr>';
   } else {
     let mi = 0;
     while (payload[`meds[${mi}][name]`]) {
-      addField(`Med ${mi + 1}`, `${payload[`meds[${mi}][name]`]} | Dose: ${payload[`meds[${mi}][dose]`] || '—'} | Dr: ${payload[`meds[${mi}][prescriber]`] || '—'}`);
+      addField(`Medication ${mi + 1}`, `${payload[`meds[${mi}][name]`]}  \u00B7  Dose: ${payload[`meds[${mi}][dose]`] || '\u2014'}  \u00B7  Prescriber: ${payload[`meds[${mi}][prescriber]`] || '\u2014'}`);
       mi++;
     }
     if (mi === 0) {
-      html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">None listed.</div>`;
+      fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">None listed.</td></tr>';
     }
   }
-  closeSection();
 
   if (program === 'SUD') {
-    addSection('7 — Substance Use History');
+    addSection('Substance Use History', '\u{1F4CB}');
     addField('Currently on MAT', payload['isOnMAT']);
     addField('Overdoses Last Year', payload['overdosesLastYear']);
     addField('Prior Treatment Attempts', payload['priorTreatmentAttempts']);
     addField('Longest Sobriety', payload['longestSobriety']);
     addField('Gambling Issues', payload['gamblingIssues']);
-    closeSection();
-    
-    addSection('8 — Drugs Used');
+
+    addSection('Drugs Used', '\u26A0\uFE0F');
     let di = 0;
     while (payload[`drugs[${di}][name]`]) {
-      addField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]} | Severity: ${payload[`drugs[${di}][severity]`] || '—'} | Route: ${payload[`drugs[${di}][route]`] || '—'}`);
+      addField(`Drug ${di + 1}`, `${payload[`drugs[${di}][name]`]}  \u00B7  Severity: ${payload[`drugs[${di}][severity]`] || '\u2014'}  \u00B7  Route: ${payload[`drugs[${di}][route]`] || '\u2014'}`);
       di++;
     }
-    closeSection();
 
-    addSection('9 — Legal History');
+    addSection('Legal History', '\u2696\uFE0F');
     addField('Ever Incarcerated', payload['everIncarcerated']);
     addField('Pending Charges', payload['pendingCharges']);
     if (payload['pendingChargesDetail']) addField('Details', payload['pendingChargesDetail']);
-    closeSection();
   }
 
-  const consentNum = program === 'SUD' ? '10' : '7';
-  addSection(`${consentNum} — Consent Acknowledgments`);
-  const consents = [['Services', payload['ack_services']], ['Participation', payload['ack_participation']], ['Attendance', payload['ack_attendance']], ['Confidentiality', payload['ack_confidentiality']], ['HIPAA', payload['ack_hipaa']], ['Telehealth', payload['ack_telehealth']], ['Client Rights', payload['ack_rights']], ['Photo / Video', payload['ack_photo']], ['Advance Directive', payload['ack_directive']]];
-  if (program === 'SUD') consents.push(['Urinalysis (UA)', payload['ack_ua']]);
-  consents.forEach(([label, val]) => addField(`${label}`, val === 'on' || val === 'true' ? '✓ Acknowledged' : 'Not acknowledged'));
-  closeSection();
+  addSection('Consent Acknowledgments', '\u2705');
+  const consentsEmail: [string, string | undefined][] = [
+    ['Services', payload['ack_services']],
+    ['Voluntary Participation', payload['ack_participation']],
+    ['Attendance Policy', payload['ack_attendance']],
+    ['Confidentiality', payload['ack_confidentiality']],
+    ['HIPAA Privacy Practices', payload['ack_hipaa']],
+    ['Telehealth & Communication', payload['ack_telehealth']],
+    ['Client Rights & Responsibilities', payload['ack_rights']],
+    ['Photo / Video Consent', payload['ack_photo']],
+    ['Mental Health Advance Directive', payload['ack_directive']]
+  ];
+  if (program === 'SUD') consentsEmail.push(['Urinalysis (UA)', payload['ack_ua']]);
+  consentsEmail.forEach(([label, val]) => addConsent(label, val));
 
-  const sigNum = program === 'SUD' ? '11' : '8';
-  addSection(`${sigNum} — Signature`);
+  addSection('Signature', '\u270D\uFE0F');
   addField('Client Name (typed)', payload['consent_name'] || payload['fullName']);
-  addField('Date', payload['consent_date']);
+  addField('Date Signed', payload['consent_date']);
   addField('Representative (if applicable)', payload['repName']);
-  closeSection();
 
-  addSection('Appendix — Uploaded Files');
-  if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
-  if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
-  if (!payload['__file_govId'] && !payload['__file_insuranceCard']) {
-     html += `<div style="font-size:14px; color:#64748b; margin-bottom:12px;">No files uploaded.</div>`;
+  addSection('Uploaded Files', '\u{1F4CE}');
+  if (payload['__file_govId'] || payload['__file_insuranceCard']) {
+    if (payload['__file_govId']) addField('Photo ID', payload['__file_govId']);
+    if (payload['__file_insuranceCard']) addField('Insurance Card', payload['__file_insuranceCard']);
+  } else {
+    fieldsHtml += '<tr><td style="padding: 10px 0; font-size: 13px; color: #94a3b8; font-style: italic;">No files uploaded.</td></tr>';
   }
-  closeSection();
 
-  html += `
-      <div class="footer">
-        The WEL Foundation &bull; 5858 Belair Rd, Baltimore MD 21206 &bull; 443-826-2770<br>
-        CONFIDENTIAL — Authorized clinical personnel only. Do not distribute.
+  const portalUrl = 'https://the-wel-foundation-production.up.railway.app/staff/submissions/new';
+
+  const html = `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <title>New ${program} Intake \u2014 ${name}</title>
+  <!--[if mso]><style>table{border-collapse:collapse;}td{font-family:Arial,sans-serif;}</style><![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;">
+
+  <!-- Outer wrapper -->
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f1f5f9;">
+    <tr><td align="center" style="padding: 32px 16px;">
+
+      <!-- Preheader text (hidden) -->
+      <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
+        New ${program} intake from ${name} \u2014 submitted ${metaDate} ET. Review now in your staff portal.
       </div>
-    </div>
-  </body>
-  </html>
-  `;
+
+      <!-- Main card -->
+      <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width: 640px; width: 100%; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+
+        <!-- Navy header -->
+        <tr>
+          <td style="background-color: #0d1b2a; padding: 40px 40px 32px 40px;">
+            <!-- Gold accent line -->
+            <table role="presentation" width="60" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+              <tr><td style="height: 3px; background-color: #d9a441; border-radius: 2px;"></td></tr>
+            </table>
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #d9a441; margin-bottom: 12px;">The WEL Foundation</div>
+            <div style="font-size: 28px; font-weight: 800; color: #ffffff; line-height: 1.2; margin-bottom: 8px;">New Intake Submission</div>
+            <div style="font-size: 15px; color: #94a3b8; font-weight: 400; line-height: 1.5;">A new form has been submitted and is awaiting your review.</div>
+          </td>
+        </tr>
+
+        <!-- Quick-glance summary cards -->
+        <tr>
+          <td style="padding: 24px 40px 0 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+              <tr>
+                <!-- Program -->
+                <td width="33%" style="padding: 20px 16px; text-align: center; border-right: 1px solid #e2e8f0;">
+                  <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; font-weight: 600; margin-bottom: 8px;">Program</div>
+                  <div style="display: inline-block; background-color: ${pBgLight}; color: ${pColor}; font-size: 13px; font-weight: 700; padding: 5px 16px; border-radius: 20px; letter-spacing: 0.5px;">${program}</div>
+                </td>
+                <!-- Applicant -->
+                <td width="34%" style="padding: 20px 16px; text-align: center; border-right: 1px solid #e2e8f0;">
+                  <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; font-weight: 600; margin-bottom: 8px;">Applicant</div>
+                  <div style="font-size: 15px; font-weight: 700; color: #0f172a;">${name}</div>
+                </td>
+                <!-- Reference ID -->
+                <td width="33%" style="padding: 20px 16px; text-align: center;">
+                  <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #94a3b8; font-weight: 600; margin-bottom: 8px;">Reference</div>
+                  <div style="font-family: 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Courier New', monospace; font-size: 14px; font-weight: 700; color: #0f172a; letter-spacing: 0.5px;">#${shortId}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Timestamp -->
+        <tr>
+          <td style="padding: 12px 40px 24px 40px; text-align: center;">
+            <div style="font-size: 12px; color: #94a3b8;">\u{1F4C5}&nbsp;&nbsp;Submitted on ${metaDate} ET</div>
+          </td>
+        </tr>
+
+        <!-- CTA Button -->
+        <tr>
+          <td style="padding: 0 40px 28px 40px;" align="center">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background-color: #d97706; border-radius: 10px;">
+                  <a href="${portalUrl}" target="_blank" style="display: inline-block; padding: 15px 40px; font-size: 15px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.3px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+                    Review in Staff Portal&nbsp;&nbsp;\u2192
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding: 0 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="border-top: 2px solid #e2e8f0; font-size: 0; line-height: 0; height: 1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Section heading for details -->
+        <tr>
+          <td style="padding: 28px 40px 4px 40px;">
+            <div style="font-size: 18px; font-weight: 700; color: #0d1b2a;">Full Submission Details</div>
+            <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Complete intake record for ${pLabel}</div>
+          </td>
+        </tr>
+
+        <!-- All data fields -->
+        <tr>
+          <td style="padding: 0 40px 24px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              ${fieldsHtml}
+            </table>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding: 0 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr><td style="border-top: 2px solid #e2e8f0; font-size: 0; line-height: 0; height: 1px;">&nbsp;</td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding: 28px 40px 36px 40px; text-align: center;">
+            <!-- Gold accent line -->
+            <table role="presentation" width="40" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 16px auto;">
+              <tr><td style="height: 3px; background-color: #d9a441; border-radius: 2px;"></td></tr>
+            </table>
+            <div style="font-size: 13px; font-weight: 700; color: #0d1b2a; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 10px;">The WEL Foundation</div>
+            <div style="font-size: 12px; color: #94a3b8; line-height: 1.7;">
+              5858 Belair Rd, Baltimore MD 21206&nbsp;&nbsp;\u00B7&nbsp;&nbsp;443-826-2770<br>
+              <a href="https://thewelfoundation.com" style="color: #d97706; text-decoration: none; font-weight: 500;">thewelfoundation.com</a>
+            </div>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 20px auto 0 auto;">
+              <tr>
+                <td style="background-color: #fef2f2; color: #dc2626; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 6px 16px; border-radius: 4px;">
+                  \u26A0&nbsp;&nbsp;Confidential \u2014 Authorized Personnel Only
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+      <!-- /Main card -->
+
+      <!-- Sub-footer -->
+      <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width: 640px; width: 100%; margin-top: 16px;">
+        <tr>
+          <td style="text-align: center; font-size: 11px; color: #94a3b8; line-height: 1.5;">
+            This is an automated notification from The WEL Foundation intake system.<br>
+            Do not reply to this email. Questions? Contact <a href="mailto:admin@thewelfoundation.com" style="color: #64748b; text-decoration: underline;">admin@thewelfoundation.com</a>
+          </td>
+        </tr>
+      </table>
+
+    </td></tr>
+  </table>
+  <!-- /Outer wrapper -->
+
+</body>
+</html>`;
+
   return html;
 }
 
@@ -332,7 +497,6 @@ serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    // PLACEHOLDER: Add RESEND_API_KEY in Supabase Dashboard → Project Settings → Edge Functions → intake-submit → Secrets
     const resendApiKey = Deno.env.get('RESEND_API_KEY') || ''
 
     if (!supabaseUrl || !supabaseServiceKey) throw new Error('Server misconfiguration: database keys unavailable.')
@@ -433,7 +597,7 @@ serve(async (req: Request) => {
             body: JSON.stringify({
               from: 'WEL Intake System <intake@thewelfoundation.com>',
               to: toEmails,
-              subject: `${subjectPrefix} — ${program} Intake — ${name}`,
+              subject: `${subjectPrefix} \u2014 ${program} Intake \u2014 ${name}`,
               html: emailHtml,
             }),
           });
