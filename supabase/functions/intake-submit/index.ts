@@ -415,12 +415,19 @@ serve(async (req: Request) => {
     try {
       if (resendApiKey) {
         const emailHtml = generateHtmlEmail(submissionId, program, name, formPayload);
-        const { data: recipients } = await supabase.from('admin_notification_recipients').select('email').eq('active', true);
+        const { data: recipients, error: recipientError } = await supabase.from('admin_notification_recipients').select('email').eq('active', true);
+        
+        if (recipientError) {
+          console.error('Failed to fetch admin recipients:', recipientError);
+        }
+        
         const adminEmails = recipients && recipients.length > 0 ? recipients.map((r: { email: string }) => r.email) : [];
+        console.log('Admin notification recipients found:', adminEmails.length, adminEmails);
         
         const sendEmail = async (toEmails: string[], subjectPrefix: string) => {
           if (toEmails.length === 0) return;
-          await fetch('https://api.resend.com/emails', {
+          console.log(`Sending email to: ${toEmails.join(', ')} with subject prefix: ${subjectPrefix}`);
+          const resendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -430,11 +437,19 @@ serve(async (req: Request) => {
               html: emailHtml,
             }),
           });
+          const resendBody = await resendRes.text();
+          if (!resendRes.ok) {
+            console.error(`Resend API error (${resendRes.status}):`, resendBody);
+          } else {
+            console.log('Resend API success:', resendBody);
+          }
         };
 
         // Send to Admins
         if (adminEmails.length > 0) {
           await sendEmail(adminEmails, 'New Submission');
+        } else {
+          console.warn('No active admin notification recipients found in admin_notification_recipients table.');
         }
 
         // Send to User
@@ -443,7 +458,7 @@ serve(async (req: Request) => {
         }
 
       } else {
-        console.warn('RESEND_API_KEY not configured. Set it in Supabase Edge Function Secrets to enable emails.')
+        console.error('RESEND_API_KEY is empty or not configured! Emails will NOT be sent. Set it via: supabase secrets set --env-file .env')
       }
     } catch (emailErr) { console.error('Email error (non-fatal):', emailErr) }
 
