@@ -424,7 +424,7 @@ serve(async (req: Request) => {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              from: 'WEL Intake System <intake@thewelfoundation.org>',
+              from: 'WEL Intake System <intake@thewelfoundation.com>',
               to: toEmails,
               subject: `${subjectPrefix} — ${program} Intake — ${name}`,
               html: emailHtml,
