@@ -33,7 +33,8 @@ import StaffPortalLayout from '../../layouts/StaffPortalLayout.astro';
         </div>
     </div>
     
-    <script>\n      // @ts-nocheck
+    <script>
+      // @ts-nocheck
       import { createClient } from '@supabase/supabase-js';
       if(!(window as any).supabase) { (window as any).supabase = createClient(import.meta.env.PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co", import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "public-anon-key"); } const supabase = (window as any).supabase;
 
