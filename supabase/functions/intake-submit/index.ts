@@ -632,7 +632,7 @@ serve(async (req: Request) => {
             body: JSON.stringify({
               from: 'WEL Intake System <intake@thewelfoundation.com>',
               to: toEmails,
-              subject: `${subjectPrefix} \u2014 ${program} Intake \u2014 ${name}`,
+              subject: `${subjectPrefix} \u2014 ${program} ${type === 'referral' ? 'Referral' : 'Intake'} \u2014 ${name}`,
               html: emailHtml,
             }),
           });

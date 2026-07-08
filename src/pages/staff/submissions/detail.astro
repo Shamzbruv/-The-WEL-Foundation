@@ -30,14 +30,14 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 </div>
             </div>
 
-            <!-- Intake PDF Export -->
+            <!-- Submission PDF Export -->
             <div class="card" id="export-card">
-                <h2 style="margin-top:0; margin-bottom:1rem;">Intake Packet (PDF)</h2>
+                <h2 style="margin-top:0; margin-bottom:1rem;" id="export-title">Submission Packet (PDF)</h2>
                 <div id="export-loading" style="color:#64748b; font-size:0.9rem;">Loading...</div>
                 <div id="export-available" style="display:none;">
                     <p style="font-size:0.9rem; color:#475569; margin-bottom:1rem;" id="export-filename"></p>
                     <button id="download-pdf-btn" class="btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem;">
-                        <i class="fa-solid fa-file-arrow-down"></i> Download Intake PDF
+                        <i class="fa-solid fa-file-arrow-down"></i> Download PDF
                     </button>
                     <p style="font-size:0.75rem; color:#94a3b8; margin-top:0.75rem;" id="export-expiry-note"></p>
                 </div>
@@ -50,7 +50,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                     <p style="font-size:0.8rem; color:#94a3b8;">Staff downloads are available for 90 days after submission. Files are automatically removed to protect privacy.</p>
                 </div>
                 <div id="export-none" style="display:none; font-size:0.9rem; color:#94a3b8;">
-                    No intake PDF generated yet for this submission.
+                    No PDF generated yet for this submission.
                 </div>
             </div>
 
@@ -277,6 +277,12 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
             const pStatus = document.getElementById('app-status')!;
             pStatus.textContent = data.status;
             pStatus.className = `status-pill status-${(data.status || '').replace(/\s+/g, '')}`;
+
+            if (data.type === 'referral') {
+                safeSet('export-title', 'Referral Packet (PDF)');
+            } else {
+                safeSet('export-title', 'Intake Packet (PDF)');
+            }
 
             (document.getElementById('ctrl-status') as HTMLSelectElement).value   = data.status;
             (document.getElementById('ctrl-assignment') as HTMLSelectElement).value = data.assigned_to || '';
