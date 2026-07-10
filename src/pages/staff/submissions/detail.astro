@@ -145,6 +145,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
         let currentSubmissionId: string | null = null;
         let currentWorkingFileId: string | null = null;
         let currentExportObjectPath: string | null = null;
+        let initialAssignedTo: string | null = null;
 
         // ── Safe text setter (never innerHTML for user data) ──────────
         function safeSet(id: string, text: string) {
@@ -194,7 +195,20 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
                 const assigned_to = (document.getElementById('ctrl-assignment') as HTMLSelectElement).value || null;
                 const { error } = await supabase.from('submissions').update({ status, internal_priority: priority, assigned_to }).eq('id', currentSubmissionId);
                 if (error) (window as any).PortalUI.alert('Notice', 'Error updating workflow: ' + error.message);
-                else { (window as any).PortalUI.alert('Notice', 'Workflow updated.'); loadDetail(); }
+                else { 
+                    (window as any).PortalUI.alert('Notice', 'Workflow updated.');
+                    if (assigned_to && assigned_to !== initialAssignedTo) {
+                        try {
+                            const { error: invokeErr } = await supabase.functions.invoke('notify-assignment', {
+                                body: { submissionId: currentSubmissionId, assignedTo: assigned_to }
+                            });
+                            if (invokeErr) console.error('Failed to send assignment notification:', invokeErr);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                    loadDetail(); 
+                }
             });
 
             // ── Notes save ────────────────────────────────────────────
@@ -286,6 +300,7 @@ import StaffPortalLayout from '../../../layouts/StaffPortalLayout.astro';
 
             (document.getElementById('ctrl-status') as HTMLSelectElement).value   = data.status;
             (document.getElementById('ctrl-assignment') as HTMLSelectElement).value = data.assigned_to || '';
+            initialAssignedTo = data.assigned_to || null;
             (document.getElementById('ctrl-priority') as HTMLSelectElement).value  = data.internal_priority;
             (document.getElementById('internal-notes') as HTMLTextAreaElement).value = data.internal_notes || '';
 
