@@ -4,10 +4,11 @@ import Layout from '../layouts/Layout.astro';
 
 <Layout title="Home">
   <!-- Hero Section -->
-  <section class="hero" style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);">
+  <section class="hero" style="position: relative; overflow: hidden; min-height: 85vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0A1E4A 0%, #0D2B6B 60%, #1A3F8A 100%);">
     
     <!-- Sophisticated CSS Gradient Mesh (Slow rotation) -->
     <div class="hero-mesh" aria-hidden="true"></div>
+    <img src="/images/wel-mark.png" alt="" class="hero-brand-mark" width="506" height="488" aria-hidden="true" />
 
     <div class="container" style="position: relative; z-index: 10; width: 100%; text-align: center; padding-top: var(--spacing-8);">
       <div class="reveal-on-scroll" style="display: inline-block; margin-bottom: var(--spacing-4);">
@@ -107,7 +108,8 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Editorial "Why WEL" Split Layout -->
-  <section class="why-wel" style="padding: var(--spacing-12) 0; background-color: var(--color-bg-surface); border-top: var(--border-delicate);">
+  <section class="why-wel" style="padding: var(--spacing-12) 0; background-color: var(--color-bg-surface); border-top: var(--border-delicate); position: relative; overflow: hidden;">
+    <img src="/images/wel-logo-stacked-optimized.png" alt="" class="section-brand-stamp" width="540" height="545" loading="lazy" aria-hidden="true" />
     <div class="container">
       <div class="split-grid">
         <!-- Sticky Left Column -->
@@ -147,7 +149,7 @@ import Layout from '../layouts/Layout.astro';
 
   <!-- Intake vs Referral Gateway -->
   <section class="gateway" style="padding: var(--spacing-12) 0; background-color: var(--color-bg-base); position: relative; overflow: hidden;">
-    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(13, 27, 42, 0.03) 0%, transparent 100%); pointer-events: none;"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(13, 43, 107, 0.03) 0%, transparent 100%); pointer-events: none;"></div>
     <div class="container" style="position: relative; z-index: 5;">
       <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-6);">
         
@@ -211,10 +213,35 @@ import Layout from '../layouts/Layout.astro';
       z-index: 0;
       /* Soft Apple-like glass glows */
       background: 
-        radial-gradient(circle at 50% 50%, rgba(13, 27, 42, 0.03) 0%, transparent 40%), 
-        radial-gradient(circle at 60% 40%, rgba(217, 119, 6, 0.04) 0%, transparent 50%),
-        radial-gradient(circle at 40% 60%, rgba(13, 27, 42, 0.02) 0%, transparent 60%);
+        radial-gradient(circle at 50% 50%, rgba(13, 43, 107, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 60% 40%, rgba(247, 148, 29, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(13, 43, 107, 0.03) 0%, transparent 60%);
       animation: rotateMesh 45s linear infinite;
+    }
+
+    .hero-brand-mark {
+      position: absolute;
+      right: clamp(-150px, -7vw, -30px);
+      top: 50%;
+      width: clamp(430px, 51vw, 760px);
+      height: auto;
+      transform: translateY(-48%) rotate(4deg);
+      opacity: 0.12;
+      filter: saturate(1.1);
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+
+    .section-brand-stamp {
+      position: absolute;
+      left: -170px;
+      bottom: -150px;
+      width: 470px;
+      height: auto;
+      opacity: 0.035;
+      pointer-events: none;
+      user-select: none;
     }
 
     @keyframes rotateMesh {
@@ -243,6 +270,18 @@ import Layout from '../layouts/Layout.astro';
 
     /* Mobile: stack hero CTAs and reduce hero padding */
     @media (max-width: 600px) {
+      .hero-brand-mark {
+        right: -190px;
+        width: 540px;
+        opacity: 0.1;
+      }
+
+      .section-brand-stamp {
+        left: -140px;
+        bottom: -90px;
+        width: 340px;
+      }
+
       .hero-ctas {
         flex-direction: column;
         align-items: stretch;
