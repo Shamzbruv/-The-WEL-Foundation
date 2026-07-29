@@ -4,9 +4,9 @@
   --color-bg-surface: #FFFFFF;
   --color-surface-glass: rgba(255, 255, 255, 0.65);
   
-  --color-primary-navy: #0F172A; /* Deep slate anchor from mock up */
+  --color-primary-navy: #0F172A;
   --color-primary-navy-light: #1E293B;
-  --color-accent-gold-muted: #D97706; /* Precision luxury amber accent */
+  --color-accent-gold-muted: #D97706;
   
   --color-text-primary: #1E293B;
   --color-text-secondary: #64748B;
@@ -62,6 +62,29 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body.public-site {
+  --color-primary-navy: #0D2B6B;
+  --color-primary-navy-light: #1A3F8A;
+  --color-accent-gold-muted: #F7941D;
+  --shadow-premium-soft: 0 4px 20px -2px rgba(13, 43, 107, 0.06);
+  --shadow-premium-hover: 0 20px 40px -10px rgba(13, 43, 107, 0.14);
+  --shadow-gold-glow: 0 0 20px rgba(247, 148, 29, 0.18);
+  --border-delicate: 1px solid rgba(13, 43, 107, 0.06);
+  --border-gold-subtle: 1px solid rgba(247, 148, 29, 0.35);
+  background-color: #F8FAFC;
+  background-image:
+    radial-gradient(circle at 0 18%, rgba(13, 43, 107, 0.055), transparent 28rem),
+    radial-gradient(circle at 100% 68%, rgba(247, 148, 29, 0.055), transparent 30rem);
+  background-attachment: fixed;
+}
+
+body.public-site main {
+  background-image: url('/images/wel-mark.png');
+  background-repeat: no-repeat;
+  background-position: calc(100% + 180px) 8rem;
+  background-size: min(42vw, 520px) auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -143,11 +166,24 @@ a:hover, a:focus {
   overflow: hidden;
 }
 
+body.public-site .card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary-navy), var(--color-accent-gold-muted));
+  opacity: 0.9;
+}
+
 .card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.12), 0 15px 30px -5px rgba(217, 119, 6, 0.15); /* Deep lift + amber glow */
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.12), 0 15px 30px -5px rgba(217, 119, 6, 0.15);
   border-color: var(--color-accent-gold-muted);
   z-index: 2;
+}
+
+body.public-site .card:hover {
+  box-shadow: 0 20px 40px -10px rgba(13, 43, 107, 0.14), 0 15px 30px -5px rgba(247, 148, 29, 0.15);
 }
 
 /* Buttons */
@@ -172,6 +208,11 @@ a:hover, a:focus {
   color: var(--color-bg-surface);
   transform: translateY(-4px) scale(1.04);
   box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.4);
+}
+
+body.public-site .btn:hover,
+body.public-site .btn:focus {
+  box-shadow: 0 10px 25px -5px rgba(247, 148, 29, 0.4);
 }
 
 .btn-secondary {
